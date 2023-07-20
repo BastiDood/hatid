@@ -11,7 +11,13 @@
         "test": "vitest run",
         "test:unit": "vitest",
         "lint": "prettier --check . && eslint .",
-        "fmt": "prettier --write ."
+        "fmt": "prettier --write .",
+        "db:init": "initdb -D data -U postgres",
+        "db:start": "postgres -D data",
+        "db:template": "psql -U postgres -f db/init.sql -1 template1",
+        "db:create": "createdb -U postgres",
+        "db:drop": "dropdb -U postgres",
+        "db:shell": "psql -U postgres"
     },
     "devDependencies": {
         "@floating-ui/dom": "^1.4.5",
