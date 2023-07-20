@@ -1,8 +1,7 @@
 <script>
-    import { AppBar, AppShell, Drawer, drawerStore } from '@skeletonlabs/skeleton';
+    import { AppBar, AppShell } from '@skeletonlabs/skeleton';
 </script>
 
-<Drawer />
 <AppShell>
     <AppBar slot="header">Header</AppBar>
 	<svelte:fragment slot="sidebarLeft">Sidebar Left</svelte:fragment>
