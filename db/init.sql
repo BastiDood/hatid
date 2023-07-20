@@ -43,7 +43,7 @@ CREATE FUNCTION upgrade_session(sid pending.id%TYPE, staff staff.id%TYPE) RETURN
         out Expiration;
     BEGIN
         DELETE FROM pending WHERE id = sid RETURNING expiration STRICT INTO exp;
-        INSERT INTO session (id, staff, expiration) VALUES (sid, staff, exp + '30 minutes') RETURNING expiration INTO out;
+        INSERT INTO session (id, staff, expiration) VALUES (sid, staff, exp + INTERVAL '30 minutes') RETURNING expiration INTO out;
         RETURN out;
     END;
 $$ LANGUAGE PLPGSQL;
