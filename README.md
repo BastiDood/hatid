@@ -23,8 +23,8 @@ pnpm db:create tix
 # OPTIONAL: Tear down the `tix` instance whenever we want.
 pnpm db:drop tix
 
-# OPTIONAL: Open a dedicated PostgreSQL shell (usually for debugging purposes).
-pnpm db:shell
+# OPTIONAL: Open a dedicated PostgreSQL shell into the `tix` instance (usually for debugging purposes).
+pnpm db:shell tix
 ```
 
 We should now have a properly initialized PostgreSQL database running in the foreground in some terminal session. We may, of course, opt to run PostgreSQL as a background service, but that is beyond the scope of this `README`.
