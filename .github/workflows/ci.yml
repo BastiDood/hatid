@@ -1,0 +1,22 @@
+name: Test and Build Project
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    steps:
+      - name: Setup Repository
+        uses: actions/checkout@v3
+      - name: Install `pnpm`
+        run: npm install -g pnpm
+      - name: Install Dependencies
+        run: pnpm install
+      - name: Check Formatting and Lints
+        run: pnpm lint
+      - name: Check Svelte Lints
+        run: pnpm check
+      - name: Run Unit Tests
+        run: pnpm test
