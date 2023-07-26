@@ -109,6 +109,7 @@
         "prefer-template": "error",
         "radix": "error",
         "require-await": "error",
+        "sort-imports": "error",
         "spaced-comment": "warn",
         "yoda": "warn"
     }
