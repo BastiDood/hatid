@@ -28,7 +28,7 @@ CREATE TABLE pendings(
 -- Validated OAuth login.
 CREATE TABLE sessions(
     session_id UUID NOT NULL,
-    user_id GoogleUserId REFERENCES users (id),
+    user_id GoogleUserId REFERENCES users (user_id),
     expiration Expiration,
     PRIMARY KEY (session_id)
 );
@@ -50,7 +50,7 @@ CREATE TABLE tickets(
     ticket_id UUID NOT NULL,
     title VARCHAR(128) NOT NULL,
     open BOOLEAN NOT NULL,
-    deadline DATETIME,
+    deadline DATE,
     priority_id SERIAL REFERENCES priorities (priority_id),
     PRIMARY KEY (ticket_id)
 );
@@ -79,12 +79,12 @@ CREATE TABLE labels(
 -- TODO: Let's consider a different name for the bridge table.
 CREATE TABLE ticket_to_label(
     ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
-    labels_id SERIAL NOT NULL REFERENCES labels (labels_id),
-    PRIMARY KEY (ticket_id, labels_id)
+    label_id SERIAL NOT NULL REFERENCES labels (label_id),
+    PRIMARY KEY (ticket_id, label_id)
 );
 
 CREATE FUNCTION create_session() RETURNS pendings AS $$
-    INSERT INTO pendings DEFAULT VALUES RETURNING id, nonce, expiration
+    INSERT INTO pendings DEFAULT VALUES RETURNING session_id, nonce, expiration
 $$ LANGUAGE SQL;
 
 CREATE FUNCTION upgrade_session(sid pendings.session_id%TYPE, uid users.user_id%TYPE) RETURNS Expiration AS $$
