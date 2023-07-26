@@ -73,6 +73,7 @@ CREATE TABLE messages(
 CREATE TABLE labels(
     label_id SERIAL NOT NULL,
     title VARCHAR(32) NOT NULL,
+    color INT NOT NULL,
     PRIMARY KEY (label_id)
 );
 
