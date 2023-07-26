@@ -5,45 +5,95 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- Access Token:       2048
 -- Refresh Token:      512
 CREATE DOMAIN GoogleUserId AS VARCHAR(255) NOT NULL;
-CREATE DOMAIN Email AS VARCHAR(32) NOT NULL;
+CREATE DOMAIN Email AS VARCHAR(40) NOT NULL;
 CREATE DOMAIN Expiration AS TIMESTAMPTZ NOT NULL CHECK(VALUE > NOW());
 
-CREATE TABLE staff(
+CREATE TABLE users(
     -- Google-assigned globally unique key.
-    id GoogleUserId,
+    user_id GoogleUserId,
     name VARCHAR(64) NOT NULL,
     email Email UNIQUE,
     picture VARCHAR(256) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (user_id)
 );
 
 -- Pending OAuth logins. Must expire periodically.
-CREATE TABLE pending(
-    id UUID NOT NULL DEFAULT gen_random_uuid(),
+CREATE TABLE pendings(
+    session_id UUID NOT NULL DEFAULT gen_random_uuid(),
     nonce BYTEA NOT NULL DEFAULT gen_random_bytes(64),
     expiration Expiration DEFAULT NOW() + INTERVAL '15 minutes',
-    PRIMARY KEY (id)
+    PRIMARY KEY (session_id)
 );
 
 -- Validated OAuth login.
-CREATE TABLE session(
-    id UUID NOT NULL,
-    staff GoogleUserId REFERENCES staff (id),
+CREATE TABLE sessions(
+    session_id UUID NOT NULL,
+    user_id GoogleUserId REFERENCES users (id),
     expiration Expiration,
-    PRIMARY KEY (id)
+    PRIMARY KEY (session_id)
 );
 
-CREATE FUNCTION create_session() RETURNS pending AS $$
-    INSERT INTO pending DEFAULT VALUES RETURNING id, nonce, expiration
+CREATE TABLE agents(
+    user_id UUID NOT NULL,
+    admin BOOLEAN NOT NULL,
+    PRIMARY KEY (user_id)
+);
+
+CREATE TABLE priorities(
+    priority_id SERIAL NOT NULL,
+    title VARCHAR(32) UNIQUE,
+    priority INT NOT NULL UNIQUE,
+    PRIMARY KEY (priority_id)
+);
+
+CREATE TABLE tickets(
+    ticket_id UUID NOT NULL,
+    title VARCHAR(128) NOT NULL,
+    open BOOLEAN NOT NULL,
+    deadline DATETIME,
+    priority_id SERIAL REFERENCES priorities (priority_id),
+    PRIMARY KEY (ticket_id)
+);
+
+CREATE TABLE assignment(
+    ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
+    agent_id UUID NOT NULL REFERENCES agents (user_id),
+    PRIMARY KEY (ticket_id, agent_id)
+);
+
+CREATE TABLE messages(
+    message_id UUID NOT NULL,
+    ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
+    creation TIMESTAMPTZ NOT NULL,
+    content VARCHAR(1024) NOT NULL,
+    author_id GoogleUserId REFERENCES users (user_id),
+    PRIMARY KEY (message_id)
+);
+
+CREATE TABLE labels(
+    label_id SERIAL NOT NULL,
+    title VARCHAR(32) NOT NULL,
+    PRIMARY KEY (label_id)
+);
+
+-- TODO: Let's consider a different name for the bridge table.
+CREATE TABLE ticket_to_label(
+    ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
+    labels_id SERIAL NOT NULL REFERENCES labels (labels_id),
+    PRIMARY KEY (ticket_id, labels_id)
+);
+
+CREATE FUNCTION create_session() RETURNS pendings AS $$
+    INSERT INTO pendings DEFAULT VALUES RETURNING id, nonce, expiration
 $$ LANGUAGE SQL;
 
-CREATE FUNCTION upgrade_session(sid pending.id%TYPE, staff staff.id%TYPE) RETURNS Expiration AS $$
+CREATE FUNCTION upgrade_session(sid pendings.session_id%TYPE, uid users.user_id%TYPE) RETURNS Expiration AS $$
     DECLARE
         exp Expiration;
         out Expiration;
     BEGIN
-        DELETE FROM pending WHERE id = sid RETURNING expiration STRICT INTO exp;
-        INSERT INTO session (id, staff, expiration) VALUES (sid, staff, exp + INTERVAL '30 minutes') RETURNING expiration INTO out;
+        DELETE FROM pendings WHERE session_id = sid RETURNING expiration STRICT INTO exp;
+        INSERT INTO sessions (session_id, user_id, expiration) VALUES (sid, uid, exp + INTERVAL '30 minutes') RETURNING expiration INTO out;
         RETURN out;
     END;
 $$ LANGUAGE PLPGSQL;
