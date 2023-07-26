@@ -1,23 +1,41 @@
 name: Test and Build Project
 
 on:
-    workflow_dispatch:
-    push:
-    pull_request:
+  workflow_dispatch:
+push:
+pull_request:
 
 jobs:
-    ci:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Setup Repository
-              uses: actions/checkout@v3
-            - name: Install `pnpm`
-              run: npm install -g pnpm
-            - name: Install Dependencies
-              run: pnpm install
-            - name: Check Formatting and Lints
-              run: pnpm lint
-            - name: Check Svelte Lints
-              run: pnpm check
-            - name: Run Unit Tests
-              run: pnpm test
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Repository
+        uses: actions/checkout@v3
+      - name: Install `pnpm`
+        run: npm install -g pnpm
+      - name: Install Dependencies
+        run: pnpm install
+      - name: Check Formatting and Lints
+        run: pnpm lint
+      - name: Check Svelte Lints
+        run: pnpm check
+      - name: Install PostgreSQL Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      # https://github.com/actions/runner-images/blob/52b92ff310885b9276df13a7ecd25826d26f42b0/images/linux/Ubuntu2204-Readme.md#postgresql
+      - name: Startup Built-in PostgreSQL Server
+        run: |
+          sudo systemctl start postgresql.service
+          pg_isready
+          sudo -u postgres psql -c "CREATE USER runner PASSWORD 'runner'"
+          sudo -u postgres createdb -O runner hatid
+      - name: Setup PostgreSQL Database
+        run: psql -f db/init.sql -1 hatid
+        env:
+          PGPASSWORD: runner
+      - name: Run Unit Tests
+        run: pnpm test
+        env:
+          PGUSER: runner
+          PGPASSWORD: runner
