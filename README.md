@@ -36,6 +36,22 @@ We should now have a properly initialized PostgreSQL database running in the for
 pnpm install
 ```
 
+### Environment Variables
+
+| **Name**         | **Description**                                             | **Required** | **Default** |
+| ---------------- | ----------------------------------------------------------- | :----------: | ----------: |
+| `GOOGLE_ID`      | Client ID obtained from the [Google Cloud Console].         |   &#x2714;   |             |
+| `GOOGLE_SECRET`  | Client secret obtained from the [Google Cloud Console].     |   &#x2714;   |             |
+| `OAUTH_REDIRECT` | OAuth 2.0 redirect URI set from the [Google Cloud Console]. |   &#x2714;   |             |
+| `PGHOST`         | IP host name of the [PostgreSQL] instance.                  |   &#x274c;   | `127.0.0.1` |
+| `PGPORT`         | Port number of the [PostgreSQL] instance.                   |   &#x274c;   |      `5432` |
+| `PGUSER`         | Provided username when logging into [PostgreSQL].           |   &#x274c;   |  `postgres` |
+| `PGPASSWORD`     | Provided password when logging into [PostgreSQL].           |   &#x2714;   |             |
+| `PGDATABASE`     | Default database in the [PostgreSQL] instance.              |   &#x274c;   |     `hatid` |
+
+[PostgreSQL]: https://www.postgresql.org/
+[Google Cloud Console]: https://console.cloud.google.com/
+
 ### Development Server
 
 In another terminal session, we may run the development server (i.e., without optimizations) as follows:
