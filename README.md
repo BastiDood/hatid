@@ -40,6 +40,8 @@ pnpm install
 
 | **Name**         | **Description**                                             | **Required** | **Default** |
 | ---------------- | ----------------------------------------------------------- | :----------: | ----------: |
+| `HOST`           | Hostname on which the server will be hosted.                |   &#x274c;   |   `0.0.0.0` |
+| `PORT`           | Port on which the server will be hosted.                    |   &#x274c;   |      `3000` |
 | `GOOGLE_ID`      | Client ID obtained from the [Google Cloud Console].         |   &#x2714;   |             |
 | `GOOGLE_SECRET`  | Client secret obtained from the [Google Cloud Console].     |   &#x2714;   |             |
 | `OAUTH_REDIRECT` | OAuth 2.0 redirect URI set from the [Google Cloud Console]. |   &#x2714;   |             |
@@ -49,8 +51,11 @@ pnpm install
 | `PGPASSWORD`     | Provided password when logging into [PostgreSQL].           |   &#x2714;   |             |
 | `PGDATABASE`     | Default database in the [PostgreSQL] instance.              |   &#x274c;   |     `hatid` |
 
+Note that [`@sveltejs/adapter-node`] also respects additional environment variables.
+
 [PostgreSQL]: https://www.postgresql.org/
 [Google Cloud Console]: https://console.cloud.google.com/
+[`@sveltejs/adapter-node`]: https://kit.svelte.dev/docs/adapter-node
 
 ### Development Server
 
