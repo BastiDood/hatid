@@ -1,5 +1,15 @@
 import { z } from 'zod';
 
+// @see https://cloud.google.com/iot/docs/how-tos/credentials/jwts#jwt_header
+const Algorithm = z.enum(['RS256', 'ES256']);
+const KeyId = z.string().min(1);
+
+export const HeaderSchema = z.object({
+    alg: Algorithm,
+    typ: z.literal('JWT'),
+    kid: KeyId,
+});
+
 const DiscoveryDocumentSchema = z.object({
     issuer: z.string().url(),
     authorization_endpoint: z.string().url(),
@@ -10,9 +20,9 @@ const DiscoveryDocumentSchema = z.object({
 });
 
 const KeySchema = z.object({
-    alg: z.enum(['RS256', 'ES256']),
+    alg: Algorithm,
     use: z.literal('sig'),
-    kid: z.string().min(1),
+    kid: KeyId,
 });
 
 const CertsResponseSchema = z.object({
@@ -27,9 +37,8 @@ export async function fetchDiscoveryDocument(): Promise<DiscoveryDocument> {
     return DiscoveryDocumentSchema.parse(json);
 }
 
-export async function fetchCerts() {
-    const { jwks_uri } = await fetchDiscoveryDocument();
-    const res = await fetch(jwks_uri);
+export async function fetchCerts(url: string) {
+    const res = await fetch(url);
     const json = await res.json();
     const { keys } = CertsResponseSchema.parse(json);
 

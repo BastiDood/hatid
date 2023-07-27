@@ -1,16 +1,16 @@
-import { createSession } from '$lib/database';
-import env from '$lib/env/oauth';
-import { fetchDiscoveryDocument } from '$lib/openid';
-import { hash } from 'blake3';
-import { redirect } from '@sveltejs/kit';
-// eslint-disable-next-line sort-imports
+import { OAUTH_SCOPE_STRING } from '$lib/model/google';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
+import { createPending } from '$lib/database';
+import env from '$lib/env/oauth';
+import { fetchDiscoveryDocument } from '$lib/model/openid';
+import { hash } from 'blake3';
+import { redirect } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
 export const GET: RequestHandler = async ({ cookies }) => {
     // TODO: check if already logged in
-    const { session_id, nonce, expiration } = await createSession();
+    const { session_id, nonce, expiration } = await createPending();
     cookies.set('sid', session_id, {
         path: '/',
         httpOnly: true,
@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ cookies }) => {
         nonce: Buffer.from(nonce).toString('base64url'),
         access_type: 'online',
         response_type: 'code',
-        scope: 'openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+        scope: OAUTH_SCOPE_STRING,
         prompt: 'select_account',
     });
 

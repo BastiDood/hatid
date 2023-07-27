@@ -84,17 +84,14 @@ CREATE TABLE ticket_to_label(
     PRIMARY KEY (ticket_id, label_id)
 );
 
-CREATE FUNCTION create_session() RETURNS pendings AS $$
+CREATE FUNCTION create_pending() RETURNS pendings AS $$
     INSERT INTO pendings DEFAULT VALUES RETURNING session_id, nonce, expiration
 $$ LANGUAGE SQL;
 
-CREATE FUNCTION upgrade_session(sid pendings.session_id%TYPE, uid users.user_id%TYPE) RETURNS Expiration AS $$
-    DECLARE
-        exp Expiration;
-        out Expiration;
-    BEGIN
-        DELETE FROM pendings WHERE session_id = sid RETURNING expiration STRICT INTO exp;
-        INSERT INTO sessions (session_id, user_id, expiration) VALUES (sid, uid, exp + INTERVAL '30 minutes') RETURNING expiration INTO out;
-        RETURN out;
-    END;
-$$ LANGUAGE PLPGSQL;
+CREATE FUNCTION delete_pending(sid pendings.session_id%TYPE) AS $$
+    DELETE FROM pendings WHERE session_id = sid RETURNING nonce, expiration;
+$$ LANGUAGE SQL;
+
+CREATE FUNCTION upgrade_pending(sid pendings.session_id%TYPE, uid users.user_id%TYPE, exp sessions.expiration%TYPE) AS $$
+    INSERT INTO sessions (session_id, user_id, expiration) VALUES (sid, uid, exp);
+$$ LANGUAGE SQL;

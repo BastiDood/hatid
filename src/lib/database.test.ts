@@ -5,7 +5,7 @@ afterAll(() => db.end());
 
 describe('database wrapper tests', () => {
     it('should create a new session', async () => {
-        const { session_id, nonce, expiration } = await db.createSession();
+        const { session_id, nonce, expiration } = await db.createPending();
         expect(session_id).toBeTruthy();
         expect(nonce).length(64);
         expect(expiration.getTime()).toBeGreaterThanOrEqual(Date.now());
