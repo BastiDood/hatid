@@ -1,8 +1,6 @@
+import * as db from '$lib/database';
 import { afterAll, describe, expect, it } from 'vitest';
-import Database from '$lib/database';
 
-// Get database credentials from environment variables.
-const db = new Database();
 afterAll(() => db.end());
 
 describe('database wrapper tests', () => {
