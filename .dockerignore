@@ -1,0 +1,15 @@
+.git
+.github
+.svelte-kit
+.vscode
+
+build
+data
+node_modules
+
+.dockerignore
+.gitignore
+.env.*
+Dockerfile
+docker-compose.yml
+README.md

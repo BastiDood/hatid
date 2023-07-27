@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - '80:3000'
+    env_file: .env
+  db:
+    image: postgres:15.3-alpine3.18
+    restart: always
+    volumes:
+      - pg:/var/lib/postgresql/data
+    env_file: .env.postgres
+volumes:
+  pg:
+    name: hatid
