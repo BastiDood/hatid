@@ -88,10 +88,10 @@ CREATE FUNCTION create_pending() RETURNS pendings AS $$
     INSERT INTO pendings DEFAULT VALUES RETURNING session_id, nonce, expiration
 $$ LANGUAGE SQL;
 
-CREATE FUNCTION delete_pending(sid pendings.session_id%TYPE) AS $$
+CREATE FUNCTION delete_pending(sid pendings.session_id%TYPE) RETURNS TABLE(nonce BYTEA, expiration Expiration)  AS $$
     DELETE FROM pendings WHERE session_id = sid RETURNING nonce, expiration;
 $$ LANGUAGE SQL;
 
-CREATE FUNCTION upgrade_pending(sid pendings.session_id%TYPE, uid users.user_id%TYPE, exp sessions.expiration%TYPE) AS $$
+CREATE FUNCTION upgrade_pending(sid pendings.session_id%TYPE, uid users.user_id%TYPE, exp sessions.expiration%TYPE) RETURNS VOID AS $$
     INSERT INTO sessions (session_id, user_id, expiration) VALUES (sid, uid, exp);
 $$ LANGUAGE SQL;
