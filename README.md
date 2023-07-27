@@ -1,3 +1,14 @@
+# HATiD
+
+**HATiD** is a **H**elpdesk **A**nd **Ti**cketing **D**ashboard written in [TypeScript] and [Svelte]. It is a full-stack web application on top of the [SvelteKit] framework. In the back end, it uses PostgreSQL as the database.
+
+[TypeScript]: https://www.typescriptlang.org/
+[Svelte]: https://svelte.dev/
+[SvelteKit]: https://kit.svelte.dev/
+[PostgreSQL]: https://www.postgresql.org/
+
+> "Hatid" [hɐˈtid] is a Filipino word which means "to deliver".
+
 # Development
 
 ## Initialize the Database Folder
