@@ -38,6 +38,8 @@ pnpm install
 
 ### Environment Variables
 
+The following environment variables are typically added to a `.env` file. Although SvelteKit allows us to embed environment variables at compile-time, we instead opt to always dynamically load the variables at runtime. This is mainly for security reasons so that credentials cannot be leaked should a Docker image be pushed to a public registry.
+
 | **Name**         | **Description**                                             | **Required** | **Default** |
 | ---------------- | ----------------------------------------------------------- | :----------: | ----------: |
 | `HOST`           | Hostname on which the server will be hosted.                |   &#x274c;   |   `0.0.0.0` |
@@ -76,4 +78,27 @@ pnpm build
 
 # Start the production preview server.
 pnpm preview
+```
+
+# Production Deployment with Docker Compose
+
+The [`postgres`][docker-postgres] image inspects the following environment variables for first-time builds. Observe that some variables in the documentation have been omitted for brevity. Also note that this project's [`docker-compose.yml`] configures these variables via a `.env.postgres` file.
+
+[docker-postgres]: https://github.com/docker-library/docs/blob/9f75f251347c82b06483d47b14bcca79ad077fcd/postgres/README.md#environment-variables
+[`docker-compose.yml`]: ./docker-compose.yml
+
+| **Name**            | **Description**                                                                   | **Required** | **Default** |
+| ------------------- | --------------------------------------------------------------------------------- | :----------: | ----------: |
+| `POSTGRES_USER`     | Sets the superuser name.                                                          |   &#x274c;   |  `postgres` |
+| `POSTGRES_PASSWORD` | Sets the superuser password.                                                      |   &#x2714;   |             |
+| `POSTGRES_DB`       | Sets the name for the default database. Defaults to the value of `POSTGRES_USER`. |   &#x274c;   |  `postgres` |
+
+Once the `.env` and `.env.postgres` files are ready, we may now run Docker Compose.
+
+```bash
+# Run the PostgreSQL and Node.js server in the background.
+docker compose up -d
+
+# OPTIONAL: Tear down the containers.
+docker compose down
 ```
