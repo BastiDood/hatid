@@ -39,3 +39,11 @@ jobs:
         env:
           PGUSER: runner
           PGPASSWORD: runner
+      - name: Build for Production
+        run: pnpm build
+        env:
+          # Of course, these are dummy values...
+          GOOGLE_ID: hatid
+          GOOGLE_SECRET: secret
+          OAUTH_REDIRECT: http://localhost/auth/callback
+          PGPASSWORD: password
