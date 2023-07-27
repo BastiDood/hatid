@@ -7,7 +7,7 @@ RUN corepack enable && pnpm install -r --dev
 
 # Build the application.
 COPY . .
-RUN pnpm build
+RUN pnpm sync && pnpm build
 
 FROM alpine:3.18.2
 
