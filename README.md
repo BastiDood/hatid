@@ -51,18 +51,18 @@ pnpm install
 
 The following environment variables are typically added to a `.env` file. Although SvelteKit allows us to embed environment variables at compile-time, we instead opt to always dynamically load the variables at runtime. This is mainly for security reasons so that credentials cannot be leaked should a Docker image be pushed to a public registry.
 
-| **Name**         | **Description**                                             | **Required** | **Default** |
-| ---------------- | ----------------------------------------------------------- | :----------: | ----------: |
-| `HOST`           | Hostname on which the server will be hosted.                |   &#x274c;   |   `0.0.0.0` |
-| `PORT`           | Port on which the server will be hosted.                    |   &#x274c;   |      `3000` |
-| `GOOGLE_ID`      | Client ID obtained from the [Google Cloud Console].         |   &#x2714;   |             |
-| `GOOGLE_SECRET`  | Client secret obtained from the [Google Cloud Console].     |   &#x2714;   |             |
-| `OAUTH_REDIRECT` | OAuth 2.0 redirect URI set from the [Google Cloud Console]. |   &#x2714;   |             |
-| `PGHOST`         | IP host name of the [PostgreSQL] instance.                  |   &#x274c;   | `127.0.0.1` |
-| `PGPORT`         | Port number of the [PostgreSQL] instance.                   |   &#x274c;   |      `5432` |
-| `PGUSER`         | Provided username when logging into [PostgreSQL].           |   &#x274c;   |  `postgres` |
-| `PGPASSWORD`     | Provided password when logging into [PostgreSQL].           |   &#x2714;   |             |
-| `PGDATABASE`     | Default database in the [PostgreSQL] instance.              |   &#x274c;   |     `hatid` |
+| **Name**         | **Description**                                             | **Required** |                      **Default** |
+| ---------------- | ----------------------------------------------------------- | :----------: | -------------------------------: |
+| `HOST`           | Hostname on which the server will be hosted.                |   &#x274c;   |                        `0.0.0.0` |
+| `PORT`           | Port on which the server will be hosted.                    |   &#x274c;   |                           `3000` |
+| `GOOGLE_ID`      | Client ID obtained from the [Google Cloud Console].         |   &#x2714;   |                                  |
+| `GOOGLE_SECRET`  | Client secret obtained from the [Google Cloud Console].     |   &#x2714;   |                                  |
+| `OAUTH_REDIRECT` | OAuth 2.0 redirect URI set from the [Google Cloud Console]. |   &#x2714;   | `http://127.0.0.1/auth/callback` |
+| `PGHOST`         | IP host name of the [PostgreSQL] instance.                  |   &#x274c;   |                      `127.0.0.1` |
+| `PGPORT`         | Port number of the [PostgreSQL] instance.                   |   &#x274c;   |                           `5432` |
+| `PGUSER`         | Provided username when logging into [PostgreSQL].           |   &#x274c;   |                       `postgres` |
+| `PGPASSWORD`     | Provided password when logging into [PostgreSQL].           |   &#x2714;   |                                  |
+| `PGDATABASE`     | Default database in the [PostgreSQL] instance.              |   &#x274c;   |                          `hatid` |
 
 Note that [`@sveltejs/adapter-node`] also respects additional environment variables.
 
