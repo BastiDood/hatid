@@ -13,7 +13,7 @@ class Transaction {
 
     async deletePending(sid: Pending['session_id']) {
         const [first, ...rest] = await this
-            .#sql`SELECT nonce, expiration FROM delete_pending(${sid})`;
+            .#sql`SELECT nonce, expiration FROM delete_pending(${sid})`.execute();
         strictEqual(rest.length, 0);
         return typeof first === 'undefined'
             ? null
@@ -21,7 +21,7 @@ class Transaction {
     }
 
     async upgradePending(sid: Pending['session_id'], uid: User['user_id'], exp: Date) {
-        const { count } = await this.#sql`SELECT upgrade_pending(${sid}, ${uid}, ${exp})`;
+        const { count } = await this.#sql`SELECT upgrade_pending(${sid}, ${uid}, ${exp})`.execute();
         assert(0 <= count && count < 2);
     }
 
@@ -59,8 +59,8 @@ export function end() {
 }
 
 export async function getUserFromSession(sid: Session['session_id']) {
-    const [first, ...rest] =
-        await sql`SELECT user_id, name, email, picture FROM get_user_from_session(${sid})`;
+    const [first, ...rest] = await sql`SELECT user_id, name, email, picture FROM get_user_from_session(${sid})`.execute();
     strictEqual(rest.length, 0);
+    console.log(first);
     return typeof first === 'undefined' ? null : UserSchema.parse(first);
 }
