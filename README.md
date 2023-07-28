@@ -57,7 +57,7 @@ The following environment variables are typically added to a `.env` file. Althou
 | `PORT`           | Port on which the server will be hosted.                    |   &#x274c;   |                           `3000` |
 | `GOOGLE_ID`      | Client ID obtained from the [Google Cloud Console].         |   &#x2714;   |                                  |
 | `GOOGLE_SECRET`  | Client secret obtained from the [Google Cloud Console].     |   &#x2714;   |                                  |
-| `OAUTH_REDIRECT` | OAuth 2.0 redirect URI set from the [Google Cloud Console]. |   &#x2714;   | `http://127.0.0.1/auth/callback` |
+| `OAUTH_REDIRECT` | OAuth 2.0 redirect URI set from the [Google Cloud Console]. |   &#x274c;   | `http://127.0.0.1/auth/callback` |
 | `PGHOST`         | IP host name of the [PostgreSQL] instance.                  |   &#x274c;   |                      `127.0.0.1` |
 | `PGPORT`         | Port number of the [PostgreSQL] instance.                   |   &#x274c;   |                           `5432` |
 | `PGUSER`         | Provided username when logging into [PostgreSQL].           |   &#x274c;   |                       `postgres` |
