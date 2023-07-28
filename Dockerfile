@@ -12,7 +12,7 @@ RUN pnpm sync && pnpm build
 FROM alpine:3.18.2
 
 # Installs Node.js without `npm` to keep things lightweight.
-RUN apk add --update nodejs-current=20.5.0-r0
+RUN apk add --update --no-cache nodejs-current=20.5.0-r0
 
 WORKDIR /app
 COPY --link --from=builder /hatid/package.json /hatid/build/ /hatid/db/ .
