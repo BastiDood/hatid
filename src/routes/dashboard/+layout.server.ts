@@ -4,6 +4,7 @@ import type { User } from '$lib/model/user';
 import { getUserFromSession } from '$lib/database';
 import { redirect } from '@sveltejs/kit';
 
+// eslint-disable-next-line func-style
 export const load: LayoutServerLoad<User> = async ({ cookies }) => {
     const sid = cookies.get('sid');
     if (!sid) throw redirect(StatusCodes.MOVED_TEMPORARILY, '/auth/login');
