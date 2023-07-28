@@ -60,7 +60,7 @@ export function end() {
 
 export async function getUserFromSession(sid: Session['session_id']) {
     const [first, ...rest] =
-        await sql`WITH _ AS (SELECT * FROM get_user_from_session(${sid})) SELECT * FROM _ WHERE _ IS NOT NULL`.execute();
+        await sql`SELECT * FROM get_user_from_session(${sid}) AS _ WHERE _ IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined' ? null : UserSchema.parse(first);
 }
