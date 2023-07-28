@@ -26,7 +26,8 @@ class Transaction {
     }
 
     async upsertUser({ user_id, name, email, picture }: User) {
-        const { count } = await this.#sql`SELECT upsert_user(${user_id}, ${name}, ${email}, ${picture})`;
+        const { count } = await this
+            .#sql`SELECT upsert_user(${user_id}, ${name}, ${email}, ${picture})`;
         assert(0 <= count && count < 2);
     }
 }
