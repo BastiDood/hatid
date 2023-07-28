@@ -1,5 +1,5 @@
 import * as db from '$lib/database';
-import { afterAll, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { getRandomValues, randomUUID } from 'node:crypto';
 
 afterAll(() => db.end());
@@ -36,12 +36,13 @@ it('should create a new session', async () => {
     expect(valid).not.toBeNull();
 });
 
-it('should receive null when fetching invalid sessions', async () => {
-    const val = await db.getUserFromSession(randomUUID());
-    expect(val).toBeNull();
-});
-
-it('should receive null when deleting invalid sessions', async () => {
-    const val = await db.begin(sql => sql.deletePending(randomUUID()));
-    expect(val).toBeNull();
+describe('invalid sessions', () => {
+    it('should be null when fetching', async () => {
+        const val = await db.getUserFromSession(randomUUID());
+        expect(val).toBeNull();
+    });
+    it('should be null when deleting', async () => {
+        const val = await db.begin(sql => sql.deletePending(randomUUID()));
+        expect(val).toBeNull();
+    });
 });
