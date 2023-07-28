@@ -1,10 +1,10 @@
+import { hash, load } from 'blake3';
 import { OAUTH_SCOPE_STRING } from '$lib/model/google';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
 import { createPending } from '$lib/database';
 import env from '$lib/env/oauth';
 import { fetchDiscoveryDocument } from '$lib/model/openid';
-import { hash } from 'blake3';
 import { redirect } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
@@ -18,6 +18,7 @@ export const GET: RequestHandler = async ({ cookies }) => {
         expires: expiration,
     });
 
+    await load();
     const params = new URLSearchParams({
         state: hash(session_id).toString('base64url'),
         client_id: env.GOOGLE_ID,

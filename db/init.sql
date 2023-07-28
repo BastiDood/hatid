@@ -95,3 +95,8 @@ $$ LANGUAGE SQL;
 CREATE FUNCTION upgrade_pending(sid pendings.session_id%TYPE, uid users.user_id%TYPE, exp sessions.expiration%TYPE) RETURNS VOID AS $$
     INSERT INTO sessions (session_id, user_id, expiration) VALUES (sid, uid, exp);
 $$ LANGUAGE SQL;
+
+CREATE FUNCTION upsert_user(uid users.user_id%TYPE, uname users.name%TYPE, addr users.email%TYPE, url users.picture%TYPE) RETURNS VOID AS $$
+    INSERT INTO users (user_id, name, email, picture) VALUES (uid, uname, addr, url)
+        ON CONFLICT (user_id) DO UPDATE SET name = uname, email = addr, picture = url;
+$$ LANGUAGE SQL;

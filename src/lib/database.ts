@@ -1,8 +1,8 @@
+import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
 import { PendingSchema } from './model/session';
 import type { User } from './model/user';
 import env from './env/postgres';
-import { strictEqual } from 'node:assert/strict';
 
 class Transaction {
     #sql: TransactionSql;
@@ -22,7 +22,12 @@ class Transaction {
 
     async upgradePending(sid: string, uid: User['user_id'], exp: Date) {
         const { count } = await this.#sql`SELECT upgrade_pending(${sid}, ${uid}, ${exp})`;
-        strictEqual(count, 0);
+        assert(0 <= count && count < 2);
+    }
+
+    async upsertUser({ user_id, name, email, picture }: User) {
+        const { count } = await this.#sql`SELECT upsert_user(${user_id}, ${name}, ${email}, ${picture})`;
+        assert(0 <= count && count < 2);
     }
 }
 
