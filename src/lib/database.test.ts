@@ -1,6 +1,6 @@
 import * as db from '$lib/database';
 import { afterAll, describe, expect, it } from 'vitest';
-import { getRandomValues } from 'node:crypto';
+import { getRandomValues, randomUUID } from 'node:crypto';
 
 afterAll(() => db.end());
 
@@ -21,7 +21,7 @@ describe('database wrapper tests', () => {
         expect(stillPending).toBeNull();
 
         await db.begin(async sql => {
-            const uid = crypto.randomUUID();
+            const uid = randomUUID();
             const bytes = getRandomValues(new Uint8Array(21));
             const email = Buffer.from(bytes).toString('base64');
             await sql.upsertUser({
@@ -38,14 +38,12 @@ describe('database wrapper tests', () => {
     });
 
     it('should receive null when fetching invalid sessions', async () => {
-        const sid = crypto.randomUUID();
-        const val = await db.getUserFromSession(sid);
+        const val = await db.getUserFromSession(randomUUID());
         expect(val).toBeNull();
     });
 
     it('should receive null when deleting invalid sessions', async () => {
-        const sid = crypto.randomUUID();
-        const val = await db.begin(sql => sql.deletePending(sid));
+        const val = await db.begin(sql => sql.deletePending(randomUUID()));
         expect(val).toBeNull();
     });
 });
