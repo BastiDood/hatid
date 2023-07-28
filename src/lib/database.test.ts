@@ -1,5 +1,6 @@
 import * as db from '$lib/database';
 import { afterAll, describe, expect, it } from 'vitest';
+import { getRandomValues } from 'node:crypto';
 
 afterAll(() => db.end());
 
@@ -21,7 +22,7 @@ describe('database wrapper tests', () => {
 
         await db.begin(async sql => {
             const uid = crypto.randomUUID();
-            const bytes = crypto.getRandomValues(new Uint8Array(21));
+            const bytes = getRandomValues(new Uint8Array(21));
             const email = Buffer.from(bytes).toString('base64');
             await sql.upsertUser({
                 user_id: uid,
