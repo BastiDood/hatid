@@ -12,7 +12,7 @@ import env from '$lib/env/oauth';
 export const GET: RequestHandler = async ({ cookies, url: { searchParams } }) => {
     // TODO: check if the session already exists
     const sid = cookies.get('sid');
-    if (!sid) throw redirect(StatusCodes.MOVED_TEMPORARILY, '/login');
+    if (!sid) throw redirect(StatusCodes.MOVED_TEMPORARILY, '/auth/login');
 
     const state = searchParams.get('state');
     if (!state) throw error(StatusCodes.BAD_REQUEST);
@@ -35,7 +35,7 @@ export const GET: RequestHandler = async ({ cookies, url: { searchParams } }) =>
 
     await begin(async db => {
         const pending = await db.deletePending(sid);
-        if (pending === null) throw redirect(StatusCodes.MOVED_PERMANENTLY, '/login');
+        if (pending === null) throw redirect(StatusCodes.MOVED_PERMANENTLY, '/auth/login');
         const { nonce, expiration } = pending;
 
         const { token_endpoint, jwks_uri, issuer } = await fetchDiscoveryDocument();
