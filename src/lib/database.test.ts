@@ -1,49 +1,47 @@
 import * as db from '$lib/database';
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, expect, it } from 'vitest';
 import { getRandomValues, randomUUID } from 'node:crypto';
 
 afterAll(() => db.end());
 
-describe('database wrapper tests', () => {
-    it('should create a new session', async () => {
-        const { session_id, nonce, expiration } = await db.createPending();
-        expect(session_id).toBeTruthy();
-        expect(nonce).length(64);
-        expect(expiration.getTime()).toBeGreaterThanOrEqual(Date.now());
+it('should create a new session', async () => {
+    const { session_id, nonce, expiration } = await db.createPending();
+    expect(session_id).toBeTruthy();
+    expect(nonce).length(64);
+    expect(expiration.getTime()).toBeGreaterThanOrEqual(Date.now());
 
-        const pending = await db.getUserFromSession(session_id);
-        expect(pending).toBeNull();
+    const pending = await db.getUserFromSession(session_id);
+    expect(pending).toBeNull();
 
-        const val = await db.begin(sql => sql.deletePending(session_id));
-        expect(val).toEqual({ nonce, expiration });
+    const val = await db.begin(sql => sql.deletePending(session_id));
+    expect(val).toEqual({ nonce, expiration });
 
-        const stillPending = await db.getUserFromSession(session_id);
-        expect(stillPending).toBeNull();
+    const stillPending = await db.getUserFromSession(session_id);
+    expect(stillPending).toBeNull();
 
-        await db.begin(async sql => {
-            const uid = randomUUID();
-            const bytes = getRandomValues(new Uint8Array(21));
-            const email = Buffer.from(bytes).toString('base64');
-            await sql.upsertUser({
-                user_id: uid,
-                name: 'Test',
-                email: `${email}@example.com`,
-                picture: 'http://example.com/avatar.png',
-            });
-            await sql.upgradePending(session_id, uid, new Date(Date.now() + 10000));
+    await db.begin(async sql => {
+        const uid = randomUUID();
+        const bytes = getRandomValues(new Uint8Array(21));
+        const email = Buffer.from(bytes).toString('base64');
+        await sql.upsertUser({
+            user_id: uid,
+            name: 'Test',
+            email: `${email}@example.com`,
+            picture: 'http://example.com/avatar.png',
         });
-
-        const valid = await db.getUserFromSession(session_id);
-        expect(valid).not.toBeNull();
+        await sql.upgradePending(session_id, uid, new Date(Date.now() + 10000));
     });
 
-    it('should receive null when fetching invalid sessions', async () => {
-        const val = await db.getUserFromSession(randomUUID());
-        expect(val).toBeNull();
-    });
+    const valid = await db.getUserFromSession(session_id);
+    expect(valid).not.toBeNull();
+});
 
-    it('should receive null when deleting invalid sessions', async () => {
-        const val = await db.begin(sql => sql.deletePending(randomUUID()));
-        expect(val).toBeNull();
-    });
+it('should receive null when fetching invalid sessions', async () => {
+    const val = await db.getUserFromSession(randomUUID());
+    expect(val).toBeNull();
+});
+
+it('should receive null when deleting invalid sessions', async () => {
+    const val = await db.begin(sql => sql.deletePending(randomUUID()));
+    expect(val).toBeNull();
 });
