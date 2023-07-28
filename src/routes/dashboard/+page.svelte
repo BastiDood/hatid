@@ -1,1 +1,1 @@
-<p>Logged in!</p>
+<p>Hello world!</p>

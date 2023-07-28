@@ -44,7 +44,6 @@ export const GET: RequestHandler = async ({ cookies, url: { searchParams } }) =>
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body,
         });
-        console.log(res);
 
         // TODO: provide better status code
         ok(res.ok);

@@ -3,7 +3,6 @@ import { z } from 'zod';
 
 const CommonSchema = z.object({
     session_id: z.string(),
-    nonce: z.instanceof(Uint8Array),
     expiration: z.coerce.date(),
 });
 

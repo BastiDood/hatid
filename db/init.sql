@@ -100,3 +100,7 @@ CREATE FUNCTION upsert_user(uid users.user_id%TYPE, uname users.name%TYPE, addr 
     INSERT INTO users (user_id, name, email, picture) VALUES (uid, uname, addr, url)
         ON CONFLICT (user_id) DO UPDATE SET name = uname, email = addr, picture = url;
 $$ LANGUAGE SQL;
+
+CREATE FUNCTION get_user_from_session(sid sessions.session_id%TYPE) RETURNS users AS $$
+    SELECT users.* FROM sessions INNER JOIN users USING (user_id) WHERE session_id = sid;
+$$ LANGUAGE SQL;

@@ -1,1 +1,1 @@
-<p>Hello world!</p>
+<a href="/auth/login">Hello world!</a>

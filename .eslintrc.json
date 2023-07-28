@@ -111,6 +111,6 @@
         "require-await": "error",
         "sort-imports": "error",
         "spaced-comment": "warn",
-        "yoda": "warn"
+        "yoda": ["warn", "never", { "exceptRange": true }]
     }
 }

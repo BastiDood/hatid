@@ -1,7 +1,7 @@
+import { type Pending, PendingSchema, type Session } from './model/session';
+import { type User, UserSchema } from './model/user';
 import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
-import { PendingSchema } from './model/session';
-import type { User } from './model/user';
 import env from './env/postgres';
 
 class Transaction {
@@ -11,7 +11,7 @@ class Transaction {
         this.#sql = sql;
     }
 
-    async deletePending(sid: string) {
+    async deletePending(sid: Pending['session_id']) {
         const [first, ...rest] = await this
             .#sql`SELECT nonce, expiration FROM delete_pending(${sid})`;
         strictEqual(rest.length, 0);
@@ -20,7 +20,7 @@ class Transaction {
             : PendingSchema.pick({ nonce: true, expiration: true }).parse(first);
     }
 
-    async upgradePending(sid: string, uid: User['user_id'], exp: Date) {
+    async upgradePending(sid: Pending['session_id'], uid: User['user_id'], exp: Date) {
         const { count } = await this.#sql`SELECT upgrade_pending(${sid}, ${uid}, ${exp})`;
         assert(0 <= count && count < 2);
     }
@@ -56,4 +56,11 @@ export function begin<T>(fn: TransactionScope<T>) {
 /** Tear down the connection pool. Must be called at most once. */
 export function end() {
     return sql.end();
+}
+
+export async function getUserFromSession(sid: Session['session_id']) {
+    const [first, ...rest] =
+        await sql`SELECT user_id, name, email, picture FROM get_user_from_session(${sid})`;
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined' ? null : UserSchema.parse(first);
 }
