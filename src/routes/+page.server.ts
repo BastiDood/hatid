@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getUserFromSession } from '$lib/database';
+import { getUserFromSession } from '$lib/server/database';
 
 type MaybeUser = Awaited<ReturnType<typeof getUserFromSession>>;
 

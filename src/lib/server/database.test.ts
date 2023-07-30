@@ -1,4 +1,4 @@
-import * as db from '$lib/database';
+import * as db from './database';
 import { afterAll, describe, expect, it } from 'vitest';
 import { getRandomValues, randomUUID } from 'node:crypto';
 

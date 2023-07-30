@@ -1,12 +1,12 @@
-import { AuthorizationCode, IdTokenSchema, TokenResponseSchema } from '$lib/model/google';
-import { HeaderSchema, fetchCerts, fetchDiscoveryDocument } from '$lib/model/openid';
+import { AuthorizationCode, IdTokenSchema, TokenResponseSchema } from '$lib/server/model/google';
+import { HeaderSchema, fetchCerts, fetchDiscoveryDocument } from '$lib/server/model/openid';
 import { default as assert, ok, strictEqual } from 'node:assert/strict';
 import { error, redirect } from '@sveltejs/kit';
 import { hash, load } from 'blake3';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
-import { begin } from '$lib/database';
-import env from '$lib/env/oauth';
+import { begin } from '$lib/server/database';
+import env from '$lib/server/env/oauth';
 
 // eslint-disable-next-line func-style
 export const GET: RequestHandler = async ({ cookies, url: { searchParams } }) => {

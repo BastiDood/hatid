@@ -84,6 +84,8 @@ CREATE TABLE ticket_to_label(
     PRIMARY KEY (ticket_id, label_id)
 );
 
+-- SESSION FUNCTIONS
+
 CREATE FUNCTION create_pending() RETURNS pendings AS $$
     INSERT INTO pendings DEFAULT VALUES RETURNING session_id, nonce, expiration
 $$ LANGUAGE SQL;
@@ -101,6 +103,10 @@ CREATE FUNCTION upsert_user(uid users.user_id%TYPE, uname users.name%TYPE, addr 
         ON CONFLICT (user_id) DO UPDATE SET name = uname, email = addr, picture = url;
 $$ LANGUAGE SQL;
 
+-- USER FUNCTIONS
+
 CREATE FUNCTION get_user_from_session(sid sessions.session_id%TYPE) RETURNS users AS $$
     SELECT users.* FROM sessions INNER JOIN users USING (user_id) WHERE session_id = sid;
 $$ LANGUAGE SQL;
+
+-- TICKET FUNCTIONS
