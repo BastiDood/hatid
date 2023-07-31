@@ -19,7 +19,6 @@
         "db:template": "psql -U postgres -f db/init.sql -1 template1",
         "db:create": "createdb -U postgres",
         "db:drop": "dropdb -U postgres",
-        "db:reset": "createdb -U postgres -T template0 template1",
         "db:shell": "psql -U postgres"
     },
     "devDependencies": {
