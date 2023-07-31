@@ -1,10 +1,10 @@
 import { hash, load } from 'blake3';
-import { OAUTH_SCOPE_STRING } from '$lib/model/google';
+import { OAUTH_SCOPE_STRING } from '$lib/server/model/google';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
-import { createPending } from '$lib/database';
-import env from '$lib/env/oauth';
-import { fetchDiscoveryDocument } from '$lib/model/openid';
+import { createPending } from '$lib/server/database';
+import env from '$lib/server/env/oauth';
+import { fetchDiscoveryDocument } from '$lib/server/model/openid';
 import { redirect } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style

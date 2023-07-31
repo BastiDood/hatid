@@ -1,7 +1,7 @@
 import type { LayoutServerLoad } from './$types';
 import { StatusCodes } from 'http-status-codes';
-import type { User } from '$lib/model/user';
-import { getUserFromSession } from '$lib/database';
+import type { User } from '$lib/server/model/user';
+import { getUserFromSession } from '$lib/server/database';
 import { redirect } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
