@@ -14,7 +14,7 @@ CREATE TABLE users(
     name VARCHAR(64) NOT NULL,
     email Email UNIQUE,
     picture VARCHAR(256) NOT NULL,
-    admin BOOLEAN NOT NULL,
+    admin BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (user_id)
 );
 
