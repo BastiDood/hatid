@@ -49,6 +49,8 @@ export async function createPending() {
 }
 
 export type TransactionScope<T> = (sql: Transaction) => T | Promise<T>;
+
+/** Starts a new transaction. */
 export function begin<T>(fn: TransactionScope<T>) {
     return sql.begin(sql => fn(new Transaction(sql)));
 }

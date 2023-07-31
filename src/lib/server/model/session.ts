@@ -2,7 +2,7 @@ import { UserSchema } from './user';
 import { z } from 'zod';
 
 const CommonSchema = z.object({
-    session_id: z.string(),
+    session_id: z.string().uuid(),
     expiration: z.coerce.date(),
 });
 
