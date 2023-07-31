@@ -102,7 +102,7 @@ CREATE TABLE ticket_labels(
 -- SESSION FUNCTIONS
 
 CREATE FUNCTION create_pending() RETURNS pendings AS $$
-    INSERT INTO pendings DEFAULT VALUES RETURNING session_id, nonce, expiration
+    INSERT INTO pendings DEFAULT VALUES RETURNING session_id, nonce, expiration;
 $$ LANGUAGE SQL;
 
 CREATE FUNCTION delete_pending(sid pendings.session_id%TYPE) RETURNS TABLE(nonce pendings.nonce%TYPE, expiration pendings.expiration%TYPE) AS $$
@@ -124,4 +124,7 @@ CREATE FUNCTION get_user_from_session(sid sessions.session_id%TYPE) RETURNS user
     SELECT users.* FROM sessions INNER JOIN users USING (user_id) WHERE session_id = sid;
 $$ LANGUAGE SQL;
 
--- TICKET FUNCTIONS
+-- LABEL FUNCTIONS
+CREATE FUNCTION create_label(title labels.title%TYPE, color labels.color%TYPE) RETURNS labels.label_id%TYPE AS $$
+    INSERT INTO labels (title, color) VALUES (title, color) RETURNING label_id;
+$$ LANGUAGE SQL;
