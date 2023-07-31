@@ -1,6 +1,6 @@
-import { type Label, LabelSchema } from './model/label';
+import { type Label, LabelSchema } from '$lib/model/label';
 import { type Pending, PendingSchema, type Session } from './model/session';
-import { type User, UserSchema } from './model/user';
+import { type User, UserSchema } from '$lib/model/user';
 import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
 import env from './env/postgres';

@@ -1,5 +1,6 @@
-import { GoogleUserId } from './google';
 import { z } from 'zod';
+
+export const GoogleUserId = z.string().min(1).max(255);
 
 export const UserSchema = z.object({
     user_id: GoogleUserId,
