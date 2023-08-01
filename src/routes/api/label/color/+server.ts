@@ -1,7 +1,7 @@
 import { editLabelColor, getUserFromSession } from '$lib/server/database';
-import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
+import { error } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
 export const PATCH: RequestHandler = async ({ cookies, request }) => {
