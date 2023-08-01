@@ -79,7 +79,11 @@ export async function getUserFromSession(sid: Session['session_id']) {
 }
 
 /** Creates a new {@linkcode Label}. The `color` is internally converted to an `INT`. */
-export async function createLabel(title: Label['title'], color: Label['color']) {
+export async function createLabel(
+    title: Label['title'],
+    color: Label['color'],
+    days: Label['deadline'],
+) {
     // Recall that the `number` type in JavaScript is actually an IEEE-754-2019 double-precision
     // floating-point number. See [Section 6.1.6.1][ieee-754] for more details. However, note that
     // the `INT` type in Postgres is a 32-bit signed integer. We thus convert the `number` into a
@@ -90,7 +94,9 @@ export async function createLabel(title: Label['title'], color: Label['color']) 
     // [ieee-754]: https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html#sec-ecmascript-language-types-number-type
     // [right-shift]: https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-signedRightShift
     const hex = color >> 0;
-    const [first, ...rest] = await sql`SELECT create_label(${title}, ${hex}) AS label_id`.execute();
+    const deadline = days === null ? null : `${days} days`;
+    const [first, ...rest] =
+        await sql`SELECT create_label(${title}, ${hex}, ${deadline}::INTERVAL DAY) AS label_id`.execute();
     strictEqual(rest.length, 0);
     return LabelSchema.pick({ label_id: true }).parse(first).label_id;
 }
@@ -120,6 +126,21 @@ export async function editLabelTitle(lid: Label['label_id'], title: Label['title
 export async function editLabelColor(lid: Label['label_id'], color: Label['color']) {
     const hex = color >> 0;
     const { count } = await sql`UPDATE labels SET color = ${hex} WHERE label_id = ${lid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount();
+    }
+}
+
+/** Edits the `deadline` field of a {@linkcode Label}. Returns `false` if not found. */
+export async function editLabelDeadline(lid: Label['label_id'], days: Label['deadline']) {
+    const deadline = days === null ? null : `${days} days`;
+    const { count } =
+        await sql`UPDATE labels SET deadline = ${deadline}::INTERVAL DAY WHERE label_id = ${lid}`.execute();
     switch (count) {
         case 0:
             return false;
