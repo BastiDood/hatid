@@ -1,10 +1,13 @@
 import { type Dept, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
-import { type Pending, PendingSchema, type Session } from './model/session';
+import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type User, UserSchema } from '$lib/model/user';
 import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
-import env from './env/postgres';
+import { UnexpectedRowCount } from './error';
+import env from '$lib/server/env/postgres';
+
+export { UnexpectedRowCount };
 
 class Transaction {
     #sql: TransactionSql;
