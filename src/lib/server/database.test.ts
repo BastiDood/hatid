@@ -36,6 +36,11 @@ it('should create a new session', async () => {
     expect(valid).not.toBeNull();
 });
 
+it('should create a new label', async () => {
+    const id = await db.createLabel('Hello World', 0xc0debabe);
+    expect(id).not.toStrictEqual(0);
+});
+
 describe('invalid sessions', () => {
     it('should be null when fetching', async () => {
         const val = await db.getUserFromSession(randomUUID());

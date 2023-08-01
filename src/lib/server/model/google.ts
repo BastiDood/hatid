@@ -1,3 +1,4 @@
+import { GoogleUserId } from '$lib/model/user';
 import { z } from 'zod';
 
 const OAUTH_SCOPES = [
@@ -7,8 +8,6 @@ const OAUTH_SCOPES = [
 ];
 export const OAUTH_SCOPE_STRING = OAUTH_SCOPES.join(' ');
 export const OAUTH_TOKEN_TYPE = 'Bearer';
-
-export const GoogleUserId = z.string().min(1).max(255);
 
 /** @see https://developers.google.com/identity/protocols/oauth2#size */
 export const AuthorizationCode = z.string().min(1).max(256);

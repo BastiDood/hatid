@@ -1,4 +1,4 @@
-import { UserSchema } from './user';
+import { UserSchema } from '$lib/model/user';
 import { z } from 'zod';
 
 const CommonSchema = z.object({
