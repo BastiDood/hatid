@@ -36,9 +36,18 @@ it('should create a new session', async () => {
     expect(valid).not.toBeNull();
 });
 
-it('should create a new label', async () => {
-    const id = await db.createLabel('Hello World', 0xc0debabe);
-    expect(id).not.toStrictEqual(0);
+it('should create and update labels', async () => {
+    const lid = await db.createLabel('Hello World', 0xc0debabe);
+    expect(lid).not.toStrictEqual(0);
+
+    expect(await db.editLabelTitle(lid, 'World Hello')).toStrictEqual(true);
+    expect(await db.editLabelColor(lid, 0xdeadbeef)).toStrictEqual(true);
+});
+
+it('should reject updating invalid labels', async () => {
+    // NOTE: Postgres does not provide 0 as a valid `SERIAL`.
+    expect(await db.editLabelTitle(0, 'World Hello')).toStrictEqual(false);
+    expect(await db.editLabelColor(0, 0xdeadbeef)).toStrictEqual(false);
 });
 
 it('should create a new department', async () => {
