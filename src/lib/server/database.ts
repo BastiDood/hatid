@@ -96,5 +96,5 @@ export async function createLabel(title: Label['title'], color: Label['color']) 
 export async function createDept(name: Dept['name']) {
     const [first, ...rest] = await sql`SELECT create_dept(${name}) AS dept_id`.execute();
     strictEqual(rest.length, 0);
-    return DeptSchema.pick({ dept_id: true }).parse(first);
+    return DeptSchema.pick({ dept_id: true }).parse(first).dept_id;
 }
