@@ -1,10 +1,13 @@
 import { type Dept, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
-import { type Pending, PendingSchema, type Session } from './model/session';
+import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type User, UserSchema } from '$lib/model/user';
 import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
-import env from './env/postgres';
+import { UnexpectedRowCount } from './error';
+import env from '$lib/server/env/postgres';
+
+export { UnexpectedRowCount };
 
 class Transaction {
     #sql: TransactionSql;
@@ -89,7 +92,7 @@ export async function createLabel(title: Label['title'], color: Label['color']) 
     const hex = color >> 0;
     const [first, ...rest] = await sql`SELECT create_label(${title}, ${hex}) AS label_id`.execute();
     strictEqual(rest.length, 0);
-    return LabelSchema.pick({ label_id: true }).parse(first);
+    return LabelSchema.pick({ label_id: true }).parse(first).label_id;
 }
 
 /** Creates a new {@linkcode Dept} or department. Requires only the department name as input.  */
@@ -97,4 +100,32 @@ export async function createDept(name: Dept['name']) {
     const [first, ...rest] = await sql`SELECT create_dept(${name}) AS dept_id`.execute();
     strictEqual(rest.length, 0);
     return DeptSchema.pick({ dept_id: true }).parse(first).dept_id;
+}
+
+/** Edits the `title` field of a {@linkcode Label}. Returns `false` if not found. */
+export async function editLabelTitle(lid: Label['label_id'], title: Label['title']) {
+    const { count } =
+        await sql`UPDATE labels SET title = ${title} WHERE label_id = ${lid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount();
+    }
+}
+
+/** Edits the `color` field of a {@linkcode Label}. Returns `false` if not found. */
+export async function editLabelColor(lid: Label['label_id'], color: Label['color']) {
+    const hex = color >> 0;
+    const { count } = await sql`UPDATE labels SET color = ${hex} WHERE label_id = ${lid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount();
+    }
 }
