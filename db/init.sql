@@ -83,7 +83,7 @@ CREATE TABLE labels(
     label_id SERIAL NOT NULL,
     title VARCHAR(32) NOT NULL,
     color INT NOT NULL,
-    deadline INTERVAL DAY (0),
+    deadline INTERVAL DAY,
     PRIMARY KEY (label_id)
 );
 
@@ -126,8 +126,8 @@ $$ LANGUAGE SQL;
 
 -- LABEL FUNCTIONS
 
-CREATE FUNCTION create_label(title labels.title%TYPE, color labels.color%TYPE) RETURNS labels.label_id%TYPE AS $$
-    INSERT INTO labels (title, color) VALUES (title, color) RETURNING label_id;
+CREATE FUNCTION create_label(title labels.title%TYPE, color labels.color%TYPE, deadline labels.deadline%TYPE) RETURNS labels.label_id%TYPE AS $$
+    INSERT INTO labels (title, color, deadline) VALUES (title, color, deadline) RETURNING label_id;
 $$ LANGUAGE SQL;
 
 -- DEPARTMENT FUNCTIONS
