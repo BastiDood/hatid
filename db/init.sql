@@ -93,7 +93,6 @@ CREATE TABLE dept_labels(
     PRIMARY KEY (dept_id, label_id)
 );
 
--- TODO: Let's consider a different name for the bridge table.
 CREATE TABLE ticket_labels(
     ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
     label_id SERIAL NOT NULL REFERENCES labels (label_id),
