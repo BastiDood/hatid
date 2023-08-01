@@ -41,6 +41,11 @@ it('should create a new label', async () => {
     expect(id).not.toStrictEqual(0);
 });
 
+it('should create a new department', async () => {
+    const id = await db.createDept('HATiD Support');
+    expect(id).not.toStrictEqual(0);
+});
+
 describe('invalid sessions', () => {
     it('should be null when fetching', async () => {
         const val = await db.getUserFromSession(randomUUID());
