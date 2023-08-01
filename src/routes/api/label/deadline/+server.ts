@@ -1,19 +1,16 @@
-import { createLabel, getUserFromSession } from '$lib/server/database';
-import { error, json } from '@sveltejs/kit';
+import { editLabelDeadline, getUserFromSession } from '$lib/server/database';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
+import { error } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
-export const POST: RequestHandler = async ({ cookies, request }) => {
+export const PATCH: RequestHandler = async ({ cookies, request }) => {
     // We choose form data here because it's more network-efficient than JSON.
     const form = await request.formData();
 
-    const title = form.get('title');
-    if (title === null || title instanceof File) throw error(StatusCodes.BAD_REQUEST);
-
-    const color = form.get('color');
-    if (color === null || color instanceof File) throw error(StatusCodes.BAD_REQUEST);
-    const hex = parseInt(color, 16);
+    const id = form.get('id');
+    if (id === null || id instanceof File) throw error(StatusCodes.BAD_REQUEST);
+    const lid = parseInt(id, 10);
 
     const deadline = form.get('deadline');
     if (deadline instanceof File) throw error(StatusCodes.BAD_REQUEST);
@@ -27,6 +24,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
     if (!user.admin) throw error(StatusCodes.FORBIDDEN);
 
-    const id = await createLabel(title, hex, days);
-    return json(id, { status: StatusCodes.CREATED });
+    const success = await editLabelDeadline(lid, days);
+    const status = success ? StatusCodes.NO_CONTENT : StatusCodes.NOT_FOUND;
+    return new Response(null, { status });
 };
