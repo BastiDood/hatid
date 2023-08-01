@@ -58,8 +58,8 @@ CREATE TABLE priorities(
 CREATE TABLE tickets(
     ticket_id UUID NOT NULL,
     title VARCHAR(128) NOT NULL,
-    open BOOLEAN NOT NULL,
-    deadline DATE,
+    open BOOLEAN NOT NULL DEFAULT TRUE,
+    due_date DATE NOT NULL DEFAULT 'infinity',
     priority_id SERIAL REFERENCES priorities (priority_id),
     PRIMARY KEY (ticket_id)
 );
