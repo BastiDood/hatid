@@ -1,3 +1,4 @@
+import { type Dept, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
 import { type Pending, PendingSchema, type Session } from './model/session';
 import { type User, UserSchema } from '$lib/model/user';
@@ -89,4 +90,11 @@ export async function createLabel(title: Label['title'], color: Label['color']) 
     const [first, ...rest] = await sql`SELECT create_label(${title}, ${hex}) AS label_id`.execute();
     strictEqual(rest.length, 0);
     return LabelSchema.pick({ label_id: true }).parse(first);
+}
+
+/** Creates a new {@linkcode Dept} or department. Requires only the department name as input.  */
+export async function createDept(name: Dept['name']) {
+    const [first, ...rest] = await sql`SELECT create_dept(${name}) AS dept_id`.execute();
+    strictEqual(rest.length, 0);
+    return DeptSchema.pick({ dept_id: true }).parse(first).dept_id;
 }
