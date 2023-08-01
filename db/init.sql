@@ -124,6 +124,11 @@ CREATE FUNCTION get_user_from_session(sid sessions.session_id%TYPE) RETURNS user
     SELECT users.* FROM sessions INNER JOIN users USING (user_id) WHERE session_id = sid;
 $$ LANGUAGE SQL;
 
+CREATE FUNCTION set_admin_for_user(uid users.user_id%TYPE, value users.admin%TYPE) RETURNS BOOLEAN AS $$
+    WITH _ AS (SELECT admin FROM users WHERE user_id = uid)
+        UPDATE users SET admin = value FROM _ WHERE user_id = uid RETURNING _.admin;
+$$ LANGUAGE SQL;
+
 -- LABEL FUNCTIONS
 
 CREATE FUNCTION create_label(title labels.title%TYPE, color labels.color%TYPE, deadline labels.deadline%TYPE) RETURNS labels.label_id%TYPE AS $$
