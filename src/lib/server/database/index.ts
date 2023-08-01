@@ -92,7 +92,7 @@ export async function createLabel(title: Label['title'], color: Label['color']) 
     const hex = color >> 0;
     const [first, ...rest] = await sql`SELECT create_label(${title}, ${hex}) AS label_id`.execute();
     strictEqual(rest.length, 0);
-    return LabelSchema.pick({ label_id: true }).parse(first);
+    return LabelSchema.pick({ label_id: true }).parse(first).label_id;
 }
 
 /** Creates a new {@linkcode Dept} or department. Requires only the department name as input.  */
