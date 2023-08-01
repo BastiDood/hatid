@@ -131,6 +131,7 @@ CREATE FUNCTION create_label(title labels.title%TYPE, color labels.color%TYPE) R
 $$ LANGUAGE SQL;
 
 -- DEPARTMENT FUNCTIONS
+
 CREATE FUNCTION create_dept(name depts.name%TYPE) RETURNS depts.dept_id%TYPE AS $$
     INSERT INTO depts (name) VALUES (name) RETURNING dept_id;
 $$ LANGUAGE SQL;
