@@ -101,3 +101,31 @@ export async function createDept(name: Dept['name']) {
     strictEqual(rest.length, 0);
     return DeptSchema.pick({ dept_id: true }).parse(first).dept_id;
 }
+
+/** Edits the `title` field of a {@linkcode Label}. Returns `false` if not found. */
+export async function editLabelTitle(lid: Label['label_id'], title: Label['title']) {
+    const { count } =
+        await sql`UPDATE labels SET title = ${title} WHERE label_id = ${lid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount();
+    }
+}
+
+/** Edits the `color` field of a {@linkcode Label}. Returns `false` if not found. */
+export async function editLabelColor(lid: Label['label_id'], color: Label['color']) {
+    const hex = color >> 0;
+    const { count } = await sql`UPDATE labels SET color = ${hex} WHERE label_id = ${lid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount();
+    }
+}
