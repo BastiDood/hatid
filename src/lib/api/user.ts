@@ -9,12 +9,12 @@ import type { User } from '$lib/model/user';
  * means that the client is out-of-sync with the server. We should probably refresh.
  */
 export async function setAdmin(id: User['user_id'], admin: User['admin']) {
-    const res = await fetch('/api/user/admin', {
+    const { status } = await fetch('/api/user/admin', {
         method: 'PATCH',
         credentials: 'same-origin',
         body: new URLSearchParams({ id, admin: Number(admin).toString(10) }),
     });
-    switch (res.status) {
+    switch (status) {
         case StatusCodes.NO_CONTENT:
             return true;
         case StatusCodes.RESET_CONTENT:
@@ -28,6 +28,6 @@ export async function setAdmin(id: User['user_id'], admin: User['admin']) {
         case StatusCodes.FORBIDDEN:
             throw new InsufficientPermissions();
         default:
-            throw new UnexpectedStatusCode(res.status);
+            throw new UnexpectedStatusCode(status);
     }
 }
