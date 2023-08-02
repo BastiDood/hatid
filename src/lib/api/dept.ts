@@ -24,7 +24,7 @@ export async function create(name: Dept['name']) {
 }
 
 /** Edits the `name` field of a {@linkcode Dept}. Returns `false` if not found. */
-export async function editName(did: Dept['dept_id'], name: Dept['name']){
+export async function editName(did: Dept['dept_id'], name: Dept['name']) {
     const res = await fetch('/api/dept/name', {
         method: 'PATCH',
         credentials: 'same-origin',
@@ -43,5 +43,5 @@ export async function editName(did: Dept['dept_id'], name: Dept['name']){
             throw new InsufficientPermissions();
         default:
             throw new UnexpectedStatusCode(res.status);
-    } 
+    }
 }

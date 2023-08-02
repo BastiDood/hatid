@@ -162,11 +162,9 @@ export async function createDept(name: Dept['name']) {
     return DeptSchema.pick({ dept_id: true }).parse(first).dept_id;
 }
 
-
 /** Edits the `name` field of a {@linkcode Dept}. Returns `false` if not found. */
 export async function editDeptName(did: Dept['dept_id'], name: Dept['name']) {
-    const { count } =
-        await sql`UPDATE depts SET name = ${name} WHERE dept_id = ${did}`.execute();
+    const { count } = await sql`UPDATE depts SET name = ${name} WHERE dept_id = ${did}`.execute();
     switch (count) {
         case 0:
             return false;
