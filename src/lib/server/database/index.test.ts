@@ -19,7 +19,7 @@ it('should create a new session', async () => {
     const stillPending = await db.getUserFromSession(session_id);
     expect(stillPending).toBeNull();
 
-    await db.begin(async sql => {
+    const uid = await db.begin(async sql => {
         const uid = randomUUID();
         const bytes = getRandomValues(new Uint8Array(21));
         const email = Buffer.from(bytes).toString('base64');
@@ -30,10 +30,20 @@ it('should create a new session', async () => {
             picture: 'http://example.com/avatar.png',
         });
         await sql.upgradePending(session_id, uid, new Date(Date.now() + 10000));
+        return uid;
     });
 
     const valid = await db.getUserFromSession(session_id);
-    expect(valid).not.toBeNull();
+    expect(valid?.user_id).toStrictEqual(uid);
+
+    expect(await db.setAdminForUser(uid, true)).toStrictEqual(false);
+    expect(await db.setAdminForUser(uid, false)).toStrictEqual(true);
+});
+
+it('should reject promoting non-existent users', async () => {
+    const uid = randomUUID();
+    expect(await db.setAdminForUser(uid, true)).toBeNull();
+    expect(await db.setAdminForUser(uid, false)).toBeNull();
 });
 
 it('should create and update labels', async () => {

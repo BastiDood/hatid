@@ -6,6 +6,7 @@ import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
 import { UnexpectedRowCount } from './error';
 import env from '$lib/server/env/postgres';
+import { z } from 'zod';
 
 export { UnexpectedRowCount };
 
@@ -76,6 +77,16 @@ export async function getUserFromSession(sid: Session['session_id']) {
         await sql`SELECT * FROM get_user_from_session(${sid}) AS _ WHERE _ IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined' ? null : UserSchema.parse(first);
+}
+
+/** Promotes a {@linkcode User} to a system administrator. Returns `true` if previously an admin. */
+export async function setAdminForUser(uid: User['user_id'], admin: User['admin']) {
+    const [first, ...rest] =
+        await sql`SELECT set_admin_for_user(${uid}, ${admin}) AS admin`.execute();
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined'
+        ? null
+        : z.object({ admin: UserSchema.shape.admin.nullable() }).parse(first).admin;
 }
 
 /** Creates a new {@linkcode Label}. The `color` is internally converted to an `INT`. */
