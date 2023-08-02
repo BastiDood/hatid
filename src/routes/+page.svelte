@@ -8,8 +8,7 @@
 <AppShell>
     <AppBar slot="header" background="bg-red-950">
         <svelte:fragment slot="lead"><span class="p-2 h3" style="font-weight: 700;">HATID</span></svelte:fragment>
-        <svelte:fragment slot="trail">
-            
+        <svelte:fragment slot="trail">        
         </svelte:fragment>
     </AppBar>
 
