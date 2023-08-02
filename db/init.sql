@@ -55,7 +55,7 @@ CREATE TABLE priorities(
 );
 
 CREATE TABLE tickets(
-    ticket_id UUID NOT NULL,
+    ticket_id UUID NOT NULL DEFAULT gen_random_uuid(),
     title VARCHAR(128) NOT NULL,
     open BOOLEAN NOT NULL DEFAULT TRUE,
     due_date DATE NOT NULL DEFAULT 'infinity',
@@ -72,12 +72,12 @@ CREATE TABLE assignments(
 );
 
 CREATE TABLE messages(
-    message_id UUID NOT NULL,
     ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
-    creation TIMESTAMPTZ NOT NULL,
+    message_id SERIAL NOT NULL,
+    creation TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     content VARCHAR(1024) NOT NULL,
     author_id GoogleUserId REFERENCES users (user_id),
-    PRIMARY KEY (message_id)
+    PRIMARY KEY (ticket_id, message_id)
 );
 
 CREATE TABLE labels(
