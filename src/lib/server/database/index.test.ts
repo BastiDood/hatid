@@ -59,30 +59,44 @@ it('should create and update labels', async () => {
     expect(await db.editLabelDeadline(lid, 5)).toStrictEqual(true);
 });
 
-it('should reject updating invalid labels', async () => {
+describe.concurrent('invalid labels', () => {
     // NOTE: Postgres does not provide 0 as a valid `SERIAL`.
-    expect(await db.editLabelTitle(0, 'World Hello')).toStrictEqual(false);
-    expect(await db.editLabelColor(0, 0xdeadbeef)).toStrictEqual(false);
-    expect(await db.editLabelDeadline(0, null)).toStrictEqual(false);
-    expect(await db.editLabelDeadline(0, 5)).toStrictEqual(false);
+    it('should reject title update', async ({ expect }) => {
+        const result = await db.editLabelTitle(0, 'World Hello');
+        expect(result).toStrictEqual(false);
+    });
+    it('should reject color update', async ({ expect }) => {
+        const result = await db.editLabelColor(0, 0xdeadbeef);
+        expect(result).toStrictEqual(false);
+    });
+    it('should reject color update', async ({ expect }) => {
+        expect(await db.editLabelDeadline(0, null)).toStrictEqual(false);
+        expect(await db.editLabelDeadline(0, 5)).toStrictEqual(false);
+    });
 });
 
 it('should create departments and update their names', async () => {
     const did = await db.createDept('HATiD Support');
     expect(did).not.toStrictEqual(0);
-
     expect(await db.editDeptName(did, 'PUSO/BULSA Support')).toStrictEqual(true);
-    // NOTE: As above, 0 is not a valid value in Postgres
-    expect(await db.editDeptName(0, 'NotExistent Support')).toStrictEqual(false);
 });
 
-describe('invalid sessions', () => {
-    it('should be null when fetching', async () => {
-        const val = await db.getUserFromSession(randomUUID());
+describe.concurrent('invalid sessions', () => {
+    const sid = randomUUID();
+    it('should be null when fetching', async ({ expect }) => {
+        const val = await db.getUserFromSession(sid);
         expect(val).toBeNull();
     });
-    it('should be null when deleting', async () => {
-        const val = await db.begin(sql => sql.deletePending(randomUUID()));
+    it('should be null when deleting', async ({ expect }) => {
+        const val = await db.begin(sql => sql.deletePending(sid));
         expect(val).toBeNull();
+    });
+});
+
+describe('invalid departments', () => {
+    // NOTE: As above, 0 is not a valid value in Postgres
+    it('should not edit the department name', async () => {
+        const result = await db.editDeptName(0, 'Non-existent Support');
+        expect(result).toStrictEqual(false);
     });
 });
