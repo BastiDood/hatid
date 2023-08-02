@@ -1,5 +1,6 @@
 import { createLabel, isAdminSession } from '$lib/server/database';
 import { error, json } from '@sveltejs/kit';
+import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
 
@@ -31,6 +32,8 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
             throw error(StatusCodes.FORBIDDEN);
         case true:
             break;
+        default:
+            throw new AssertionError();
     }
 
     const id = await createLabel(title, hex, days);

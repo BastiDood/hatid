@@ -1,4 +1,5 @@
 import { editLabelTitle, isAdminSession } from '$lib/server/database';
+import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
 import { error } from '@sveltejs/kit';
@@ -27,6 +28,8 @@ export const PATCH: RequestHandler = async ({ cookies, request }) => {
             throw error(StatusCodes.FORBIDDEN);
         case true:
             break;
+        default:
+            throw new AssertionError();
     }
 
     const success = await editLabelTitle(lid, title);
