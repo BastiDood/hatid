@@ -1,4 +1,4 @@
-import { editDeptName, getUserFromSession } from '$lib/server/database';
+import { editDeptName, isHeadSession } from '$lib/server/database';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
 import { error } from '@sveltejs/kit';
@@ -18,9 +18,15 @@ export const PATCH: RequestHandler = async ({ cookies, request }) => {
     if (!sid) throw error(StatusCodes.UNAUTHORIZED);
 
     // TODO: session has expired so we must inform the client that they should log in again
-    const user = await getUserFromSession(sid);
-    if (user === null) throw error(StatusCodes.UNAUTHORIZED);
-    if (!user.admin) throw error(StatusCodes.FORBIDDEN);
+    const head = await isHeadSession(sid, did);
+    switch (head) {
+        case null:
+            throw error(StatusCodes.UNAUTHORIZED);
+        case false:
+            throw error(StatusCodes.FORBIDDEN);
+        case true:
+            break;
+    }
 
     const success = await editDeptName(did, name);
     const status = success ? StatusCodes.NO_CONTENT : StatusCodes.NOT_FOUND;

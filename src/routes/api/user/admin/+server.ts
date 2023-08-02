@@ -1,4 +1,4 @@
-import { getUserFromSession, setAdminForUser } from '$lib/server/database';
+import { isAdminSession, setAdminForUser } from '$lib/server/database';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
 import { error } from '@sveltejs/kit';
@@ -19,10 +19,17 @@ export const PATCH: RequestHandler = async ({ cookies, request }) => {
     if (!sid) throw error(StatusCodes.UNAUTHORIZED);
 
     // TODO: session has expired so we must inform the client that they should log in again
-    const user = await getUserFromSession(sid);
-    if (user === null) throw error(StatusCodes.UNAUTHORIZED);
-    if (!user.admin) throw error(StatusCodes.FORBIDDEN);
+    const perms = await isAdminSession(sid);
+    switch (perms) {
+        case null:
+            throw error(StatusCodes.UNAUTHORIZED);
+        case false:
+            throw error(StatusCodes.FORBIDDEN);
+        case true:
+            break;
+    }
 
+    // FIXME: disallow self-downgrade of permission
     const prev = await setAdminForUser(uid, admin);
     if (prev === null) return new Response(null, { status: StatusCodes.NOT_FOUND });
 
