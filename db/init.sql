@@ -25,11 +25,10 @@ CREATE TABLE depts(
 );
 
 CREATE TABLE dept_agents(
-    dept_agent_id SERIAL NOT NULL,
     dept_id SERIAL NOT NULL REFERENCES depts (dept_id),
     user_id GoogleUserId REFERENCES users (user_id),
     head BOOLEAN NOT NULL,
-    PRIMARY KEY (dept_agent_id)
+    PRIMARY KEY (dept_id, user_id)
 );
 
 -- Pending OAuth logins. Must expire periodically.
@@ -66,8 +65,10 @@ CREATE TABLE tickets(
 
 CREATE TABLE assignments(
     ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
-    agent_id SERIAL NOT NULL REFERENCES dept_agents (dept_agent_id),
-    PRIMARY KEY (ticket_id, agent_id)
+    dept_id SERIAL NOT NULL,
+    user_id GoogleUserId,
+    PRIMARY KEY (ticket_id, dept_id, user_id),
+    FOREIGN KEY (dept_id, user_id) REFERENCES dept_agents (dept_id, user_id)
 );
 
 CREATE TABLE messages(
@@ -122,6 +123,10 @@ $$ LANGUAGE SQL;
 
 CREATE FUNCTION get_user_from_session(sid sessions.session_id%TYPE) RETURNS users AS $$
     SELECT users.* FROM sessions INNER JOIN users USING (user_id) WHERE session_id = sid;
+$$ LANGUAGE SQL;
+
+CREATE FUNCTION is_head_session(sid sessions.session_id%TYPE, did depts.dept_id%TYPE) RETURNS dept_agents.head%TYPE AS $$
+    SELECT head FROM sessions INNER JOIN dept_agents USING (user_id) WHERE session_id = sid AND dept_id = did;
 $$ LANGUAGE SQL;
 
 CREATE FUNCTION set_admin_for_user(uid users.user_id%TYPE, value users.admin%TYPE) RETURNS BOOLEAN AS $$

@@ -1,3 +1,4 @@
+import { type Agent, AgentSchema } from '$lib/model/agent';
 import { type Dept, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
@@ -77,6 +78,24 @@ export async function getUserFromSession(sid: Session['session_id']) {
         await sql`SELECT * FROM get_user_from_session(${sid}) AS _ WHERE _ IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined' ? null : UserSchema.parse(first);
+}
+
+/** Maps a session ID to its associated `admin` field in {@linkcode User}. */
+export async function isAdminSession(sid: Session['session_id']) {
+    const [first, ...rest] =
+        await sql`SELECT admin FROM get_user_from_session(${sid}) AS _ WHERE _ IS NOT NULL`.execute();
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined'
+        ? null
+        : UserSchema.pick({ admin: true }).parse(first).admin;
+}
+
+/** Maps a session ID to the department-level permissions of the `head` field in {@linkcode Agent}. */
+export async function isHeadSession(sid: Session['session_id'], did: Agent['dept_id']) {
+    const [first, ...rest] =
+        await sql`SELECT * FROM is_head_session(${sid}, ${did}) AS _ WHERE _ IS NOT NULL`.execute();
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined' ? null : AgentSchema.pick({ head: true }).parse(first).head;
 }
 
 /** Promotes a {@linkcode User} to a system administrator. Returns `true` if previously an admin. */
