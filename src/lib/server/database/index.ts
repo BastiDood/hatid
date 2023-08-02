@@ -163,3 +163,16 @@ export async function createDept(name: Dept['name']) {
 }
 
 
+/** Edits the `name` field of a {@linkcode Dept}. Returns `false` if not found. */
+export async function editDeptName(did: Dept['dept_id'], name: Dept['name']) {
+    const { count } =
+        await sql`UPDATE depts SET name = ${name} WHERE dept_id = ${did}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount();
+    }
+}
