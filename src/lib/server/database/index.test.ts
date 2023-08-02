@@ -29,9 +29,7 @@ it('should complete a full user journey', async () => {
             email: `${email}@example.com`,
             picture: 'http://example.com/avatar.png',
         });
-
-        const now = Date.now();
-        await sql.upgradePending(session_id, uid, new Date(now + 10000));
+        await sql.upgradePending(session_id, uid, new Date(Date.now() + 10000));
         return uid;
     });
 
