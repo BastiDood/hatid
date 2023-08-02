@@ -112,13 +112,6 @@ export async function createLabel(
     return LabelSchema.pick({ label_id: true }).parse(first).label_id;
 }
 
-/** Creates a new {@linkcode Dept} or department. Requires only the department name as input.  */
-export async function createDept(name: Dept['name']) {
-    const [first, ...rest] = await sql`SELECT create_dept(${name}) AS dept_id`.execute();
-    strictEqual(rest.length, 0);
-    return DeptSchema.pick({ dept_id: true }).parse(first).dept_id;
-}
-
 /** Edits the `title` field of a {@linkcode Label}. Returns `false` if not found. */
 export async function editLabelTitle(lid: Label['label_id'], title: Label['title']) {
     const { count } =
@@ -161,3 +154,12 @@ export async function editLabelDeadline(lid: Label['label_id'], days: Label['dea
             throw new UnexpectedRowCount();
     }
 }
+
+/** Creates a new {@linkcode Dept} or department. Requires only the department name as input.  */
+export async function createDept(name: Dept['name']) {
+    const [first, ...rest] = await sql`SELECT create_dept(${name}) AS dept_id`.execute();
+    strictEqual(rest.length, 0);
+    return DeptSchema.pick({ dept_id: true }).parse(first).dept_id;
+}
+
+
