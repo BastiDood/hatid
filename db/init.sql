@@ -58,8 +58,8 @@ CREATE TABLE priorities(
 CREATE TABLE tickets(
     ticket_id UUID NOT NULL,
     title VARCHAR(128) NOT NULL,
-    open BOOLEAN NOT NULL,
-    deadline DATE,
+    open BOOLEAN NOT NULL DEFAULT TRUE,
+    due_date DATE NOT NULL DEFAULT 'infinity',
     priority_id SERIAL REFERENCES priorities (priority_id),
     PRIMARY KEY (ticket_id)
 );
@@ -83,6 +83,7 @@ CREATE TABLE labels(
     label_id SERIAL NOT NULL,
     title VARCHAR(32) NOT NULL,
     color INT NOT NULL,
+    deadline INTERVAL DAY,
     PRIMARY KEY (label_id)
 );
 
@@ -92,7 +93,6 @@ CREATE TABLE dept_labels(
     PRIMARY KEY (dept_id, label_id)
 );
 
--- TODO: Let's consider a different name for the bridge table.
 CREATE TABLE ticket_labels(
     ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
     label_id SERIAL NOT NULL REFERENCES labels (label_id),
@@ -126,8 +126,8 @@ $$ LANGUAGE SQL;
 
 -- LABEL FUNCTIONS
 
-CREATE FUNCTION create_label(title labels.title%TYPE, color labels.color%TYPE) RETURNS labels.label_id%TYPE AS $$
-    INSERT INTO labels (title, color) VALUES (title, color) RETURNING label_id;
+CREATE FUNCTION create_label(title labels.title%TYPE, color labels.color%TYPE, deadline labels.deadline%TYPE) RETURNS labels.label_id%TYPE AS $$
+    INSERT INTO labels (title, color, deadline) VALUES (title, color, deadline) RETURNING label_id;
 $$ LANGUAGE SQL;
 
 -- DEPARTMENT FUNCTIONS
