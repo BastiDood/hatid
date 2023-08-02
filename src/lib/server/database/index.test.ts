@@ -4,7 +4,7 @@ import { getRandomValues, randomUUID } from 'node:crypto';
 
 afterAll(() => db.end());
 
-it('should create a new session', async () => {
+it('should complete a full user journey', async () => {
     const { session_id, nonce, expiration } = await db.createPending();
     expect(session_id).toBeTruthy();
     expect(nonce).length(64);
@@ -29,15 +29,28 @@ it('should create a new session', async () => {
             email: `${email}@example.com`,
             picture: 'http://example.com/avatar.png',
         });
-        await sql.upgradePending(session_id, uid, new Date(Date.now() + 10000));
+
+        const now = Date.now();
+        await sql.upgradePending(session_id, uid, new Date(now + 10000));
         return uid;
     });
 
     const valid = await db.getUserFromSession(session_id);
     expect(valid?.user_id).toStrictEqual(uid);
 
+    expect(await db.isAdminSession(session_id)).toStrictEqual(false);
     expect(await db.setAdminForUser(uid, true)).toStrictEqual(false);
+    expect(await db.isAdminSession(session_id)).toStrictEqual(true);
     expect(await db.setAdminForUser(uid, false)).toStrictEqual(true);
+    expect(await db.isAdminSession(session_id)).toStrictEqual(false);
+
+    const did = await db.createDept('Full User Journey');
+    expect(await db.isHeadSession(randomUUID(), 0)).toBeNull();
+    expect(await db.isHeadSession(randomUUID(), did)).toBeNull();
+    expect(await db.isHeadSession(session_id, 0)).toBeNull();
+    expect(await db.isHeadSession(session_id, did)).toBeNull();
+
+    // TODO: add happy path tests for `db.isHeadSession` once we can people to departments
 });
 
 it('should reject promoting non-existent users', async () => {
@@ -85,6 +98,10 @@ describe.concurrent('invalid sessions', () => {
     const sid = randomUUID();
     it('should be null when fetching', async ({ expect }) => {
         const val = await db.getUserFromSession(sid);
+        expect(val).toBeNull();
+    });
+    it('should be null checking admin permissions', async ({ expect }) => {
+        const val = await db.isAdminSession(sid);
         expect(val).toBeNull();
     });
     it('should be null when deleting', async ({ expect }) => {
