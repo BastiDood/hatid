@@ -112,13 +112,6 @@ export async function createLabel(
     return LabelSchema.pick({ label_id: true }).parse(first).label_id;
 }
 
-/** Creates a new {@linkcode Dept} or department. Requires only the department name as input.  */
-export async function createDept(name: Dept['name']) {
-    const [first, ...rest] = await sql`SELECT create_dept(${name}) AS dept_id`.execute();
-    strictEqual(rest.length, 0);
-    return DeptSchema.pick({ dept_id: true }).parse(first).dept_id;
-}
-
 /** Edits the `title` field of a {@linkcode Label}. Returns `false` if not found. */
 export async function editLabelTitle(lid: Label['label_id'], title: Label['title']) {
     const { count } =
@@ -152,6 +145,26 @@ export async function editLabelDeadline(lid: Label['label_id'], days: Label['dea
     const deadline = days === null ? null : `${days} days`;
     const { count } =
         await sql`UPDATE labels SET deadline = ${deadline}::INTERVAL DAY WHERE label_id = ${lid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount();
+    }
+}
+
+/** Creates a new {@linkcode Dept} or department. Requires only the department name as input.  */
+export async function createDept(name: Dept['name']) {
+    const [first, ...rest] = await sql`SELECT create_dept(${name}) AS dept_id`.execute();
+    strictEqual(rest.length, 0);
+    return DeptSchema.pick({ dept_id: true }).parse(first).dept_id;
+}
+
+/** Edits the `name` field of a {@linkcode Dept}. Returns `false` if not found. */
+export async function editDeptName(did: Dept['dept_id'], name: Dept['name']) {
+    const { count } = await sql`UPDATE depts SET name = ${name} WHERE dept_id = ${did}`.execute();
     switch (count) {
         case 0:
             return false;

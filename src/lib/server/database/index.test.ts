@@ -67,9 +67,13 @@ it('should reject updating invalid labels', async () => {
     expect(await db.editLabelDeadline(0, 5)).toStrictEqual(false);
 });
 
-it('should create a new department', async () => {
-    const id = await db.createDept('HATiD Support');
-    expect(id).not.toStrictEqual(0);
+it('should create departments and update their names', async () => {
+    const did = await db.createDept('HATiD Support');
+    expect(did).not.toStrictEqual(0);
+
+    expect(await db.editDeptName(did, 'PUSO/BULSA Support')).toStrictEqual(true);
+    // NOTE: As above, 0 is not a valid value in Postgres
+    expect(await db.editDeptName(0, 'NotExistent Support')).toStrictEqual(false);
 });
 
 describe('invalid sessions', () => {
