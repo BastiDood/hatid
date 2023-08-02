@@ -70,6 +70,14 @@ it('should create and update labels', async () => {
     expect(await db.editLabelDeadline(lid, 5)).toStrictEqual(true);
 });
 
+it('should create and update priorities', async () => {
+    const bytes = getRandomValues(new Uint8Array(21));
+    const priority = Buffer.from(bytes).toString('base64');
+    const pid = await db.createPriority(priority, 0);
+    expect(pid).not.toStrictEqual(0);
+    // TODO: update priority properties here
+});
+
 describe.concurrent('invalid labels', () => {
     // NOTE: Postgres does not provide 0 as a valid `SERIAL`.
     it('should reject title update', async ({ expect }) => {

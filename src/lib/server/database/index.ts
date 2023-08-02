@@ -2,6 +2,7 @@ import { type Agent, AgentSchema } from '$lib/model/agent';
 import { type Dept, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
+import { type Priority, PrioritySchema } from '$lib/model/priority';
 import { type User, UserSchema } from '$lib/model/user';
 import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
@@ -172,6 +173,14 @@ export async function editLabelDeadline(lid: Label['label_id'], days: Label['dea
         default:
             throw new UnexpectedRowCount();
     }
+}
+
+/** Creates a new {@linkcode Priority} or department. Requires only the department name as input.  */
+export async function createPriority(title: Priority['title'], priority: Priority['priority']) {
+    const [first, ...rest] =
+        await sql`SELECT create_priority(${title}, ${priority}) AS priority_id`.execute();
+    strictEqual(rest.length, 0);
+    return PrioritySchema.pick({ priority_id: true }).parse(first).priority_id;
 }
 
 /** Creates a new {@linkcode Dept} or department. Requires only the department name as input.  */

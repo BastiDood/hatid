@@ -50,7 +50,7 @@ CREATE TABLE sessions(
 CREATE TABLE priorities(
     priority_id SERIAL NOT NULL,
     title VARCHAR(32) UNIQUE,
-    priority INT NOT NULL UNIQUE,
+    priority INT NOT NULL,
     PRIMARY KEY (priority_id)
 );
 
@@ -138,6 +138,12 @@ $$ LANGUAGE SQL;
 
 CREATE FUNCTION create_label(title labels.title%TYPE, color labels.color%TYPE, deadline labels.deadline%TYPE) RETURNS labels.label_id%TYPE AS $$
     INSERT INTO labels (title, color, deadline) VALUES (title, color, deadline) RETURNING label_id;
+$$ LANGUAGE SQL;
+
+-- PRIORITY FUNCTIONS
+
+CREATE FUNCTION create_priority(title priorities.title%TYPE, priority priorities.priority%TYPE) RETURNS priorities.priority_id%TYPE AS $$
+    INSERT INTO priorities (title, priority) VALUES (title, priority) RETURNING priority_id;
 $$ LANGUAGE SQL;
 
 -- DEPARTMENT FUNCTIONS
