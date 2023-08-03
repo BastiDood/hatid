@@ -47,7 +47,7 @@ it('should complete a full user journey', async () => {
     expect(await db.isHeadSession(randomUUID(), did)).toBeNull();
     expect(await db.isHeadSession(session_id, 0)).toBeNull();
     expect(await db.isHeadSession(session_id, did)).toBeNull();
-
+ 
     expect(await db.addDeptAgent(did, randomUUID(), true)).toStrictEqual(false);
     expect(await db.addDeptAgent(0, uid, true)).toStrictEqual(false);
     expect(await db.addDeptAgent(did, uid, false)).toStrictEqual(true);
