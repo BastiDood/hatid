@@ -1,4 +1,4 @@
-import { setHeadForAgent, isHeadSession } from '$lib/server/database';
+import { isHeadSession, setHeadForAgent } from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
@@ -39,7 +39,7 @@ export const PATCH: RequestHandler = async ({ cookies, request }) => {
     // FIXME: disallow self-downgrade of permission
     const prev = await setHeadForAgent(did, uid, newHead);
     if (prev === null) return new Response(null, { status: StatusCodes.NOT_FOUND });
-    
+
     const status = prev === head ? StatusCodes.RESET_CONTENT : StatusCodes.NO_CONTENT;
     return new Response(null, { status });
-}
+};

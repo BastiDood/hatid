@@ -203,9 +203,13 @@ export async function editDeptName(did: Dept['dept_id'], name: Dept['name']) {
     }
 }
 
-/** Adds a new {@linkcode Agent} user to the dept_agents table. 
+/** Adds a new {@linkcode Agent} user to the dept_agents table.
  * Returns `false` if agent already exists in department or if provided IDs are incorrect. */
-export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id'], head: Agent['head']){
+export async function addDeptAgent(
+    did: Agent['dept_id'],
+    uid: Agent['user_id'],
+    head: Agent['head'],
+) {
     const { count } = await sql`SELECT add_dept_agent(${did}, ${uid}, ${head})`.execute();
     switch (count) {
         case 0:
@@ -218,7 +222,11 @@ export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id'],
 }
 
 /** Promotes a {@linkcode Agent} to a department head. Returns `true` if already a department head. */
-export async function setHeadForAgent(did: Agent['dept_id'], uid: Agent['user_id'], head: Agent['head']) {
+export async function setHeadForAgent(
+    did: Agent['dept_id'],
+    uid: Agent['user_id'],
+    head: Agent['head'],
+) {
     const [first, ...rest] =
         await sql`SELECT set_head_for_agent(${did}, ${uid}, ${head}) AS head`.execute();
     strictEqual(rest.length, 0);

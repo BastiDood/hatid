@@ -47,19 +47,25 @@ export async function editName(did: Dept['dept_id'], name: Dept['name']) {
     }
 }
 
-export async function addAgent(dept_id: Agent['dept_id'], uid: Agent['user_id'], head: Agent['head']) {
+export async function addAgent(
+    dept_id: Agent['dept_id'],
+    uid: Agent['user_id'],
+    head: Agent['head'],
+) {
     const { status } = await fetch('/api/dept/agent', {
         method: 'POST',
         credentials: 'same-origin',
-        body: new URLSearchParams({ did: dept_id.toString(10), uid, head: Number(head).toString(10) }),
+        body: new URLSearchParams({
+            did: dept_id.toString(10),
+            uid,
+            head: Number(head).toString(10),
+        }),
     });
     switch (status) {
         case StatusCodes.NO_CONTENT:
             return true;
         case StatusCodes.RESET_CONTENT:
             return false;
-        case StatusCodes.NOT_FOUND:
-            return null;
         case StatusCodes.BAD_REQUEST:
             throw new BadInput();
         case StatusCodes.UNAUTHORIZED:
@@ -71,11 +77,19 @@ export async function addAgent(dept_id: Agent['dept_id'], uid: Agent['user_id'],
     }
 }
 
-export async function setHead(dept_id: Agent['dept_id'], uid: Agent['user_id'], head: Agent['head']) {
+export async function setHead(
+    dept_id: Agent['dept_id'],
+    uid: Agent['user_id'],
+    head: Agent['head'],
+) {
     const { status } = await fetch('/api/user/admin', {
         method: 'PATCH',
         credentials: 'same-origin',
-        body: new URLSearchParams({ did: dept_id.toString(10), uid, head: Number(head).toString(10) }),
+        body: new URLSearchParams({
+            did: dept_id.toString(10),
+            uid,
+            head: Number(head).toString(10),
+        }),
     });
     switch (status) {
         case StatusCodes.NO_CONTENT:

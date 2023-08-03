@@ -1,8 +1,8 @@
 import { addDeptAgent, isHeadSession } from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
-import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
+import { error } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
 export const POST: RequestHandler = async ({ cookies, request }) => {
