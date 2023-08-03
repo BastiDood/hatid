@@ -183,8 +183,9 @@ export async function createPriority(title: Priority['title'], priority: Priorit
 }
 
 /** Edits the `title` field of a {@linkcode Priority}. Returns `false` if not found. */
-export async function editPriorityTitle(pid: Priority['priority_id'], title: Priority['title']){
-    const { count } = await sql`UPDATE priorities SET title = ${title} WHERE priority_id = ${pid}`.execute();
+export async function editPriorityTitle(pid: Priority['priority_id'], title: Priority['title']) {
+    const { count } =
+        await sql`UPDATE priorities SET title = ${title} WHERE priority_id = ${pid}`.execute();
     switch (count) {
         case 0:
             return false;
@@ -196,8 +197,12 @@ export async function editPriorityTitle(pid: Priority['priority_id'], title: Pri
 }
 
 /** Edits the `priority` field of a {@linkcode Priority}. Returns `false` if not found. */
-export async function editPriorityLevel(pid: Priority['priority_id'], priority: Priority['priority']){
-    const { count } = await sql`UPDATE priorities SET priority = ${priority} WHERE priority_id = ${pid}`.execute();
+export async function editPriorityLevel(
+    pid: Priority['priority_id'],
+    priority: Priority['priority'],
+) {
+    const { count } =
+        await sql`UPDATE priorities SET priority = ${priority} WHERE priority_id = ${pid}`.execute();
     switch (count) {
         case 0:
             return false;

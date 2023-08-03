@@ -85,7 +85,7 @@ it('should create and update priorities', async () => {
     const priority = Buffer.from(bytes).toString('base64');
     const pid = await db.createPriority(priority, 0);
     expect(pid).not.toStrictEqual(0);
-    
+
     expect(await db.editPriorityTitle(pid, 'URGENT')).toStrictEqual(true);
     expect(await db.editPriorityLevel(pid, 2)).toStrictEqual(true);
 });
