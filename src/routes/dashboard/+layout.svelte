@@ -111,7 +111,6 @@
             </div>
         </aside>
     </svelte:fragment>
-
     <slot />
 
     <svelte:fragment slot="footer"></svelte:fragment>
