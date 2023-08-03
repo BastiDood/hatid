@@ -182,6 +182,37 @@ export async function createPriority(title: Priority['title'], priority: Priorit
     return PrioritySchema.pick({ priority_id: true }).parse(first).priority_id;
 }
 
+/** Edits the `title` field of a {@linkcode Priority}. Returns `false` if not found. */
+export async function editPriorityTitle(pid: Priority['priority_id'], title: Priority['title']) {
+    const { count } =
+        await sql`UPDATE priorities SET title = ${title} WHERE priority_id = ${pid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount();
+    }
+}
+
+/** Edits the `priority` field of a {@linkcode Priority}. Returns `false` if not found. */
+export async function editPriorityLevel(
+    pid: Priority['priority_id'],
+    priority: Priority['priority'],
+) {
+    const { count } =
+        await sql`UPDATE priorities SET priority = ${priority} WHERE priority_id = ${pid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount();
+    }
+}
+
 /** Creates a new {@linkcode Dept} or department. Requires only the department name as input.  */
 export async function createDept(name: Dept['name']) {
     const [first, ...rest] = await sql`SELECT create_dept(${name}) AS dept_id`.execute();
