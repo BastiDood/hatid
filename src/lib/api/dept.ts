@@ -82,7 +82,7 @@ export async function setHead(
     uid: Agent['user_id'],
     head: Agent['head'],
 ) {
-    const { status } = await fetch('/api/user/admin', {
+    const { status } = await fetch('/api/dept/head', {
         method: 'PATCH',
         credentials: 'same-origin',
         body: new URLSearchParams({
