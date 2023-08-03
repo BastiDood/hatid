@@ -5,7 +5,7 @@ import { type Label, LabelSchema } from '$lib/model/label';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
 import { type User, UserSchema } from '$lib/model/user';
-import pg, { PostgresError, type TransactionSql } from 'postgres';
+import pg, { type TransactionSql } from 'postgres';
 import { UnexpectedRowCount } from './error';
 import env from '$lib/server/env/postgres';
 
@@ -229,7 +229,7 @@ export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id'])
                 throw new UnexpectedRowCount();
         }
     } catch (err) {
-        const isExpected = err instanceof PostgresError;
+        const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;
         strictEqual(err.code, '23503');
         strictEqual(err.table_name, 'dept_agents');
