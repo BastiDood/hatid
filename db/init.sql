@@ -151,3 +151,13 @@ $$ LANGUAGE SQL;
 CREATE FUNCTION create_dept(name depts.name%TYPE) RETURNS depts.dept_id%TYPE AS $$
     INSERT INTO depts (name) VALUES (name) RETURNING dept_id;
 $$ LANGUAGE SQL;
+
+CREATE FUNCTION add_dept_agent(did dept_agents.dept_id%TYPE, uid dept_agents.user_id%TYPE, value dept_agents.head%TYPE) RETURNS VOID AS $$
+    INSERT INTO dept_agents (dept_id, user_id, head) VALUES (did, uid, value)
+        ON CONFLICT (dept_id, user_id) DO NOTHING;
+$$ LANGUAGE SQL;
+
+CREATE FUNCTION set_head_for_agent(did dept_agents.dept_id%TYPE, uid dept_agents.user_id%TYPE, value dept_agents.head%TYPE) RETURNS BOOLEAN AS $$
+    WITH _ AS (SELECT head FROM dept_agents WHERE dept_id = did AND user_id = uid)
+        UPDATE dept_agents SET head = value FROM _ WHERE dept_id = did AND user_id = uid RETURNING _.head;
+$$ LANGUAGE SQL;

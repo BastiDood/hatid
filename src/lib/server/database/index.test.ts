@@ -35,7 +35,7 @@ it('should complete a full user journey', async () => {
 
     const valid = await db.getUserFromSession(session_id);
     expect(valid?.user_id).toStrictEqual(uid);
-
+    
     expect(await db.isAdminSession(session_id)).toStrictEqual(false);
     expect(await db.setAdminForUser(uid, true)).toStrictEqual(false);
     expect(await db.isAdminSession(session_id)).toStrictEqual(true);
@@ -48,7 +48,15 @@ it('should complete a full user journey', async () => {
     expect(await db.isHeadSession(session_id, 0)).toBeNull();
     expect(await db.isHeadSession(session_id, did)).toBeNull();
 
-    // TODO: add happy path tests for `db.isHeadSession` once we can people to departments
+    expect(await db.addDeptAgent(did, randomUUID(), true)).toStrictEqual(false);
+    expect(await db.addDeptAgent(0, uid, true)).toStrictEqual(false);
+    expect(await db.addDeptAgent(did, uid, false)).toStrictEqual(true);
+    // Assumption: setAdminForUser (thus setHeadForAgent) returns old admin/head value
+    expect(await db.isHeadSession(session_id, did)).toStrictEqual(false);
+    expect(await db.setHeadForAgent(did, uid, true)).toStrictEqual(false);
+    expect(await db.isHeadSession(session_id, did)).toStrictEqual(true);
+    expect(await db.setHeadForAgent(did, uid, false)).toStrictEqual(true);
+    expect(await db.isHeadSession(session_id, did)).toStrictEqual(false);
 });
 
 it('should reject promoting non-existent users', async () => {
