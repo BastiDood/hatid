@@ -1,8 +1,22 @@
-import { addDeptAgent, isHeadSession } from '$lib/server/database';
+import { AddDeptAgentResult, addDeptAgent, isHeadSession } from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
 import { error } from '@sveltejs/kit';
+
+function resultToCode(result: AddDeptAgentResult) {
+    switch (result) {
+        case AddDeptAgentResult.Success:
+            return StatusCodes.CREATED;
+        case AddDeptAgentResult.AlreadyExists:
+            return StatusCodes.CONFLICT;
+        case AddDeptAgentResult.NoDept:
+        case AddDeptAgentResult.NoUser:
+            return StatusCodes.NOT_FOUND;
+        default:
+            throw new AssertionError();
+    }
+}
 
 // eslint-disable-next-line func-style
 export const POST: RequestHandler = async ({ cookies, request }) => {
@@ -32,7 +46,6 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
             throw new AssertionError();
     }
 
-    const success = await addDeptAgent(did, uid);
-    const status = success ? StatusCodes.NO_CONTENT : StatusCodes.NOT_FOUND;
+    const status = resultToCode(await addDeptAgent(did, uid));
     return new Response(null, { status });
 };
