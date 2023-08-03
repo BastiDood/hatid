@@ -25,12 +25,12 @@ export async function create(name: Dept['name']) {
 
 /** Edits the `name` field of a {@linkcode Dept}. Returns `false` if not found. */
 export async function editName(did: Dept['dept_id'], name: Dept['name']) {
-    const res = await fetch('/api/dept/name', {
+    const { status } = await fetch('/api/dept/name', {
         method: 'PATCH',
         credentials: 'same-origin',
         body: new URLSearchParams({ id: did.toString(10), name }),
     });
-    switch (res.status) {
+    switch (status) {
         case StatusCodes.NO_CONTENT:
             return true;
         case StatusCodes.NOT_FOUND:
@@ -42,6 +42,6 @@ export async function editName(did: Dept['dept_id'], name: Dept['name']) {
         case StatusCodes.FORBIDDEN:
             throw new InsufficientPermissions();
         default:
-            throw new UnexpectedStatusCode(res.status);
+            throw new UnexpectedStatusCode(status);
     }
 }

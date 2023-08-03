@@ -50,12 +50,12 @@ CREATE TABLE sessions(
 CREATE TABLE priorities(
     priority_id SERIAL NOT NULL,
     title VARCHAR(32) UNIQUE,
-    priority INT NOT NULL UNIQUE,
+    priority INT NOT NULL,
     PRIMARY KEY (priority_id)
 );
 
 CREATE TABLE tickets(
-    ticket_id UUID NOT NULL,
+    ticket_id UUID NOT NULL DEFAULT gen_random_uuid(),
     title VARCHAR(128) NOT NULL,
     open BOOLEAN NOT NULL DEFAULT TRUE,
     due_date DATE NOT NULL DEFAULT 'infinity',
@@ -72,12 +72,12 @@ CREATE TABLE assignments(
 );
 
 CREATE TABLE messages(
-    message_id UUID NOT NULL,
     ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
-    creation TIMESTAMPTZ NOT NULL,
+    message_id SERIAL NOT NULL,
+    creation TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     content VARCHAR(1024) NOT NULL,
     author_id GoogleUserId REFERENCES users (user_id),
-    PRIMARY KEY (message_id)
+    PRIMARY KEY (ticket_id, message_id)
 );
 
 CREATE TABLE labels(
@@ -138,6 +138,12 @@ $$ LANGUAGE SQL;
 
 CREATE FUNCTION create_label(title labels.title%TYPE, color labels.color%TYPE, deadline labels.deadline%TYPE) RETURNS labels.label_id%TYPE AS $$
     INSERT INTO labels (title, color, deadline) VALUES (title, color, deadline) RETURNING label_id;
+$$ LANGUAGE SQL;
+
+-- PRIORITY FUNCTIONS
+
+CREATE FUNCTION create_priority(title priorities.title%TYPE, priority priorities.priority%TYPE) RETURNS priorities.priority_id%TYPE AS $$
+    INSERT INTO priorities (title, priority) VALUES (title, priority) RETURNING priority_id;
 $$ LANGUAGE SQL;
 
 -- DEPARTMENT FUNCTIONS
