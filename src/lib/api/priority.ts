@@ -48,8 +48,8 @@ export async function editTitle(pid: Priority['priority_id'], title: Priority['t
 }
 
 /** Edits the `priority` field of a {@linkcode Priority}. Returns `false` if not found. */
-export async function editLevel(pid: Priority['priority_id'], priority: Priority['priority']) {
-    const { status } = await fetch('/api/priority/level', {
+export async function edit(pid: Priority['priority_id'], priority: Priority['priority']) {
+    const { status } = await fetch('/api/priority', {
         method: 'PATCH',
         credentials: 'same-origin',
         body: new URLSearchParams({ id: pid.toString(10), priority: priority.toString(10) }),

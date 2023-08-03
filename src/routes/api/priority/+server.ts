@@ -1,4 +1,4 @@
-import { createPriority, isAdminSession } from '$lib/server/database';
+import { createPriority, editPriorityLevel, isAdminSession } from '$lib/server/database';
 import { error, json } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
@@ -34,4 +34,37 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 
     const id = await createPriority(title, priority);
     return json(id, { status: StatusCodes.CREATED });
+};
+
+// eslint-disable-next-line func-style
+export const PATCH: RequestHandler = async ({ cookies, request }) => {
+    const form = await request.formData();
+
+    const id = form.get('id');
+    if (id === null || id instanceof File) throw error(StatusCodes.BAD_REQUEST);
+    const pid = parseInt(id, 10);
+
+    const level = form.get('priority');
+    if (level === null || level instanceof File) throw error(StatusCodes.BAD_REQUEST);
+    const priority = parseInt(level, 10);
+
+    const sid = cookies.get('sid');
+    if (!sid) throw error(StatusCodes.UNAUTHORIZED);
+
+    // TODO: session has expired so we must inform the client that they should log in again
+    const perms = await isAdminSession(sid);
+    switch (perms) {
+        case null:
+            throw error(StatusCodes.UNAUTHORIZED);
+        case false:
+            throw error(StatusCodes.FORBIDDEN);
+        case true:
+            break;
+        default:
+            throw new AssertionError();
+    }
+
+    const success = await editPriorityLevel(pid, priority);
+    const status = success ? StatusCodes.NO_CONTENT : StatusCodes.NOT_FOUND;
+    return new Response(null, { status });
 };
