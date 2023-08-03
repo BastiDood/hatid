@@ -1,14 +1,13 @@
+import { AssertionError, default as assert, strictEqual } from 'node:assert/strict';
+import pg, { PostgresError, type TransactionSql } from 'postgres';
 import { type Agent, AgentSchema } from '$lib/model/agent';
 import { type Dept, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
 import { type User, UserSchema } from '$lib/model/user';
-import { default as assert, strictEqual } from 'node:assert/strict';
-import pg, { type TransactionSql } from 'postgres';
 import { UnexpectedRowCount } from './error';
 import env from '$lib/server/env/postgres';
-import { z } from 'zod';
 
 export { UnexpectedRowCount };
 
@@ -94,7 +93,7 @@ export async function isAdminSession(sid: Session['session_id']) {
 /** Maps a session ID to the department-level permissions of the `head` field in {@linkcode Agent}. */
 export async function isHeadSession(sid: Session['session_id'], did: Agent['dept_id']) {
     const [first, ...rest] =
-        await sql`SELECT * FROM is_head_session(${sid}, ${did}) AS _ WHERE _ IS NOT NULL`.execute();
+        await sql`SELECT * FROM is_head_session(${sid}, ${did}) AS head WHERE head IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined' ? null : AgentSchema.pick({ head: true }).parse(first).head;
 }
@@ -102,11 +101,11 @@ export async function isHeadSession(sid: Session['session_id'], did: Agent['dept
 /** Promotes a {@linkcode User} to a system administrator. Returns `true` if previously an admin. */
 export async function setAdminForUser(uid: User['user_id'], admin: User['admin']) {
     const [first, ...rest] =
-        await sql`SELECT set_admin_for_user(${uid}, ${admin}) AS admin`.execute();
+        await sql`SELECT * FROM set_admin_for_user(${uid}, ${admin}) AS admin WHERE admin IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined'
         ? null
-        : z.object({ admin: UserSchema.shape.admin.nullable() }).parse(first).admin;
+        : UserSchema.pick({ admin: true }).parse(first).admin;
 }
 
 /** Creates a new {@linkcode Label}. The `color` is internally converted to an `INT`. */
@@ -203,21 +202,45 @@ export async function editDeptName(did: Dept['dept_id'], name: Dept['name']) {
     }
 }
 
-/** Adds a new {@linkcode Agent} user to the dept_agents table.
- * Returns `false` if agent already exists in department or if provided IDs are incorrect. */
-export async function addDeptAgent(
-    did: Agent['dept_id'],
-    uid: Agent['user_id'],
-    head: Agent['head'],
-) {
-    const { count } = await sql`SELECT add_dept_agent(${did}, ${uid}, ${head})`.execute();
-    switch (count) {
-        case 0:
-            return false;
-        case 1:
-            return true;
-        default:
-            throw new UnexpectedRowCount();
+export const enum AddDeptAgentResult {
+    /** Department agent successfully added. */
+    Success,
+    /** Department agent already exists. No permissions changed. */
+    AlreadyExists,
+    /** Department does not exist. */
+    NoDept,
+    /** User does not exist. */
+    NoUser,
+}
+
+/**
+ * Adds a new {@linkcode Agent} user to the dept_agents table. Returns the
+ * {@linkcode AddDeptAgentResult} for the operation.
+ */
+export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id']) {
+    try {
+        const { count } = await sql`SELECT add_dept_agent(${did}, ${uid})`.execute();
+        switch (count) {
+            case 0:
+                return AddDeptAgentResult.AlreadyExists;
+            case 1:
+                return AddDeptAgentResult.Success;
+            default:
+                throw new UnexpectedRowCount();
+        }
+    } catch (err) {
+        const isExpected = err instanceof PostgresError;
+        if (!isExpected) throw err;
+        strictEqual(err.code, '23503');
+        strictEqual(err.table_name, 'dept_agents');
+        switch (err.constraint_name) {
+            case 'dept_agents_dept_id_fkey':
+                return AddDeptAgentResult.NoDept;
+            case 'dept_agents_user_id_fkey':
+                return AddDeptAgentResult.NoUser;
+            default:
+                throw new AssertionError();
+        }
     }
 }
 
@@ -228,9 +251,7 @@ export async function setHeadForAgent(
     head: Agent['head'],
 ) {
     const [first, ...rest] =
-        await sql`SELECT set_head_for_agent(${did}, ${uid}, ${head}) AS head`.execute();
+        await sql`SELECT * FROM set_head_for_agent(${did}, ${uid}, ${head}) AS head WHERE head IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
-    return typeof first === 'undefined'
-        ? null
-        : z.object({ head: AgentSchema.shape.head.nullable() }).parse(first).head;
+    return typeof first === 'undefined' ? null : AgentSchema.pick({ head: true }).parse(first).head;
 }
