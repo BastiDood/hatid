@@ -90,6 +90,17 @@ it('should create and update priorities', async () => {
     expect(await db.editPriorityLevel(pid, 2)).toStrictEqual(true);
 });
 
+describe.concurrent('invalid priorities', () => {
+    it('should reject title update', async ({ expect }) => {
+        const result = await db.editPriorityTitle(0, 'Simple');
+        expect(result).toStrictEqual(false);
+    });
+    it('should reject priority update', async ({ expect }) => {
+        const result = await db.editPriorityLevel(0, 1);
+        expect(result).toStrictEqual(false);
+    });
+});
+
 describe.concurrent('invalid labels', () => {
     // NOTE: Postgres does not provide 0 as a valid `SERIAL`.
     it('should reject title update', async ({ expect }) => {
