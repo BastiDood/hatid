@@ -48,10 +48,12 @@ it('should complete a full user journey', async () => {
     expect(await db.isHeadSession(session_id, 0)).toBeNull();
     expect(await db.isHeadSession(session_id, did)).toBeNull();
 
-    expect(await db.addDeptAgent(did, randomUUID(), true)).toStrictEqual(false);
-    expect(await db.addDeptAgent(0, uid, true)).toStrictEqual(false);
-    expect(await db.addDeptAgent(did, uid, false)).toStrictEqual(true);
-    // Assumption: setAdminForUser (thus setHeadForAgent) returns old admin/head value
+    const nonExistentUser = randomUUID();
+    expect(await db.addDeptAgent(0, nonExistentUser)).toStrictEqual(db.AddDeptAgentResult.NoDept);
+    expect(await db.addDeptAgent(did, nonExistentUser)).toStrictEqual(db.AddDeptAgentResult.NoUser);
+    expect(await db.addDeptAgent(0, uid)).toStrictEqual(db.AddDeptAgentResult.NoDept);
+    expect(await db.addDeptAgent(did, uid)).toStrictEqual(db.AddDeptAgentResult.Success);
+
     expect(await db.isHeadSession(session_id, did)).toStrictEqual(false);
     expect(await db.setHeadForAgent(did, uid, true)).toStrictEqual(false);
     expect(await db.isHeadSession(session_id, did)).toStrictEqual(true);
