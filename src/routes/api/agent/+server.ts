@@ -15,10 +15,6 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     const uid = form.get('uid');
     if (uid === null || uid instanceof File) throw error(StatusCodes.BAD_REQUEST);
 
-    const rawHead = form.get('head');
-    if (rawHead === null || rawHead instanceof File) throw error(StatusCodes.BAD_REQUEST);
-    const newHead = Boolean(parseInt(rawHead, 10));
-
     const sid = cookies.get('sid');
     if (!sid) throw error(StatusCodes.UNAUTHORIZED);
 
@@ -36,7 +32,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
             throw new AssertionError();
     }
 
-    const success = await addDeptAgent(did, uid, newHead);
+    const success = await addDeptAgent(did, uid);
     const status = success ? StatusCodes.NO_CONTENT : StatusCodes.NOT_FOUND;
     return new Response(null, { status });
 };
