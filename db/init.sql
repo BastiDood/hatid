@@ -27,7 +27,7 @@ CREATE TABLE depts(
 CREATE TABLE dept_agents(
     dept_id SERIAL NOT NULL REFERENCES depts (dept_id),
     user_id GoogleUserId REFERENCES users (user_id),
-    head BOOLEAN NOT NULL,
+    head BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (dept_id, user_id)
 );
 
@@ -129,7 +129,7 @@ CREATE FUNCTION is_head_session(sid sessions.session_id%TYPE, did depts.dept_id%
     SELECT head FROM sessions INNER JOIN dept_agents USING (user_id) WHERE session_id = sid AND dept_id = did;
 $$ LANGUAGE SQL;
 
-CREATE FUNCTION set_admin_for_user(uid users.user_id%TYPE, value users.admin%TYPE) RETURNS BOOLEAN AS $$
+CREATE FUNCTION set_admin_for_user(uid users.user_id%TYPE, value users.admin%TYPE) RETURNS users.admin%TYPE AS $$
     WITH _ AS (SELECT admin FROM users WHERE user_id = uid)
         UPDATE users SET admin = value FROM _ WHERE user_id = uid RETURNING _.admin;
 $$ LANGUAGE SQL;
@@ -150,4 +150,13 @@ $$ LANGUAGE SQL;
 
 CREATE FUNCTION create_dept(name depts.name%TYPE) RETURNS depts.dept_id%TYPE AS $$
     INSERT INTO depts (name) VALUES (name) RETURNING dept_id;
+$$ LANGUAGE SQL;
+
+CREATE FUNCTION add_dept_agent(did dept_agents.dept_id%TYPE, uid dept_agents.user_id%TYPE) RETURNS VOID AS $$
+    INSERT INTO dept_agents (dept_id, user_id) VALUES (did, uid) ON CONFLICT (dept_id, user_id) DO NOTHING;
+$$ LANGUAGE SQL;
+
+CREATE FUNCTION set_head_for_agent(did dept_agents.dept_id%TYPE, uid dept_agents.user_id%TYPE, value dept_agents.head%TYPE) RETURNS dept_agents.head%TYPE AS $$
+    WITH _ AS (SELECT head FROM dept_agents WHERE dept_id = did AND user_id = uid)
+        UPDATE dept_agents SET head = value FROM _ WHERE dept_id = did AND user_id = uid RETURNING _.head;
 $$ LANGUAGE SQL;
