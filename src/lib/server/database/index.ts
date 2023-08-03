@@ -1,11 +1,11 @@
-import { AssertionError, default as assert, strictEqual } from 'node:assert/strict';
-import pg, { PostgresError, type TransactionSql } from 'postgres';
 import { type Agent, AgentSchema } from '$lib/model/agent';
+import { AssertionError, default as assert, strictEqual } from 'node:assert/strict';
 import { type Dept, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
 import { type User, UserSchema } from '$lib/model/user';
+import pg, { PostgresError, type TransactionSql } from 'postgres';
 import { UnexpectedRowCount } from './error';
 import env from '$lib/server/env/postgres';
 
