@@ -1,11 +1,10 @@
 <script lang="ts">
-    import { AppBar, AppShell, Avatar, AppRail, AppRailTile, AppRailAnchor } from '@skeletonlabs/skeleton';
+    import { AppBar, AppShell, Avatar } from '@skeletonlabs/skeleton';
     import type { LayoutServerData } from './$types';
 
     // eslint-disable-next-line init-declarations
     export let data: LayoutServerData;
-    let currentTile: number = 0;
-    let src = '/HATiD.png';
+    const src = '/HATiD.png';
     $: ({ name, email, picture } = data);
 </script>
 

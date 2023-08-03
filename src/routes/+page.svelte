@@ -1,9 +1,9 @@
 <script lang="ts">
+    import { AppBar, AppShell } from '@skeletonlabs/skeleton';
     import type { PageServerData } from './$types';
-    import { AppShell, AppBar } from '@skeletonlabs/skeleton';
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
-    let src = '/HATiD.png';
+    const src = '/HATiD.png';
 </script>
 
 <AppShell>
