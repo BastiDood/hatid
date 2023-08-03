@@ -4,7 +4,7 @@ import { getRandomValues, randomUUID } from 'node:crypto';
 
 afterAll(() => db.end());
 
-it('should create a new session', async () => {
+it('should complete a full user journey', async () => {
     const { session_id, nonce, expiration } = await db.createPending();
     expect(session_id).toBeTruthy();
     expect(nonce).length(64);
@@ -36,8 +36,19 @@ it('should create a new session', async () => {
     const valid = await db.getUserFromSession(session_id);
     expect(valid?.user_id).toStrictEqual(uid);
 
+    expect(await db.isAdminSession(session_id)).toStrictEqual(false);
     expect(await db.setAdminForUser(uid, true)).toStrictEqual(false);
+    expect(await db.isAdminSession(session_id)).toStrictEqual(true);
     expect(await db.setAdminForUser(uid, false)).toStrictEqual(true);
+    expect(await db.isAdminSession(session_id)).toStrictEqual(false);
+
+    const did = await db.createDept('Full User Journey');
+    expect(await db.isHeadSession(randomUUID(), 0)).toBeNull();
+    expect(await db.isHeadSession(randomUUID(), did)).toBeNull();
+    expect(await db.isHeadSession(session_id, 0)).toBeNull();
+    expect(await db.isHeadSession(session_id, did)).toBeNull();
+
+    // TODO: add happy path tests for `db.isHeadSession` once we can people to departments
 });
 
 it('should reject promoting non-existent users', async () => {
@@ -59,30 +70,48 @@ it('should create and update labels', async () => {
     expect(await db.editLabelDeadline(lid, 5)).toStrictEqual(true);
 });
 
-it('should reject updating invalid labels', async () => {
+describe.concurrent('invalid labels', () => {
     // NOTE: Postgres does not provide 0 as a valid `SERIAL`.
-    expect(await db.editLabelTitle(0, 'World Hello')).toStrictEqual(false);
-    expect(await db.editLabelColor(0, 0xdeadbeef)).toStrictEqual(false);
-    expect(await db.editLabelDeadline(0, null)).toStrictEqual(false);
-    expect(await db.editLabelDeadline(0, 5)).toStrictEqual(false);
+    it('should reject title update', async ({ expect }) => {
+        const result = await db.editLabelTitle(0, 'World Hello');
+        expect(result).toStrictEqual(false);
+    });
+    it('should reject color update', async ({ expect }) => {
+        const result = await db.editLabelColor(0, 0xdeadbeef);
+        expect(result).toStrictEqual(false);
+    });
+    it('should reject color update', async ({ expect }) => {
+        expect(await db.editLabelDeadline(0, null)).toStrictEqual(false);
+        expect(await db.editLabelDeadline(0, 5)).toStrictEqual(false);
+    });
 });
 
 it('should create departments and update their names', async () => {
     const did = await db.createDept('HATiD Support');
     expect(did).not.toStrictEqual(0);
-
     expect(await db.editDeptName(did, 'PUSO/BULSA Support')).toStrictEqual(true);
-    // NOTE: As above, 0 is not a valid value in Postgres
-    expect(await db.editDeptName(0, 'NotExistent Support')).toStrictEqual(false);
 });
 
-describe('invalid sessions', () => {
-    it('should be null when fetching', async () => {
-        const val = await db.getUserFromSession(randomUUID());
+describe.concurrent('invalid sessions', () => {
+    const sid = randomUUID();
+    it('should be null when fetching', async ({ expect }) => {
+        const val = await db.getUserFromSession(sid);
         expect(val).toBeNull();
     });
-    it('should be null when deleting', async () => {
-        const val = await db.begin(sql => sql.deletePending(randomUUID()));
+    it('should be null checking admin permissions', async ({ expect }) => {
+        const val = await db.isAdminSession(sid);
         expect(val).toBeNull();
+    });
+    it('should be null when deleting', async ({ expect }) => {
+        const val = await db.begin(sql => sql.deletePending(sid));
+        expect(val).toBeNull();
+    });
+});
+
+describe('invalid departments', () => {
+    // NOTE: As above, 0 is not a valid value in Postgres
+    it('should not edit the department name', async () => {
+        const result = await db.editDeptName(0, 'Non-existent Support');
+        expect(result).toStrictEqual(false);
     });
 });
