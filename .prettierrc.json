@@ -5,10 +5,18 @@
     "singleQuote": true,
     "printWidth": 100,
     "trailingComma": "all",
-    "plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
+    "plugins": ["prettier-plugin-sql", "prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
     "pluginSearchDirs": false,
     "overrides": [
         { "files": "*.svelte", "options": { "parser": "svelte", "svelteStrictMode": true } },
+        {
+            "files": "*.sql",
+            "options": {
+                "language": "postgresql",
+                "keywordCase": "upper",
+                "logicalOperatorNewline": "after"
+            }
+        },
         { "files": "*.yml", "options": { "tabWidth": 2 } }
     ]
 }
