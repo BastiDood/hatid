@@ -3,11 +3,14 @@
     import { AppShell, AppBar } from '@skeletonlabs/skeleton';
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
+    let src = '/HATiD.png';
 </script>
 
 <AppShell>
     <AppBar slot="header" background="bg-red-950">
-        <svelte:fragment slot="lead"><span class="p-2 h3" style="font-weight: 700;">HATID</span></svelte:fragment>
+        <svelte:fragment slot="lead"><span class="p-2 h3" style="font-weight: 700;">
+            <a href="/"><img {src} alt="HATiD" class="h-10" /></a>
+        </span></svelte:fragment>
         <svelte:fragment slot="trail">        
         </svelte:fragment>
     </AppBar>
@@ -15,49 +18,55 @@
 	<slot />
     <div class="h-full flex items-center justify-center">
         <div class="card bg-initial overflow-hidden" style="width: 50vh; background-color:#5F2E2E;" >
-            <header class="card-header flex justify-center items-center h4 bold" style="margin-top: 5%; margin-bottom: 2%; font-weight: 700;">LOGIN</header>
-            <section class="p-4">
-                <!--Email input-->
-                <div class="relative mb-3">
-                    <input
-                    type="email"
-                    class="peer m-0 block h-[58px] w-full rounded bg-red-950 bg-clip-padding px-3 py-4 text-base font-normal leading-tight text-neutral-700 transition duration-200 ease-linear placeholder:text-transparent focus:border-primary focus:pb-[0.625rem] focus:pt-[1.625rem] focus:text-neutral-700 focus:outline-none peer-focus:text-primary dark:border-neutral-600 dark:text-neutral-200 dark:focus:border-primary dark:peer-focus:text-primary [&:not(:placeholder-shown)]:pb-[0.625rem] [&:not(:placeholder-shown)]:pt-[1.625rem]"
-                    id="floatingInput"
-                    placeholder="name@example.com" />
-                    <label
-                    for="floatingInput"
-                    class="pointer-events-none absolute left-0 top-0 origin-[0_0] border border-solid border-transparent px-3 py-4 text-neutral-500 transition-[opacity,_transform] duration-200 ease-linear peer-focus:-translate-y-2 peer-focus:translate-x-[0.15rem] peer-focus:scale-[0.85] peer-focus:text-primary peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:scale-[0.85] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">
-                        Email address
-                    </label>
-                </div>
-                
-                <!--Password input-->
-                <div class="relative mb-3">
-                    <input
-                    type="password"
-                    class="peer m-0 block h-[58px] w-full rounded bg-red-950 bg-clip-padding px-3 py-4 text-base font-normal leading-tight text-neutral-700 transition duration-200 ease-linear placeholder:text-transparent focus:border-primary focus:pb-[0.625rem] focus:pt-[1.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none peer-focus:text-primary dark:border-neutral-600 dark:text-neutral-200 dark:focus:border-primary dark:peer-focus:text-primary [&:not(:placeholder-shown)]:pb-[0.625rem] [&:not(:placeholder-shown)]:pt-[1.625rem]"
-                    id="floatingPassword"
-                    placeholder="Password" />
-                    <label
-                    for="floatingPassword"
-                    class="pointer-events-none absolute left-0 top-0 origin-[0_0] border border-solid border-transparent px-3 py-4 text-neutral-500 transition-[opacity,_transform] duration-200 ease-linear peer-focus:-translate-y-2 peer-focus:translate-x-[0.15rem] peer-focus:scale-[0.85] peer-focus:text-primary peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:scale-[0.85] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-                    >Password</label
-                    >
-                </div>
-                <a href="/" class="btn variant-filled flex justify-center items-center">Login</a>
-                <div class="inline-flex items-center justify-center w-full">
-                    <hr class="w-3/6 h-1 my-8 bg-white dark:bg-white" style="margin-left: 3%; margin-right: 1%;">
-                    <span class=" px-3 font-medium text-gray-900 dark:text-white">or</span>
-                    <hr class="w-3/6 h-1 my-8 bg-white dark:bg-white" style="margin-left: 1%; margin-right: 3%" >
-                </div>
-            </section>
 
-            <footer class="card-footer flex justify-center items-center">
                 {#if data.user === null}
-                    <a href="/auth/login"
+                    <header class="card-header flex justify-center items-center h4 bold" style="margin-top: 5%; margin-bottom: 2%; font-weight: 700;">LOGIN</header>
+                    <section class="p-4">
+                        <!--Email input-->
+                        <div class="relative mb-3">
+                            <input
+                            type="email"
+                            class="peer m-0 block h-[58px] w-full rounded bg-red-950 bg-clip-padding px-3 py-4 text-base font-normal leading-tight text-neutral-700 transition duration-200 ease-linear placeholder:text-transparent focus:border-primary focus:pb-[0.625rem] focus:pt-[1.625rem] focus:text-neutral-700 focus:outline-none peer-focus:text-primary dark:border-neutral-600 dark:text-neutral-200 dark:focus:border-primary dark:peer-focus:text-primary [&:not(:placeholder-shown)]:pb-[0.625rem] [&:not(:placeholder-shown)]:pt-[1.625rem]"
+                            id="floatingInput"
+                            placeholder="name@example.com" />
+                            <label
+                            for="floatingInput"
+                            class="pointer-events-none absolute left-0 top-0 origin-[0_0] border border-solid border-transparent px-3 py-4 text-neutral-500 transition-[opacity,_transform] duration-200 ease-linear peer-focus:-translate-y-2 peer-focus:translate-x-[0.15rem] peer-focus:scale-[0.85] peer-focus:text-primary peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:scale-[0.85] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">
+                                Email address
+                            </label>
+                        </div>
+                        
+                        <!--Password input-->
+                        <div class="relative mb-3">
+                            <input
+                            type="password"
+                            class="peer m-0 block h-[58px] w-full rounded bg-red-950 bg-clip-padding px-3 py-4 text-base font-normal leading-tight text-neutral-700 transition duration-200 ease-linear placeholder:text-transparent focus:border-primary focus:pb-[0.625rem] focus:pt-[1.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none peer-focus:text-primary dark:border-neutral-600 dark:text-neutral-200 dark:focus:border-primary dark:peer-focus:text-primary [&:not(:placeholder-shown)]:pb-[0.625rem] [&:not(:placeholder-shown)]:pt-[1.625rem]"
+                            id="floatingPassword"
+                            placeholder="Password" />
+                            <label
+                            for="floatingPassword"
+                            class="pointer-events-none absolute left-0 top-0 origin-[0_0] border border-solid border-transparent px-3 py-4 text-neutral-500 transition-[opacity,_transform] duration-200 ease-linear peer-focus:-translate-y-2 peer-focus:translate-x-[0.15rem] peer-focus:scale-[0.85] peer-focus:text-primary peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:scale-[0.85] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+                            >Password</label
+                            >
+                        </div>
+                        <a href="/"                        
                         data-te-ripple-init
                         data-te-ripple-color="light"
                         class="btn variant-filled mb-2 flex rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg"
+                        style="background-color: white">
+                            Login
+                        </a>
+                        <div class="inline-flex items-center justify-center w-full mb-0">
+                            <hr class="w-3/6 h-1 my-8 bg-white dark:bg-white" style="margin-left: 3%; margin-right: 1%;">
+                            <span class=" px-3 font-medium text-gray-900 dark:text-white">or</span>
+                            <hr class="w-3/6 h-1 my-8 bg-white dark:bg-white" style="margin-left: 1%; margin-right: 3%" >
+                        </div>
+                    </section>
+                    <footer class="card-footer flex justify-center items-center">
+                        <a href="/auth/login"
+                        data-te-ripple-init
+                        data-te-ripple-color="light"
+                        class="w-full btn variant-filled mb-2 flex rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg"
                         style="background-color: white">
                         <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -73,10 +82,22 @@
                         </svg>
                          Sign in with Google
                     </a>
+                    </footer>
                 {:else}
-                    <a href="/dashboard" class="btn variant-filled">Go to Dashboard</a>
+                    <header class="card-header flex justify-center items-center h4 bold" style="margin-top: 5%; margin-bottom: 2%; font-weight: 700;">ALREADY LOGGED IN</header>
+                    <section class="p-4">
+
+                    </section>
+                    <footer class="card-footer flex justify-center items-center">
+                        <a href="/dashboard"
+                            data-te-ripple-init
+                            data-te-ripple-color="light"
+                            class="w-full btn variant-filled mb-2 flex rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg"
+                            style="background-color: white">
+                            Go to Dashboard
+                        </a>
+                    </footer>
                 {/if}
-            </footer>
         </div>  
     </div>
 <!-- 
