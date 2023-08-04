@@ -30,7 +30,7 @@ CREATE TABLE
 
 CREATE TABLE
     dept_agents (
-        dept_id SERIAL NOT NULL REFERENCES depts (dept_id),
+        dept_id INT NOT NULL REFERENCES depts (dept_id),
         user_id GoogleUserId REFERENCES users (user_id),
         head BOOLEAN NOT NULL DEFAULT FALSE,
         PRIMARY KEY (dept_id, user_id)
@@ -68,7 +68,7 @@ CREATE TABLE
         title VARCHAR(128) NOT NULL,
         open BOOLEAN NOT NULL DEFAULT TRUE,
         due_date DATE NOT NULL DEFAULT 'infinity',
-        priority_id SERIAL REFERENCES priorities (priority_id),
+        priority_id INT REFERENCES priorities (priority_id),
         PRIMARY KEY (ticket_id)
     );
 
@@ -83,11 +83,11 @@ CREATE TABLE
 
 CREATE TABLE
     messages (
+        author_id GoogleUserId REFERENCES users (user_id),
         ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
         message_id SERIAL NOT NULL,
         creation TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONTENT VARCHAR(1024) NOT NULL,
-        author_id GoogleUserId REFERENCES users (user_id),
+        body VARCHAR(1024) NOT NULL,
         PRIMARY KEY (ticket_id, message_id)
     );
 
@@ -95,22 +95,22 @@ CREATE TABLE
     labels (
         label_id SERIAL NOT NULL,
         title VARCHAR(32) NOT NULL,
-        color INT NOT NULL,
+        color INT NOT NULL, -- Red Green Blue Alpha (RGBA)
         deadline INTERVAL DAY,
         PRIMARY KEY (label_id)
     );
 
 CREATE TABLE
     dept_labels (
-        dept_id SERIAL NOT NULL REFERENCES depts (dept_id),
-        label_id SERIAL NOT NULL REFERENCES labels (label_id),
+        dept_id INT NOT NULL REFERENCES depts (dept_id),
+        label_id INT NOT NULL REFERENCES labels (label_id),
         PRIMARY KEY (dept_id, label_id)
     );
 
 CREATE TABLE
     ticket_labels (
         ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
-        label_id SERIAL NOT NULL REFERENCES labels (label_id),
+        label_id INT NOT NULL REFERENCES labels (label_id),
         PRIMARY KEY (ticket_id, label_id)
     );
 
@@ -162,7 +162,7 @@ CREATE FUNCTION get_user_from_session (
     TYPE
 ) RETURNS users AS $$
     SELECT users.* FROM sessions INNER JOIN users USING (user_id) WHERE session_id = sid;
-$$ LANGUAGE SQL;
+$$ IMMUTABLE LANGUAGE SQL;
 
 CREATE FUNCTION is_head_session (
     sid sessions.session_id %
@@ -172,7 +172,7 @@ CREATE FUNCTION is_head_session (
 ) RETURNS dept_agents.head %
 TYPE AS $$
     SELECT head FROM sessions INNER JOIN dept_agents USING (user_id) WHERE session_id = sid AND dept_id = did;
-$$ LANGUAGE SQL;
+$$ IMMUTABLE LANGUAGE SQL;
 
 CREATE FUNCTION set_admin_for_user (
     uid users.user_id %
@@ -239,3 +239,25 @@ TYPE AS $$
     WITH _ AS (SELECT head FROM dept_agents WHERE dept_id = did AND user_id = uid)
         UPDATE dept_agents SET head = value FROM _ WHERE dept_id = did AND user_id = uid RETURNING _.head;
 $$ LANGUAGE SQL;
+
+-- TICKET FUNCTIONS
+CREATE FUNCTION create_ticket (
+    title tickets.title %
+    TYPE,
+    author messages.author_id %
+    TYPE,
+    body messages.body %
+    TYPE,
+    -- TODO: Use the type alias version once PostgreSQL supports the syntax.
+    labels INT[]
+) RETURNS tickets.ticket_id %
+TYPE AS $$
+DECLARE
+    tid tickets.ticket_id%TYPE;
+BEGIN
+    INSERT INTO tickets (title) VALUES (title) RETURNING ticket_id STRICT INTO tid;
+    INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body);
+    INSERT INTO ticket_labels (ticket_id, label_id) SELECT tid, unnest(labels);
+    RETURN tid;
+END;
+$$ LANGUAGE PLPGSQL;
