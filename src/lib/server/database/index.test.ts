@@ -10,14 +10,20 @@ it('should complete a full user journey', async () => {
     expect(nonce).length(64);
     expect(expiration.getTime()).toBeGreaterThanOrEqual(Date.now());
 
-    const pending = await db.getUserFromSession(session_id);
-    expect(pending).toBeNull();
+    {
+        const pending = await db.getUserFromSession(session_id);
+        expect(pending).toBeNull();
+    }
 
-    const val = await db.begin(sql => sql.deletePending(session_id));
-    expect(val).toEqual({ nonce, expiration });
+    {
+        const val = await db.begin(sql => sql.deletePending(session_id));
+        expect(val).toEqual({ nonce, expiration });
+    }
 
-    const stillPending = await db.getUserFromSession(session_id);
-    expect(stillPending).toBeNull();
+    {
+        const stillPending = await db.getUserFromSession(session_id);
+        expect(stillPending).toBeNull();
+    }
 
     const uid = await db.begin(async sql => {
         const uid = randomUUID();
@@ -33,8 +39,10 @@ it('should complete a full user journey', async () => {
         return uid;
     });
 
-    const valid = await db.getUserFromSession(session_id);
-    expect(valid?.user_id).toStrictEqual(uid);
+    {
+        const valid = await db.getUserFromSession(session_id);
+        expect(valid?.user_id).toStrictEqual(uid);
+    }
 
     expect(await db.isAdminSession(session_id)).toStrictEqual(false);
     expect(await db.setAdminForUser(uid, true)).toStrictEqual(false);
@@ -59,6 +67,36 @@ it('should complete a full user journey', async () => {
     expect(await db.isHeadSession(session_id, did)).toStrictEqual(true);
     expect(await db.setHeadForAgent(did, uid, false)).toStrictEqual(true);
     expect(await db.isHeadSession(session_id, did)).toStrictEqual(false);
+
+    {
+        // Invalid user with no labels
+        const result = await db.createTicket('Invalid User', nonExistentUser, 'oof', []);
+        expect(result).toStrictEqual(db.CreateTicketResult.NoAuthor);
+    }
+
+    {
+        // Valid user with invalid label
+        const result = await db.createTicket('Invalid Label', uid, 'oof', [0]);
+        expect(result).toStrictEqual(db.CreateTicketResult.NoLabels);
+    }
+
+    {
+        // Valid user with no labels
+        const result = await db.createTicket('No Labels', uid, 'oof', []);
+        expect(typeof result).toStrictEqual('string');
+    }
+
+    const coolLabel = await db.createLabel('Cool', 0xc0debeef);
+
+    {
+        // Invalid user with one label
+        const result = await db.createTicket('Invalid User', nonExistentUser, 'oof', [coolLabel]);
+        expect(result).toStrictEqual(db.CreateTicketResult.NoAuthor);
+    }
+
+    // Valid user with labels
+    const tid = await db.createTicket('With Label', uid, 'yay!', [coolLabel]);
+    expect(typeof tid).toStrictEqual('string');
 });
 
 it('should reject promoting non-existent users', async () => {
@@ -86,7 +124,7 @@ it('should create and update priorities', async () => {
     const pid = await db.createPriority(priority, 0);
     expect(pid).not.toStrictEqual(0);
 
-    expect(await db.editPriorityTitle(pid, 'URGENT')).toStrictEqual(true);
+    expect(await db.editPriorityTitle(pid, `${priority}-1`)).toStrictEqual(true);
     expect(await db.editPriorityLevel(pid, 2)).toStrictEqual(true);
 });
 
