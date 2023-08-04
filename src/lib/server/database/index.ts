@@ -303,6 +303,7 @@ export const enum CreateTicketResult {
     NoLabels,
 }
 
+/** Creates a new {@linkcode Ticket} and returns its `ticket_id` if successful. */
 export async function createTicket(
     title: Ticket['title'],
     author: Message['author_id'],

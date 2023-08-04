@@ -3,6 +3,7 @@ import { type Message, type Ticket, TicketSchema } from '$lib/model/ticket';
 import type { Label } from '$lib/model/label';
 import { StatusCodes } from 'http-status-codes';
 
+/** Creates a new {@linkcode Ticket} and returns its `ticket_id` if successful. */
 export async function create(
     title: Ticket['title'],
     content: Message['body'],

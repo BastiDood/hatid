@@ -1,8 +1,8 @@
 import { CreateTicketResult, createTicket, getUserFromSession } from '$lib/server/database';
-import { error } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
+import { error } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
 export const POST: RequestHandler = async ({ cookies, request }) => {
