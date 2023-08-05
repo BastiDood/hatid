@@ -97,6 +97,12 @@ it('should complete a full user journey', async () => {
     // Valid user with labels
     const tid = await db.createTicket('With Label', uid, 'yay!', [coolLabel]);
     expect(typeof tid).toStrictEqual('string');
+
+    expect(await db.subscribeDeptToLabel(0, 0)).toStrictEqual(db.SubscribeDeptToLabelResult.NoDept);
+    expect(await db.subscribeDeptToLabel(0, coolLabel)).toStrictEqual(db.SubscribeDeptToLabelResult.NoDept);
+    expect(await db.subscribeDeptToLabel(did, 0)).toStrictEqual(db.SubscribeDeptToLabelResult.NoLabel);
+    expect(await db.subscribeDeptToLabel(did, coolLabel)).toStrictEqual(db.SubscribeDeptToLabelResult.Success);
+    expect(await db.subscribeDeptToLabel(did, coolLabel)).toStrictEqual(db.SubscribeDeptToLabelResult.Exists);
 });
 
 it('should reject promoting non-existent users', async () => {
