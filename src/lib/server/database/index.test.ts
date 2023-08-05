@@ -84,9 +84,10 @@ it('should complete a full user journey', async () => {
         // Valid user with no labels
         const result = await db.createTicket('No Labels', uid, 'oof', []);
         assert(typeof result === 'object');
-        const { tid, mid } = result;
+        const { tid, mid, due } = result;
         expect(tid).toHaveLength(36);
         expect(mid).not.toStrictEqual(0);
+        expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
     }
 
     const coolLabel = await db.createLabel('Cool', 0xc0debeef);
@@ -133,9 +134,10 @@ it('should complete a full user journey', async () => {
     // Valid user with labels
     const createTicketResult = await db.createTicket('With Label', uid, 'yay!', [coolLabel]);
     assert(typeof createTicketResult === 'object');
-    const { tid, mid } = createTicketResult;
+    const { tid, mid, due } = createTicketResult;
     expect(tid).toHaveLength(36);
     expect(mid).not.toStrictEqual(0);
+    expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
 
     {
         const result = await db.createReply(tid, nonExistentUser, 'No User');
