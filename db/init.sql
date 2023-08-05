@@ -162,7 +162,7 @@ CREATE FUNCTION get_user_from_session (
     TYPE
 ) RETURNS users AS $$
     SELECT users.* FROM sessions INNER JOIN users USING (user_id) WHERE session_id = sid;
-$$ IMMUTABLE LANGUAGE SQL;
+$$ STABLE LANGUAGE SQL;
 
 CREATE FUNCTION is_head_session (
     sid sessions.session_id %
@@ -172,7 +172,7 @@ CREATE FUNCTION is_head_session (
 ) RETURNS dept_agents.head %
 TYPE AS $$
     SELECT head FROM sessions INNER JOIN dept_agents USING (user_id) WHERE session_id = sid AND dept_id = did;
-$$ IMMUTABLE LANGUAGE SQL;
+$$ STABLE LANGUAGE SQL;
 
 CREATE FUNCTION set_admin_for_user (
     uid users.user_id %
