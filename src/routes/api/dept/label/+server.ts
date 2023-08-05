@@ -3,10 +3,10 @@ import {
     isHeadSession,
     subscribeDeptToLabel,
 } from '$lib/server/database';
-import { error } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
+import { error } from '@sveltejs/kit';
 
 function resultToCode(result: SubscribeDeptToLabelResult) {
     switch (result) {
