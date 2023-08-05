@@ -1,10 +1,10 @@
 import { type Agent, AgentSchema } from '$lib/model/agent';
-import { type Dept, DeptSchema } from '$lib/model/dept';
+import { type Dept, type DeptLabel, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
 import { type Message, type Ticket, type TicketLabel, TicketSchema } from '$lib/model/ticket';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
-import { UnexpectedConstraintName, UnexpectedRowCount, UnexpectedTableName } from './error';
+import { UnexpectedConstraintName, UnexpectedErrorCode, UnexpectedRowCount, UnexpectedTableName } from './error';
 import { type User, UserSchema } from '$lib/model/user';
 import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
@@ -294,6 +294,51 @@ export async function setHeadForAgent(
         await sql`SELECT * FROM set_head_for_agent(${did}, ${uid}, ${head}) AS head WHERE head IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined' ? null : AgentSchema.pick({ head: true }).parse(first).head;
+}
+
+export enum SubscribeDeptToLabelResult {
+    /** Subscription successfully added. */
+    Success,
+    /** Subscription already exists. No action taken. */
+    Exists,
+    /** Provided {@linkcode Dept} does not exist. */
+    NoDept,
+    /** Provided {@linkcode Label} does not exist. */
+    NoLabel,
+}
+
+/** Opts in a {@linkcode Dept} to a {@linkcode Label}. */
+export async function subscribeDeptToLabel(did: DeptLabel['dept_id'], lid: DeptLabel['label_id']) {
+    try {
+        const { count } = await sql`SELECT subscribe_dept_to_label(${did}, ${lid})`;
+        strictEqual(count, 1);
+        return SubscribeDeptToLabelResult.Success;
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(table_name, 'dept_labels');
+
+        switch (code) {
+            case '23503':
+                switch (constraint_name) {
+                    case 'dept_labels_dept_id_fkey':
+                        return SubscribeDeptToLabelResult.NoDept;
+                    case 'dept_labels_label_id_fkey':
+                        return SubscribeDeptToLabelResult.NoLabel;
+                    default:
+                        assert(constraint_name);
+                        throw new UnexpectedConstraintName(constraint_name);
+                }
+            case '23505':
+                strictEqual(constraint_name, 'dept_labels_pkey');
+                return SubscribeDeptToLabelResult.Exists;
+            default:
+                throw new UnexpectedErrorCode(code);
+        }
+
+    }
 }
 
 export const enum CreateTicketResult {

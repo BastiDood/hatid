@@ -36,3 +36,16 @@ export class UnexpectedConstraintName extends Error {
         return this.#constraint;
     }
 }
+
+export class UnexpectedErrorCode extends Error {
+    #code: string;
+
+    constructor(code: string) {
+        super(`unexpected error code ${code}`);
+        this.#code = code;
+    }
+
+    get code() {
+        return this.#code;
+    }
+}

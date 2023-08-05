@@ -240,6 +240,15 @@ TYPE AS $$
         UPDATE dept_agents SET head = value FROM _ WHERE dept_id = did AND user_id = uid RETURNING _.head;
 $$ LANGUAGE SQL;
 
+CREATE FUNCTION subscribe_dept_to_label (
+    did dept_labels.dept_id %
+    TYPE,
+    lid dept_labels.label_id %
+    TYPE
+) RETURNS VOID AS $$
+    INSERT INTO dept_labels (dept_id, label_id) VALUES (did, lid);
+$$ LANGUAGE SQL;
+
 -- TICKET FUNCTIONS
 CREATE FUNCTION create_ticket (
     title tickets.title %
