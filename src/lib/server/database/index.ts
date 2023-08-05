@@ -142,7 +142,7 @@ export async function editLabelTitle(lid: Label['label_id'], title: Label['title
         case 1:
             return true;
         default:
-            throw new UnexpectedRowCount();
+            throw new UnexpectedRowCount(count);
     }
 }
 
@@ -156,7 +156,7 @@ export async function editLabelColor(lid: Label['label_id'], color: Label['color
         case 1:
             return true;
         default:
-            throw new UnexpectedRowCount();
+            throw new UnexpectedRowCount(count);
     }
 }
 
@@ -171,7 +171,7 @@ export async function editLabelDeadline(lid: Label['label_id'], days: Label['dea
         case 1:
             return true;
         default:
-            throw new UnexpectedRowCount();
+            throw new UnexpectedRowCount(count);
     }
 }
 
@@ -193,7 +193,7 @@ export async function editPriorityTitle(pid: Priority['priority_id'], title: Pri
         case 1:
             return true;
         default:
-            throw new UnexpectedRowCount();
+            throw new UnexpectedRowCount(count);
     }
 }
 
@@ -210,7 +210,7 @@ export async function editPriorityLevel(
         case 1:
             return true;
         default:
-            throw new UnexpectedRowCount();
+            throw new UnexpectedRowCount(count);
     }
 }
 
@@ -230,7 +230,7 @@ export async function editDeptName(did: Dept['dept_id'], name: Dept['name']) {
         case 1:
             return true;
         default:
-            throw new UnexpectedRowCount();
+            throw new UnexpectedRowCount(count);
     }
 }
 
@@ -258,7 +258,7 @@ export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id'])
             case 1:
                 return AddDeptAgentResult.Success;
             default:
-                throw new UnexpectedRowCount();
+                throw new UnexpectedRowCount(count);
         }
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;

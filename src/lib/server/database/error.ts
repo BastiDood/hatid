@@ -1,6 +1,13 @@
 export class UnexpectedRowCount extends Error {
-    constructor() {
-        super('unexpected row count');
+    #count: number;
+
+    constructor(count: number) {
+        super(`unexpected row count ${count}`);
+        this.#count = count;
+    }
+
+    get count() {
+        return this.#count;
     }
 }
 
