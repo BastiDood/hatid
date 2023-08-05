@@ -89,13 +89,6 @@ it('should complete a full user journey', async () => {
         expect(mid).not.toStrictEqual(0);
     }
 
-    // Valid user with labels
-    const createTicketResult = await db.createTicket('With Label', uid, 'yay!', [coolLabel]);
-    assert(typeof createTicketResult === 'object');
-    const { tid, mid } = createTicketResult;
-    expect(tid).toHaveLength(36);
-    expect(mid).not.toStrictEqual(0);
-
     const coolLabel = await db.createLabel('Cool', 0xc0debeef);
 
     {
@@ -125,6 +118,38 @@ it('should complete a full user journey', async () => {
         const result = await db.subscribeDeptToLabel(did, coolLabel);
         expect(result).toStrictEqual(db.SubscribeDeptToLabelResult.Exists);
     }
+
+    const nonExistentTicket = randomUUID();
+
+    {
+        const result = await db.createReply(
+            nonExistentTicket,
+            nonExistentUser,
+            'No Ticket and User',
+        );
+        expect(result).toStrictEqual(db.CreateReplyResult.NoUser);
+    }
+
+    // Valid user with labels
+    const createTicketResult = await db.createTicket('With Label', uid, 'yay!', [coolLabel]);
+    assert(typeof createTicketResult === 'object');
+    const { tid, mid } = createTicketResult;
+    expect(tid).toHaveLength(36);
+    expect(mid).not.toStrictEqual(0);
+
+    {
+        const result = await db.createReply(tid, nonExistentUser, 'No User');
+        expect(result).toStrictEqual(db.CreateReplyResult.NoUser);
+    }
+
+    {
+        const result = await db.createReply(nonExistentTicket, uid, 'No Ticket');
+        expect(result).toStrictEqual(db.CreateReplyResult.NoTicket);
+    }
+
+    const replyId = await db.createReply(tid, uid, 'Valid Reply');
+    assert(typeof replyId === 'number');
+    expect(replyId).not.toStrictEqual(0);
 });
 
 it('should reject promoting non-existent users', async () => {

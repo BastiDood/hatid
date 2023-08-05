@@ -1,5 +1,11 @@
 import { type Agent, AgentSchema } from '$lib/model/agent';
-import { CreateTicketSchema, type Message, type Ticket, type TicketLabel } from '$lib/model/ticket';
+import {
+    CreateTicketSchema,
+    type Message,
+    MessageSchema,
+    type Ticket,
+    type TicketLabel,
+} from '$lib/model/ticket';
 import { type Dept, type DeptLabel, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
@@ -359,7 +365,7 @@ export async function createTicket(
 ) {
     try {
         const [first, ...rest] =
-            await sql`SELECT tid, mid FROM create_ticket(${title}, ${author}, ${body}, ${labels})`;
+            await sql`SELECT tid, mid FROM create_ticket(${title}, ${author}, ${body}, ${labels})`.execute();
         strictEqual(rest.length, 0);
         return CreateTicketSchema.parse(first);
     } catch (err) {
@@ -385,5 +391,42 @@ export async function createTicket(
 
         assert(constraint_name);
         throw new UnexpectedConstraintName(constraint_name);
+    }
+}
+
+export const enum CreateReplyResult {
+    /** The provided {@linkcode Ticket} does not exist. */
+    NoTicket = '0',
+    /** The provided {@linkcode User} does not exist. */
+    NoUser = '1',
+}
+
+export async function createReply(
+    tid: Message['ticket_id'],
+    author: Message['author_id'],
+    body: Message['body'],
+) {
+    try {
+        const [first, ...rest] =
+            await sql`SELECT create_reply(${tid}, ${author}, ${body}) AS message_id`.execute();
+        strictEqual(rest.length, 0);
+        return MessageSchema.pick({ message_id: true }).parse(first).message_id;
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(code, '23503');
+        strictEqual(table_name, 'messages');
+
+        switch (constraint_name) {
+            case 'messages_ticket_id_fkey':
+                return CreateReplyResult.NoTicket;
+            case 'messages_author_id_fkey':
+                return CreateReplyResult.NoUser;
+            default:
+                assert(constraint_name);
+                throw new UnexpectedConstraintName(constraint_name);
+        }
     }
 }
