@@ -1,12 +1,13 @@
 import { type Agent, AgentSchema } from '$lib/model/agent';
-import { AssertionError, default as assert, strictEqual } from 'node:assert/strict';
 import { type Dept, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
+import { type Message, type Ticket, type TicketLabel, TicketSchema } from '$lib/model/ticket';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
+import { UnexpectedConstraintName, UnexpectedRowCount, UnexpectedTableName } from './error';
 import { type User, UserSchema } from '$lib/model/user';
+import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
-import { UnexpectedRowCount } from './error';
 import env from '$lib/server/env/postgres';
 
 export { UnexpectedRowCount };
@@ -112,7 +113,7 @@ export async function setAdminForUser(uid: User['user_id'], admin: User['admin']
 export async function createLabel(
     title: Label['title'],
     color: Label['color'],
-    days: Label['deadline'],
+    days: Label['deadline'] = null,
 ) {
     // Recall that the `number` type in JavaScript is actually an IEEE-754-2019 double-precision
     // floating-point number. See [Section 6.1.6.1][ieee-754] for more details. However, note that
@@ -262,15 +263,23 @@ export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id'])
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;
-        strictEqual(err.code, '23503');
-        strictEqual(err.table_name, 'dept_agents');
-        switch (err.constraint_name) {
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(code, '23503');
+
+        if (table_name !== 'dept_agents') {
+            assert(table_name);
+            throw new UnexpectedTableName(table_name);
+        }
+
+        switch (constraint_name) {
             case 'dept_agents_dept_id_fkey':
                 return AddDeptAgentResult.NoDept;
             case 'dept_agents_user_id_fkey':
                 return AddDeptAgentResult.NoUser;
             default:
-                throw new AssertionError();
+                assert(constraint_name);
+                throw new UnexpectedConstraintName(constraint_name);
         }
     }
 }
@@ -285,4 +294,49 @@ export async function setHeadForAgent(
         await sql`SELECT * FROM set_head_for_agent(${did}, ${uid}, ${head}) AS head WHERE head IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined' ? null : AgentSchema.pick({ head: true }).parse(first).head;
+}
+
+export const enum CreateTicketResult {
+    /** Author not found. */
+    NoAuthor,
+    /** One of the provided labels did not exist. */
+    NoLabels,
+}
+
+/** Creates a new {@linkcode Ticket} and returns its `ticket_id` if successful. */
+export async function createTicket(
+    title: Ticket['title'],
+    author: Message['author_id'],
+    body: Message['body'],
+    labels: TicketLabel['label_id'][],
+) {
+    try {
+        const [first, ...rest] =
+            await sql`SELECT create_ticket(${title}, ${author}, ${body}, ${labels}) AS ticket_id`;
+        strictEqual(rest.length, 0);
+        return TicketSchema.pick({ ticket_id: true }).parse(first).ticket_id;
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(code, '23503');
+
+        switch (table_name) {
+            case 'ticket_labels':
+                if (constraint_name === 'ticket_labels_label_id_fkey')
+                    return CreateTicketResult.NoLabels;
+                break;
+            case 'messages':
+                if (constraint_name === 'messages_author_id_fkey')
+                    return CreateTicketResult.NoAuthor;
+                break;
+            default:
+                assert(table_name);
+                throw new UnexpectedTableName(table_name);
+        }
+
+        assert(constraint_name);
+        throw new UnexpectedConstraintName(constraint_name);
+    }
 }
