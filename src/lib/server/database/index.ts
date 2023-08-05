@@ -365,7 +365,7 @@ export async function createTicket(
 ) {
     try {
         const [first, ...rest] =
-            await sql`SELECT tid, mid FROM create_ticket(${title}, ${author}, ${body}, ${labels})`.execute();
+            await sql`SELECT tid, mid, LEAST(due, to_timestamp(8640000000000)) AS due FROM create_ticket(${title}, ${author}, ${body}, ${labels})`.execute();
         strictEqual(rest.length, 0);
         return CreateTicketSchema.parse(first);
     } catch (err) {

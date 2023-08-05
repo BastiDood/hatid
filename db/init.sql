@@ -67,7 +67,7 @@ CREATE TABLE
         ticket_id UUID NOT NULL DEFAULT gen_random_uuid (),
         title VARCHAR(128) NOT NULL,
         open BOOLEAN NOT NULL DEFAULT TRUE,
-        due_date DATE NOT NULL DEFAULT 'infinity',
+        due_date TIMESTAMPTZ NOT NULL,
         priority_id INT REFERENCES priorities (priority_id),
         PRIMARY KEY (ticket_id)
     );
@@ -270,20 +270,27 @@ CREATE FUNCTION create_ticket (
     body messages.body %
     TYPE,
     -- TODO: Use the type alias version once PostgreSQL supports the syntax.
-    labels INT[]
+    lids INT[]
 ) RETURNS TABLE (
     tid tickets.ticket_id %
     TYPE,
     mid messages.message_id %
+    TYPE,
+    due tickets.due_date %
     TYPE
 ) AS $$
 DECLARE
     tid tickets.ticket_id%TYPE;
     mid messages.message_id%TYPE;
+    due tickets.due_date%TYPE;
+    min_deadline labels.deadline%TYPE;
 BEGIN
-    INSERT INTO tickets (title) VALUES (title) RETURNING ticket_id STRICT INTO tid;
+    WITH _ AS (SELECT unnest(lids) AS label_id)
+        SELECT MIN(deadline) STRICT INTO min_deadline FROM _ LEFT JOIN labels USING (label_id);
+    INSERT INTO tickets (title, due_date) VALUES (title, COALESCE(NOW() + min_deadline, 'infinity'))
+        RETURNING ticket_id, due_date STRICT INTO tid, due;
     SELECT create_reply(tid, author, body) STRICT INTO mid;
-    INSERT INTO ticket_labels (ticket_id, label_id) SELECT tid, unnest(labels);
-    RETURN QUERY SELECT tid, mid;
+    INSERT INTO ticket_labels (ticket_id, label_id) SELECT tid, unnest(lids);
+    RETURN QUERY SELECT tid, mid, due;
 END;
 $$ LANGUAGE PLPGSQL;

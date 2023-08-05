@@ -27,6 +27,7 @@ export const MessageSchema = z.object({
 export const CreateTicketSchema = z.object({
     tid: TicketSchema.shape.ticket_id,
     mid: MessageSchema.shape.message_id,
+    due: TicketSchema.shape.due_date,
 });
 
 export type Ticket = z.infer<typeof TicketSchema>;
