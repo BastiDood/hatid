@@ -1,4 +1,8 @@
-import { SubscribeDeptToLabelResult, isHeadSession, subscribeDeptToLabel } from '$lib/server/database';
+import {
+    SubscribeDeptToLabelResult,
+    isHeadSession,
+    subscribeDeptToLabel,
+} from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';

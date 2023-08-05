@@ -4,7 +4,12 @@ import { type Label, LabelSchema } from '$lib/model/label';
 import { type Message, type Ticket, type TicketLabel, TicketSchema } from '$lib/model/ticket';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
-import { UnexpectedConstraintName, UnexpectedErrorCode, UnexpectedRowCount, UnexpectedTableName } from './error';
+import {
+    UnexpectedConstraintName,
+    UnexpectedErrorCode,
+    UnexpectedRowCount,
+    UnexpectedTableName,
+} from './error';
 import { type User, UserSchema } from '$lib/model/user';
 import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
@@ -337,7 +342,6 @@ export async function subscribeDeptToLabel(did: DeptLabel['dept_id'], lid: DeptL
             default:
                 throw new UnexpectedErrorCode(code);
         }
-
     }
 }
 
