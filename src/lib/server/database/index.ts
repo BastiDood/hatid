@@ -356,7 +356,12 @@ export const enum CreateTicketResult {
     NoLabels,
 }
 
-/** Creates a new {@linkcode Ticket} and returns its `ticket_id` if successful. */
+/**
+ * Creates a new {@linkcode Ticket} and returns its `ticket_id`, `message_id`, `due_date` if
+ * successful. Note that the PostgreSQL date for `infinity` would be replaced by the
+ * {@link https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-time-values-and-time-range maximum}
+ * possible `Date` value, which roughly lands on September 13, 275760.
+ */
 export async function createTicket(
     title: Ticket['title'],
     author: Message['author_id'],
@@ -364,6 +369,21 @@ export async function createTicket(
     labels: TicketLabel['label_id'][],
 ) {
     try {
+        // Recall that PostgreSQL supports the `infinity` date, which is basically a sentinel value
+        // that compares greater than all dates except `infinity` itself. Unfortunately, JavaScript
+        // supports no such mechanism in the `Date` type.
+        //
+        // We thus consult the ECMAScript specification to find out that the maximum number of
+        // milliseconds (since the Unix epoch) representable by the `Date` type is
+        // `8_640_000_000_000_000`, which roughly lands on September 13, 275760. It is this exact
+        // value so far in the future that we use in place of the PostgreSQL `infinity` date.
+        //
+        // More "native" and "low-level" PostgreSQL drivers such as that of the `postgres` crate
+        // for the Rust programming language does in fact support distinguishing between regular
+        // dates, `infinity`, and `-infinity`. But alas, this is impossible in JavaScript by its
+        // very specification.
+        //
+        // [date-limits]: https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-time-values-and-time-range
         const [first, ...rest] =
             await sql`SELECT tid, mid, LEAST(due, to_timestamp(8640000000000)) AS due FROM create_ticket(${title}, ${author}, ${body}, ${labels})`.execute();
         strictEqual(rest.length, 0);
