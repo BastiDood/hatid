@@ -1,5 +1,5 @@
 import { BadInput, InvalidSession, UnexpectedStatusCode } from './error';
-import { CreateTicketSchema, type Message, type Ticket } from '$lib/model/ticket';
+import { CreateTicketSchema, type Message, MessageSchema, type Ticket } from '$lib/model/ticket';
 import type { Label } from '$lib/model/label';
 import { StatusCodes } from 'http-status-codes';
 
@@ -28,6 +28,27 @@ export async function create(
     switch (res.status) {
         case StatusCodes.CREATED:
             return CreateTicketSchema.parse(await res.json());
+        case StatusCodes.NOT_FOUND:
+            return null;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        default:
+            throw new UnexpectedStatusCode(res.status);
+    }
+}
+
+/** Creates a new reply {@linkcode Message} to a {@linkcode Ticket} and returns its `message_id`. */
+export async function reply(ticket: Message['ticket_id'], body: Message['body']) {
+    const res = await fetch('/api/ticket/reply', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: new URLSearchParams({ ticket, body }),
+    });
+    switch (res.status) {
+        case StatusCodes.CREATED:
+            return MessageSchema.shape.message_id.parse(await res.json());
         case StatusCodes.NOT_FOUND:
             return null;
         case StatusCodes.BAD_REQUEST:
