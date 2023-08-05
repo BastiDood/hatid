@@ -1,8 +1,8 @@
 import { CreateTicketResult, createTicket, getUserFromSession } from '$lib/server/database';
+import { error, json } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
-import { error } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
 export const POST: RequestHandler = async ({ cookies, request }) => {
@@ -26,7 +26,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
 
     const result = await createTicket(title, user.user_id, body, labels);
-    if (typeof result === 'string') return new Response(result, { status: StatusCodes.CREATED });
+    if (typeof result === 'object') return json(result, { status: StatusCodes.CREATED });
 
     switch (result) {
         case CreateTicketResult.NoAuthor:

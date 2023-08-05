@@ -250,6 +250,18 @@ CREATE FUNCTION subscribe_dept_to_label (
 $$ LANGUAGE SQL;
 
 -- TICKET FUNCTIONS
+CREATE FUNCTION create_reply (
+    tid messages.ticket_id %
+    TYPE,
+    author messages.author_id %
+    TYPE,
+    body messages.body %
+    TYPE
+) RETURNS messages.message_id %
+TYPE AS $$
+    INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body) RETURNING message_id;
+$$ LANGUAGE SQL;
+
 CREATE FUNCTION create_ticket (
     title tickets.title %
     TYPE,
@@ -259,14 +271,19 @@ CREATE FUNCTION create_ticket (
     TYPE,
     -- TODO: Use the type alias version once PostgreSQL supports the syntax.
     labels INT[]
-) RETURNS tickets.ticket_id %
-TYPE AS $$
+) RETURNS TABLE (
+    tid tickets.ticket_id %
+    TYPE,
+    mid messages.message_id %
+    TYPE
+) AS $$
 DECLARE
     tid tickets.ticket_id%TYPE;
+    mid messages.message_id%TYPE;
 BEGIN
     INSERT INTO tickets (title) VALUES (title) RETURNING ticket_id STRICT INTO tid;
-    INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body);
+    SELECT create_reply(tid, author, body) STRICT INTO mid;
     INSERT INTO ticket_labels (ticket_id, label_id) SELECT tid, unnest(labels);
-    RETURN tid;
+    RETURN QUERY SELECT tid, mid;
 END;
 $$ LANGUAGE PLPGSQL;

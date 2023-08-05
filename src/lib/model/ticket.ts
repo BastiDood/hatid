@@ -16,7 +16,7 @@ export const TicketLabelSchema = z.object({
     label_id: LabelSchema.shape.label_id,
 });
 
-export const Message = z.object({
+export const MessageSchema = z.object({
     author_id: UserSchema.shape.user_id,
     ticket_id: TicketSchema.shape.ticket_id,
     message_id: z.number().int().positive(),
@@ -24,6 +24,13 @@ export const Message = z.object({
     body: z.string().max(1024),
 });
 
+export const CreateTicketSchema = z.object({
+    tid: TicketSchema.shape.ticket_id,
+    mid: MessageSchema.shape.message_id,
+});
+
 export type Ticket = z.infer<typeof TicketSchema>;
 export type TicketLabel = z.infer<typeof TicketLabelSchema>;
-export type Message = z.infer<typeof Message>;
+export type Message = z.infer<typeof MessageSchema>;
+
+export type CreateTicket = z.infer<typeof CreateTicketSchema>;

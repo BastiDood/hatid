@@ -1,7 +1,7 @@
 import { type Agent, AgentSchema } from '$lib/model/agent';
+import { CreateTicketSchema, type Message, type Ticket, type TicketLabel } from '$lib/model/ticket';
 import { type Dept, type DeptLabel, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
-import { type Message, type Ticket, type TicketLabel, TicketSchema } from '$lib/model/ticket';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
 import {
@@ -14,8 +14,6 @@ import { type User, UserSchema } from '$lib/model/user';
 import { default as assert, strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
 import env from '$lib/server/env/postgres';
-
-export { UnexpectedRowCount };
 
 class Transaction {
     #sql: TransactionSql;
@@ -361,9 +359,9 @@ export async function createTicket(
 ) {
     try {
         const [first, ...rest] =
-            await sql`SELECT create_ticket(${title}, ${author}, ${body}, ${labels}) AS ticket_id`;
+            await sql`SELECT tid, mid FROM create_ticket(${title}, ${author}, ${body}, ${labels})`;
         strictEqual(rest.length, 0);
-        return TicketSchema.pick({ ticket_id: true }).parse(first).ticket_id;
+        return CreateTicketSchema.parse(first);
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;
