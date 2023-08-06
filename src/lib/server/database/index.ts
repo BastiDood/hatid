@@ -435,15 +435,15 @@ export async function createReply(
         const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;
 
-        const { code, table_name, constraint_name } = err;
-        strictEqual(code, '23503');
-        strictEqual(table_name, 'messages');
-
-        switch (constraint_name) {
-            case 'messages_ticket_id_fkey':
-                return CreateReplyResult.NoTicket;
-            case 'messages_author_id_fkey':
+        const { code, table_name, constraint_name, routine } = err;
+        switch (code) {
+            case '23503':
+                strictEqual(table_name, 'messages');
+                strictEqual(constraint_name, 'messages_author_id_fkey');
                 return CreateReplyResult.NoUser;
+            case 'P0004':
+                strictEqual(routine, 'exec_stmt_assert');
+                return CreateReplyResult.NoTicket;
             default:
                 assert(constraint_name);
                 throw new UnexpectedConstraintName(constraint_name);

@@ -128,7 +128,7 @@ it('should complete a full user journey', async () => {
             nonExistentUser,
             'No Ticket and User',
         );
-        expect(result).toStrictEqual(db.CreateReplyResult.NoUser);
+        expect(result).toStrictEqual(db.CreateReplyResult.NoTicket);
     }
 
     // Valid user with labels

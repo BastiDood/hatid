@@ -259,8 +259,19 @@ CREATE FUNCTION create_reply (
     TYPE
 ) RETURNS messages.message_id %
 TYPE AS $$
-    INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body) RETURNING message_id;
-$$ LANGUAGE SQL;
+DECLARE
+    valid tickets.open%TYPE;
+    mid messages.message_id%TYPE;
+BEGIN
+    SELECT open STRICT INTO valid FROM tickets WHERE ticket_id = tid;
+    ASSERT valid IS NOT NULL;
+    IF valid THEN
+        INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body)
+            RETURNING message_id STRICT INTO mid;
+    END IF;
+    RETURN mid;
+END;
+$$ LANGUAGE PLPGSQL;
 
 CREATE FUNCTION create_ticket (
     title tickets.title %
@@ -289,7 +300,8 @@ BEGIN
         SELECT MIN(deadline) STRICT INTO min_deadline FROM _ LEFT JOIN labels USING (label_id);
     INSERT INTO tickets (title, due_date) VALUES (title, COALESCE(NOW() + min_deadline, 'infinity'))
         RETURNING ticket_id, due_date STRICT INTO tid, due;
-    SELECT create_reply(tid, author, body) STRICT INTO mid;
+    INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body)
+        RETURNING message_id STRICT INTO mid;
     INSERT INTO ticket_labels (ticket_id, label_id) SELECT tid, unnest(lids);
     RETURN QUERY SELECT tid, mid, due;
 END;
