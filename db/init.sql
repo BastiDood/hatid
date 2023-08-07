@@ -293,12 +293,12 @@ CREATE FUNCTION create_ticket (
 DECLARE
     tid tickets.ticket_id%TYPE;
     mid messages.message_id%TYPE;
-    due tickets.due_date%TYPE;
+    due tickets.due_date%TYPE = 'infinity';
     min_deadline labels.deadline%TYPE;
 BEGIN
     WITH _ AS (SELECT unnest(lids) AS label_id)
         SELECT MIN(deadline) STRICT INTO min_deadline FROM _ LEFT JOIN labels USING (label_id);
-    INSERT INTO tickets (title, due_date) VALUES (title, COALESCE(NOW() + min_deadline, 'infinity'))
+    INSERT INTO tickets (title, due_date) VALUES (title, COALESCE(NOW() + min_deadline, due))
         RETURNING ticket_id, due_date STRICT INTO tid, due;
     INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body)
         RETURNING message_id STRICT INTO mid;
