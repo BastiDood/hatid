@@ -67,7 +67,7 @@ CREATE TABLE
         ticket_id UUID NOT NULL DEFAULT gen_random_uuid (),
         title VARCHAR(128) NOT NULL,
         open BOOLEAN NOT NULL DEFAULT TRUE,
-        due_date TIMESTAMPTZ NOT NULL,
+        due_date Expiration,
         priority_id INT REFERENCES priorities (priority_id),
         PRIMARY KEY (ticket_id)
     );
