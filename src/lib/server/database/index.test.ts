@@ -1,6 +1,7 @@
 import * as db from '.';
 import { afterAll, assert, describe, expect, it } from 'vitest';
 import { getRandomValues, randomUUID } from 'node:crypto';
+import { date } from 'zod';
 
 afterAll(() => db.end());
 
@@ -100,6 +101,8 @@ it('should complete a full user journey', async () => {
         expect(await db.isTicketAuthor(nonExistentTicket, uid)).toBeNull();
         expect(await db.isTicketAuthor(tid, nonExistentUser)).toStrictEqual(false);
         expect(await db.isTicketAuthor(tid, uid)).toStrictEqual(true);
+
+        expect(await db.editTicketDueDate(tid, new Date)).toStrictEqual(true);
     }
 
     const coolLabel = await db.createLabel('Cool', 0xc0debeef);

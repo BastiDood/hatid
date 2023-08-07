@@ -459,6 +459,20 @@ export async function editTicketTitle(tid: Ticket['ticket_id'], title: Ticket['t
     }
 }
 
+export async function editTicketDueDate(tid: Ticket['ticket_id'], tdd: Ticket['due_date']) {
+    const time = tdd.toISOString();
+    const { count } =
+        await sql`UPDATE tickets SET due_date = ${time} WHERE ticket_id = ${tid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount(count);
+    }
+}
+
 export const enum CreateReplyResult {
     /** The provided {@linkcode Ticket} does not exist. */
     NoTicket = '0',
