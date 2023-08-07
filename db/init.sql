@@ -67,7 +67,7 @@ CREATE TABLE
         ticket_id UUID NOT NULL DEFAULT gen_random_uuid (),
         title VARCHAR(128) NOT NULL,
         open BOOLEAN NOT NULL DEFAULT TRUE,
-        due_date DATE NOT NULL DEFAULT 'infinity',
+        due_date TIMESTAMPTZ NOT NULL,
         priority_id INT REFERENCES priorities (priority_id),
         PRIMARY KEY (ticket_id)
     );
@@ -250,6 +250,29 @@ CREATE FUNCTION subscribe_dept_to_label (
 $$ LANGUAGE SQL;
 
 -- TICKET FUNCTIONS
+CREATE FUNCTION create_reply (
+    tid messages.ticket_id %
+    TYPE,
+    author messages.author_id %
+    TYPE,
+    body messages.body %
+    TYPE
+) RETURNS messages.message_id %
+TYPE AS $$
+DECLARE
+    valid tickets.open%TYPE;
+    mid messages.message_id%TYPE;
+BEGIN
+    SELECT open STRICT INTO valid FROM tickets WHERE ticket_id = tid;
+    ASSERT valid IS NOT NULL;
+    IF valid THEN
+        INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body)
+            RETURNING message_id STRICT INTO mid;
+    END IF;
+    RETURN mid;
+END;
+$$ LANGUAGE PLPGSQL;
+
 CREATE FUNCTION create_ticket (
     title tickets.title %
     TYPE,
@@ -258,15 +281,28 @@ CREATE FUNCTION create_ticket (
     body messages.body %
     TYPE,
     -- TODO: Use the type alias version once PostgreSQL supports the syntax.
-    labels INT[]
-) RETURNS tickets.ticket_id %
-TYPE AS $$
+    lids INT[]
+) RETURNS TABLE (
+    tid tickets.ticket_id %
+    TYPE,
+    mid messages.message_id %
+    TYPE,
+    due tickets.due_date %
+    TYPE
+) AS $$
 DECLARE
     tid tickets.ticket_id%TYPE;
+    mid messages.message_id%TYPE;
+    due tickets.due_date%TYPE;
+    min_deadline labels.deadline%TYPE;
 BEGIN
-    INSERT INTO tickets (title) VALUES (title) RETURNING ticket_id STRICT INTO tid;
-    INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body);
-    INSERT INTO ticket_labels (ticket_id, label_id) SELECT tid, unnest(labels);
-    RETURN tid;
+    WITH _ AS (SELECT unnest(lids) AS label_id)
+        SELECT MIN(deadline) STRICT INTO min_deadline FROM _ LEFT JOIN labels USING (label_id);
+    INSERT INTO tickets (title, due_date) VALUES (title, COALESCE(NOW() + min_deadline, 'infinity'))
+        RETURNING ticket_id, due_date STRICT INTO tid, due;
+    INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body)
+        RETURNING message_id STRICT INTO mid;
+    INSERT INTO ticket_labels (ticket_id, label_id) SELECT tid, unnest(lids);
+    RETURN QUERY SELECT tid, mid, due;
 END;
 $$ LANGUAGE PLPGSQL;

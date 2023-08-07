@@ -1,9 +1,12 @@
 import { BadInput, InvalidSession, UnexpectedStatusCode } from './error';
-import { type Message, type Ticket, TicketSchema } from '$lib/model/ticket';
+import { CreateTicketSchema, type Message, MessageSchema, type Ticket } from '$lib/model/ticket';
 import type { Label } from '$lib/model/label';
 import { StatusCodes } from 'http-status-codes';
 
-/** Creates a new {@linkcode Ticket} and returns its `ticket_id` if successful. */
+/**
+ * Creates a new {@linkcode Ticket} and returns its `ticket_id` as `tid` and its the `message_id`
+ * as `mid`. The `mid` points to the first {@linkcode Message} in the ticket's conversation thread.
+ */
 export async function create(
     title: Ticket['title'],
     content: Message['body'],
@@ -24,7 +27,28 @@ export async function create(
 
     switch (res.status) {
         case StatusCodes.CREATED:
-            return TicketSchema.shape.ticket_id.parse(await res.text());
+            return CreateTicketSchema.parse(await res.json());
+        case StatusCodes.NOT_FOUND:
+            return null;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        default:
+            throw new UnexpectedStatusCode(res.status);
+    }
+}
+
+/** Creates a new reply {@linkcode Message} to a {@linkcode Ticket} and returns its `message_id`. */
+export async function reply(ticket: Message['ticket_id'], body: Message['body']) {
+    const res = await fetch('/api/ticket/reply', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: new URLSearchParams({ ticket, body }),
+    });
+    switch (res.status) {
+        case StatusCodes.CREATED:
+            return MessageSchema.shape.message_id.parse(await res.json());
         case StatusCodes.NOT_FOUND:
             return null;
         case StatusCodes.BAD_REQUEST:

@@ -1,5 +1,5 @@
 import * as db from '.';
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, assert, describe, expect, it } from 'vitest';
 import { getRandomValues, randomUUID } from 'node:crypto';
 
 afterAll(() => db.end());
@@ -83,7 +83,11 @@ it('should complete a full user journey', async () => {
     {
         // Valid user with no labels
         const result = await db.createTicket('No Labels', uid, 'oof', []);
-        expect(typeof result).toStrictEqual('string');
+        assert(typeof result === 'object');
+        const { tid, mid, due } = result;
+        expect(tid).toHaveLength(36);
+        expect(mid).not.toStrictEqual(0);
+        expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
     }
 
     const coolLabel = await db.createLabel('Cool', 0xc0debeef);
@@ -93,10 +97,6 @@ it('should complete a full user journey', async () => {
         const result = await db.createTicket('Invalid User', nonExistentUser, 'oof', [coolLabel]);
         expect(result).toStrictEqual(db.CreateTicketResult.NoAuthor);
     }
-
-    // Valid user with labels
-    const tid = await db.createTicket('With Label', uid, 'yay!', [coolLabel]);
-    expect(typeof tid).toStrictEqual('string');
 
     expect(await db.subscribeDeptToLabel(0, 0)).toStrictEqual(db.SubscribeDeptToLabelResult.NoDept);
 
@@ -119,6 +119,39 @@ it('should complete a full user journey', async () => {
         const result = await db.subscribeDeptToLabel(did, coolLabel);
         expect(result).toStrictEqual(db.SubscribeDeptToLabelResult.Exists);
     }
+
+    const nonExistentTicket = randomUUID();
+
+    {
+        const result = await db.createReply(
+            nonExistentTicket,
+            nonExistentUser,
+            'No Ticket and User',
+        );
+        expect(result).toStrictEqual(db.CreateReplyResult.NoTicket);
+    }
+
+    // Valid user with labels
+    const createTicketResult = await db.createTicket('With Label', uid, 'yay!', [coolLabel]);
+    assert(typeof createTicketResult === 'object');
+    const { tid, mid, due } = createTicketResult;
+    expect(tid).toHaveLength(36);
+    expect(mid).not.toStrictEqual(0);
+    expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
+
+    {
+        const result = await db.createReply(tid, nonExistentUser, 'No User');
+        expect(result).toStrictEqual(db.CreateReplyResult.NoUser);
+    }
+
+    {
+        const result = await db.createReply(nonExistentTicket, uid, 'No Ticket');
+        expect(result).toStrictEqual(db.CreateReplyResult.NoTicket);
+    }
+
+    const replyId = await db.createReply(tid, uid, 'Valid Reply');
+    assert(typeof replyId === 'number');
+    expect(replyId).not.toStrictEqual(0);
 });
 
 it('should reject promoting non-existent users', async () => {

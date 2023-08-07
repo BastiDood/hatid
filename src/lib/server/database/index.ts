@@ -1,7 +1,13 @@
 import { type Agent, AgentSchema } from '$lib/model/agent';
+import {
+    CreateTicketSchema,
+    type Message,
+    MessageSchema,
+    type Ticket,
+    type TicketLabel,
+} from '$lib/model/ticket';
 import { type Dept, type DeptLabel, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
-import { type Message, type Ticket, type TicketLabel, TicketSchema } from '$lib/model/ticket';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
 import {
@@ -11,11 +17,9 @@ import {
     UnexpectedTableName,
 } from './error';
 import { type User, UserSchema } from '$lib/model/user';
-import { default as assert, strictEqual } from 'node:assert/strict';
+import assert, { strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
 import env from '$lib/server/env/postgres';
-
-export { UnexpectedRowCount };
 
 class Transaction {
     #sql: TransactionSql;
@@ -352,7 +356,12 @@ export const enum CreateTicketResult {
     NoLabels,
 }
 
-/** Creates a new {@linkcode Ticket} and returns its `ticket_id` if successful. */
+/**
+ * Creates a new {@linkcode Ticket} and returns its `ticket_id`, `message_id`, `due_date` if
+ * successful. Note that the PostgreSQL date for `infinity` would be replaced by the
+ * {@link https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-time-values-and-time-range maximum}
+ * possible `Date` value, which roughly lands on September 13, 275760.
+ */
 export async function createTicket(
     title: Ticket['title'],
     author: Message['author_id'],
@@ -360,10 +369,25 @@ export async function createTicket(
     labels: TicketLabel['label_id'][],
 ) {
     try {
+        // Recall that PostgreSQL supports the `infinity` date, which is basically a sentinel value
+        // that compares greater than all dates except `infinity` itself. Unfortunately, JavaScript
+        // supports no such mechanism in the `Date` type.
+        //
+        // We thus consult the ECMAScript specification to find out that the maximum number of
+        // milliseconds (since the Unix epoch) representable by the `Date` type is
+        // `8_640_000_000_000_000`, which roughly lands on September 13, 275760. It is this exact
+        // value so far in the future that we use in place of the PostgreSQL `infinity` date.
+        //
+        // More "native" and "low-level" PostgreSQL drivers such as that of the `postgres` crate
+        // for the Rust programming language does in fact support distinguishing between regular
+        // dates, `infinity`, and `-infinity`. But alas, this is impossible in JavaScript by its
+        // very specification.
+        //
+        // [date-limits]: https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-time-values-and-time-range
         const [first, ...rest] =
-            await sql`SELECT create_ticket(${title}, ${author}, ${body}, ${labels}) AS ticket_id`;
+            await sql`SELECT tid, mid, LEAST(due, to_timestamp(8640000000000)) AS due FROM create_ticket(${title}, ${author}, ${body}, ${labels})`.execute();
         strictEqual(rest.length, 0);
-        return TicketSchema.pick({ ticket_id: true }).parse(first).ticket_id;
+        return CreateTicketSchema.parse(first);
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;
@@ -387,5 +411,42 @@ export async function createTicket(
 
         assert(constraint_name);
         throw new UnexpectedConstraintName(constraint_name);
+    }
+}
+
+export const enum CreateReplyResult {
+    /** The provided {@linkcode Ticket} does not exist. */
+    NoTicket = '0',
+    /** The provided {@linkcode User} does not exist. */
+    NoUser = '1',
+}
+
+export async function createReply(
+    tid: Message['ticket_id'],
+    author: Message['author_id'],
+    body: Message['body'],
+) {
+    try {
+        const [first, ...rest] =
+            await sql`SELECT create_reply(${tid}, ${author}, ${body}) AS message_id`.execute();
+        strictEqual(rest.length, 0);
+        return MessageSchema.pick({ message_id: true }).parse(first).message_id;
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name, routine } = err;
+        switch (code) {
+            case '23503':
+                strictEqual(table_name, 'messages');
+                strictEqual(constraint_name, 'messages_author_id_fkey');
+                return CreateReplyResult.NoUser;
+            case 'P0004':
+                strictEqual(routine, 'exec_stmt_assert');
+                return CreateReplyResult.NoTicket;
+            default:
+                assert(constraint_name);
+                throw new UnexpectedConstraintName(constraint_name);
+        }
     }
 }
