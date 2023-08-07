@@ -20,6 +20,7 @@ import { type User, UserSchema } from '$lib/model/user';
 import assert, { strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
 import env from '$lib/server/env/postgres';
+import { z } from 'zod';
 
 class Transaction {
     #sql: TransactionSql;
@@ -408,6 +409,13 @@ export async function createTicket(
         assert(constraint_name);
         throw new UnexpectedConstraintName(constraint_name);
     }
+}
+
+export async function isTicketAuthor(tid: Ticket['ticket_id'], uid: Message['author_id']) {
+    const [first, ...rest] =
+        await sql`SELECT get_ticket_author(${tid}) = ${uid} AS result`.execute();
+    strictEqual(rest.length, 0);
+    return z.object({ result: z.boolean().nullable() }).parse(first).result;
 }
 
 /** Edits the `title` field of a {@linkcode Ticket}. Returns `false` if not found. */

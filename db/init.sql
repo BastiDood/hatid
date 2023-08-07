@@ -306,3 +306,12 @@ BEGIN
     RETURN QUERY SELECT tid, mid, due;
 END;
 $$ LANGUAGE PLPGSQL;
+
+CREATE FUNCTION get_ticket_author (
+    tid tickets.ticket_id %
+    TYPE
+) RETURNS messages.author_id %
+TYPE AS $$
+    WITH _ AS (SELECT author_id, MIN(creation) FROM messages WHERE ticket_id = tid GROUP BY author_id)
+        SELECT author_id FROM _;
+$$ LANGUAGE SQL;
