@@ -39,13 +39,12 @@ export async function create(
     }
 }
 /** Edits the `title` field of a {@linkcode Ticket}. Returns `false` if not found. */
-export async function editTitle(tid: Ticket['ticket_id'], title: Ticket['title']) {
+export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title']) {
     const { status } = await fetch('/api/ticket/title', {
         method: 'PATCH',
         credentials: 'same-origin',
-        body: new URLSearchParams({ id: tid, title }),
+        body: new URLSearchParams({ id, title }),
     });
-
     switch (status) {
         case StatusCodes.NO_CONTENT:
             return true;
