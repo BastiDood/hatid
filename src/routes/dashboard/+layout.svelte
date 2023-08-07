@@ -1,6 +1,7 @@
 <script lang="ts">
     import { AppBar, AppShell, Avatar } from '@skeletonlabs/skeleton';
     import type { LayoutServerData } from './$types';
+    // eslint-disable-next-line init-declarations
     export let data: LayoutServerData;
     const src = '/HATiD.png';
     $: ({ name, email, picture } = data);
