@@ -414,6 +414,20 @@ export async function createTicket(
     }
 }
 
+/** Edits the `title` field of a {@linkcode Ticket}. Returns `false` if not found. */
+export async function editTicketTitle(tid: Ticket['ticket_id'], title: Ticket['title']) {
+    const { count } =
+        await sql`UPDATE tickets SET title = ${title} WHERE ticket_id = ${tid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount(count);
+    }
+}
+
 export const enum CreateReplyResult {
     /** The provided {@linkcode Ticket} does not exist. */
     NoTicket = '0',

@@ -98,6 +98,18 @@ it('should complete a full user journey', async () => {
         expect(result).toStrictEqual(db.CreateTicketResult.NoAuthor);
     }
 
+    {
+        // Create ticket and edit its title
+        const result = await db.createTicket('Old title', uid, 'Hello World', [coolLabel]);
+        assert(typeof result === 'object');
+        const { tid, mid, due } = result;
+        expect(tid).toHaveLength(36);
+        expect(mid).not.toStrictEqual(0);
+        expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
+
+        expect(await db.editTicketTitle(tid, 'New title')).toStrictEqual(true);
+    }
+
     expect(await db.subscribeDeptToLabel(0, 0)).toStrictEqual(db.SubscribeDeptToLabelResult.NoDept);
 
     {
