@@ -27,15 +27,15 @@ pnpm db:start
 # create and tear down multiple instantiations of the template.
 pnpm db:template
 
-# Instantiate a single instance of the template named `tix`.
+# Instantiate a single instance of the template named `hatid`.
 # Of course, we may change this into any name we want.
-pnpm db:create tix
+pnpm db:create hatid
 
-# OPTIONAL: Tear down the `tix` instance whenever we want.
-pnpm db:drop tix
+# OPTIONAL: Tear down the `hatid` instance whenever we want.
+pnpm db:drop hatid
 
-# OPTIONAL: Open a dedicated PostgreSQL shell into the `tix` instance (usually for debugging purposes).
-pnpm db:shell tix
+# OPTIONAL: Open a dedicated PostgreSQL shell into the `hatid` instance (usually for debugging purposes).
+pnpm db:shell hatid
 ```
 
 We should now have a properly initialized PostgreSQL database running in the foreground in some terminal session. We may, of course, opt to run PostgreSQL as a background service, but that is beyond the scope of this `README`.
