@@ -275,11 +275,7 @@ export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id'])
 
         const { code, table_name, constraint_name } = err;
         strictEqual(code, '23503');
-
-        if (table_name !== 'dept_agents') {
-            assert(table_name);
-            throw new UnexpectedTableName(table_name);
-        }
+        strictEqual(table_name, 'dept_agents');
 
         switch (constraint_name) {
             case 'dept_agents_dept_id_fkey':
