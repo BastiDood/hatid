@@ -76,6 +76,8 @@ export function end() {
     return sql.end();
 }
 
+const NullableBooleanResult = z.object({ result: z.boolean().nullable() });
+
 /** Generates a brand new pending session via OAuth 2.0. */
 export async function createPending() {
     const [first, ...rest] = await sql`SELECT * FROM create_pending()`.execute();
@@ -415,7 +417,21 @@ export async function isTicketAuthor(tid: Ticket['ticket_id'], uid: Message['aut
     const [first, ...rest] =
         await sql`SELECT get_ticket_author(${tid}) = ${uid} AS result`.execute();
     strictEqual(rest.length, 0);
-    return z.object({ result: z.boolean().nullable() }).parse(first).result;
+    return NullableBooleanResult.parse(first).result;
+}
+
+export async function isAssignedAgent(tid: Ticket['ticket_id'], uid: Agent['user_id']) {
+    const [first, ...rest] =
+        await sql`SELECT ${uid} IN get_assigned_agents(${tid}) AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
+}
+
+export async function canEditTicketTitle(tid: Ticket['ticket_id'], uid: User['user_id']) {
+    const [first, ...rest] =
+        await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT * FROM get_assigned_agents(${tid})) AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
 }
 
 /** Edits the `title` field of a {@linkcode Ticket}. Returns `false` if not found. */

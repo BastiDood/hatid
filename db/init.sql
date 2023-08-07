@@ -315,3 +315,11 @@ TYPE AS $$
     WITH _ AS (SELECT author_id, MIN(creation) FROM messages WHERE ticket_id = tid GROUP BY author_id)
         SELECT author_id FROM _;
 $$ LANGUAGE SQL;
+
+CREATE FUNCTION get_assigned_agents (
+    tid assignments.ticket_id %
+    TYPE
+) RETURNS SETOF assignments.user_id %
+TYPE AS $$
+    SELECT user_id FROM assignments WHERE ticket_id = tid;
+$$ LANGUAGE SQL;
