@@ -1,6 +1,6 @@
 import { AuthorizationCode, IdTokenSchema, TokenResponseSchema } from '$lib/server/model/google';
 import { HeaderSchema, fetchCerts, fetchDiscoveryDocument } from '$lib/server/model/openid';
-import { default as assert, ok, strictEqual } from 'node:assert/strict';
+import assert, { ok, strictEqual } from 'node:assert/strict';
 import { error, redirect } from '@sveltejs/kit';
 import { hash, load } from 'blake3';
 import type { RequestHandler } from './$types';

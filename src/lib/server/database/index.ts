@@ -17,7 +17,7 @@ import {
     UnexpectedTableName,
 } from './error';
 import { type User, UserSchema } from '$lib/model/user';
-import { default as assert, strictEqual } from 'node:assert/strict';
+import assert, { strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
 import env from '$lib/server/env/postgres';
 
