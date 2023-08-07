@@ -20,6 +20,7 @@ import { type User, UserSchema } from '$lib/model/user';
 import assert, { strictEqual } from 'node:assert/strict';
 import pg, { type TransactionSql } from 'postgres';
 import env from '$lib/server/env/postgres';
+import { z } from 'zod';
 
 class Transaction {
     #sql: TransactionSql;
@@ -74,6 +75,8 @@ export function begin<T>(fn: TransactionScope<T>) {
 export function end() {
     return sql.end();
 }
+
+const NullableBooleanResult = z.object({ result: z.boolean().nullable() });
 
 /** Generates a brand new pending session via OAuth 2.0. */
 export async function createPending() {
@@ -275,11 +278,7 @@ export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id'])
 
         const { code, table_name, constraint_name } = err;
         strictEqual(code, '23503');
-
-        if (table_name !== 'dept_agents') {
-            assert(table_name);
-            throw new UnexpectedTableName(table_name);
-        }
+        strictEqual(table_name, 'dept_agents');
 
         switch (constraint_name) {
             case 'dept_agents_dept_id_fkey':
@@ -411,6 +410,41 @@ export async function createTicket(
 
         assert(constraint_name);
         throw new UnexpectedConstraintName(constraint_name);
+    }
+}
+
+export async function isTicketAuthor(tid: Ticket['ticket_id'], uid: Message['author_id']) {
+    const [first, ...rest] =
+        await sql`SELECT get_ticket_author(${tid}) = ${uid} AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
+}
+
+export async function isAssignedAgent(tid: Ticket['ticket_id'], uid: Agent['user_id']) {
+    const [first, ...rest] =
+        await sql`SELECT ${uid} IN get_assigned_agents(${tid}) AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
+}
+
+export async function canEditTicketTitle(tid: Ticket['ticket_id'], uid: User['user_id']) {
+    const [first, ...rest] =
+        await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT * FROM get_assigned_agents(${tid})) AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
+}
+
+/** Edits the `title` field of a {@linkcode Ticket}. Returns `false` if not found. */
+export async function editTicketTitle(tid: Ticket['ticket_id'], title: Ticket['title']) {
+    const { count } =
+        await sql`UPDATE tickets SET title = ${title} WHERE ticket_id = ${tid}`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount(count);
     }
 }
 

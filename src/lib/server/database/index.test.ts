@@ -80,6 +80,7 @@ it('should complete a full user journey', async () => {
         expect(result).toStrictEqual(db.CreateTicketResult.NoLabels);
     }
 
+    const nonExistentTicket = randomUUID();
     {
         // Valid user with no labels
         const result = await db.createTicket('No Labels', uid, 'oof', []);
@@ -88,6 +89,11 @@ it('should complete a full user journey', async () => {
         expect(tid).toHaveLength(36);
         expect(mid).not.toStrictEqual(0);
         expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
+
+        expect(await db.isTicketAuthor(nonExistentTicket, nonExistentUser)).toBeNull();
+        expect(await db.isTicketAuthor(nonExistentTicket, uid)).toBeNull();
+        expect(await db.isTicketAuthor(tid, nonExistentUser)).toStrictEqual(false);
+        expect(await db.isTicketAuthor(tid, uid)).toStrictEqual(true);
     }
 
     const coolLabel = await db.createLabel('Cool', 0xc0debeef);
@@ -96,6 +102,23 @@ it('should complete a full user journey', async () => {
         // Invalid user with one label
         const result = await db.createTicket('Invalid User', nonExistentUser, 'oof', [coolLabel]);
         expect(result).toStrictEqual(db.CreateTicketResult.NoAuthor);
+    }
+
+    {
+        // Create ticket and edit its title
+        const result = await db.createTicket('Old title', uid, 'Hello World', [coolLabel]);
+        assert(typeof result === 'object');
+        const { tid, mid, due } = result;
+        expect(tid).toHaveLength(36);
+        expect(mid).not.toStrictEqual(0);
+        expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
+
+        expect(await db.canEditTicketTitle(nonExistentTicket, nonExistentUser)).toBeNull();
+        expect(await db.canEditTicketTitle(nonExistentTicket, uid)).toBeNull();
+        expect(await db.canEditTicketTitle(tid, nonExistentUser)).toStrictEqual(false);
+        expect(await db.canEditTicketTitle(tid, uid)).toStrictEqual(true);
+        // TODO: add test case when the agent actually does have permission
+        expect(await db.editTicketTitle(tid, 'New Title')).toStrictEqual(true);
     }
 
     expect(await db.subscribeDeptToLabel(0, 0)).toStrictEqual(db.SubscribeDeptToLabelResult.NoDept);
@@ -120,8 +143,6 @@ it('should complete a full user journey', async () => {
         expect(result).toStrictEqual(db.SubscribeDeptToLabelResult.Exists);
     }
 
-    const nonExistentTicket = randomUUID();
-
     {
         const result = await db.createReply(
             nonExistentTicket,
@@ -138,6 +159,11 @@ it('should complete a full user journey', async () => {
     expect(tid).toHaveLength(36);
     expect(mid).not.toStrictEqual(0);
     expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
+
+    expect(await db.isTicketAuthor(nonExistentTicket, nonExistentUser)).toStrictEqual(null);
+    expect(await db.isTicketAuthor(nonExistentTicket, uid)).toStrictEqual(null);
+    expect(await db.isTicketAuthor(tid, nonExistentUser)).toStrictEqual(false);
+    expect(await db.isTicketAuthor(tid, uid)).toStrictEqual(true);
 
     {
         const result = await db.createReply(tid, nonExistentUser, 'No User');

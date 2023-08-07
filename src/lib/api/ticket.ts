@@ -1,4 +1,4 @@
-import { BadInput, InvalidSession, UnexpectedStatusCode } from './error';
+import { BadInput, InsufficientPermissions, InvalidSession, UnexpectedStatusCode } from './error';
 import { CreateTicketSchema, type Message, MessageSchema, type Ticket } from '$lib/model/ticket';
 import type { Label } from '$lib/model/label';
 import { StatusCodes } from 'http-status-codes';
@@ -36,6 +36,28 @@ export async function create(
             throw new InvalidSession();
         default:
             throw new UnexpectedStatusCode(res.status);
+    }
+}
+/** Edits the `title` field of a {@linkcode Ticket}. Returns `false` if not found. */
+export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title']) {
+    const { status } = await fetch('/api/ticket/title', {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        body: new URLSearchParams({ id, title }),
+    });
+    switch (status) {
+        case StatusCodes.NO_CONTENT:
+            return true;
+        case StatusCodes.NOT_FOUND:
+            return false;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        case StatusCodes.FORBIDDEN:
+            throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(status);
     }
 }
 
