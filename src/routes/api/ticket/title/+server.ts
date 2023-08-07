@@ -1,6 +1,6 @@
+import { canEditTicketTitle, editTicketTitle, getUserFromSession } from '$lib/server/database';
 import type { RequestHandler } from '../$types';
 import { StatusCodes } from 'http-status-codes';
-import { editTicketTitle } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
@@ -16,7 +16,9 @@ export const PATCH: RequestHandler = async ({ cookies, request }) => {
     const sid = cookies.get('sid');
     if (!sid) throw error(StatusCodes.UNAUTHORIZED);
 
-    // TODO: Missing a permission check. Editing should only be allowed for the ticket author and agents assigned to the ticket.
+    const user = await getUserFromSession(sid);
+    if (user === null) throw error(StatusCodes.UNAUTHORIZED);
+    if (!(await canEditTicketTitle(tid, user.user_id))) throw error(StatusCodes.FORBIDDEN);
 
     const success = await editTicketTitle(tid, title);
     const status = success ? StatusCodes.NO_CONTENT : StatusCodes.NOT_FOUND;
