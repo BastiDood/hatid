@@ -1,6 +1,6 @@
 <script>
-    export let title = '';
-    export let link = '';
+    export let title = "";
+    export let link = "";
 </script>
 
 <div class="relative mb-3 w-full">
