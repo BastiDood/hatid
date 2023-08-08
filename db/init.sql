@@ -283,6 +283,15 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL;
 
+CREATE FUNCTION assign_label (
+    tid ticket_labels.ticket_id %
+    TYPE,
+    lid ticket_labels.label_id %
+    TYPE
+) RETURNS VOID AS $$
+    INSERT INTO ticket_labels (ticket_id, label_id) VALUES (tid, lid);
+$$ LANGUAGE SQL;
+
 CREATE FUNCTION create_ticket (
     title tickets.title %
     TYPE,

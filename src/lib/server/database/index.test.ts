@@ -89,6 +89,9 @@ it('should complete a full user journey', async () => {
     }
 
     const nonExistentTicket = randomUUID();
+    const coolLabel = await db.createLabel('Cool', 0xc0debeef);
+    expect(coolLabel).not.toStrictEqual(0);
+
     {
         // Valid user with no labels
         const result = await db.createTicket('No Labels', uid, 'oof', []);
@@ -102,9 +105,32 @@ it('should complete a full user journey', async () => {
         expect(await db.isTicketAuthor(nonExistentTicket, uid)).toBeNull();
         expect(await db.isTicketAuthor(tid, nonExistentUser)).toStrictEqual(false);
         expect(await db.isTicketAuthor(tid, uid)).toStrictEqual(true);
-    }
 
-    const coolLabel = await db.createLabel('Cool', 0xc0debeef);
+        {
+            const assignment = await db.assignTicketLabel(nonExistentTicket, 0);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.NoTicket);
+        }
+
+        {
+            const assignment = await db.assignTicketLabel(nonExistentTicket, coolLabel);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.NoTicket);
+        }
+
+        {
+            const assignment = await db.assignTicketLabel(tid, 0);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.NoLabel);
+        }
+
+        {
+            const assignment = await db.assignTicketLabel(tid, coolLabel);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.Success);
+        }
+
+        {
+            const assignment = await db.assignTicketLabel(tid, coolLabel);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.AlreadyExists);
+        }
+    }
 
     {
         // Invalid user with one label

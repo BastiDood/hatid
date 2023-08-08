@@ -425,6 +425,52 @@ export async function createTicket(
     }
 }
 
+export const enum AssignTicketLabelResult {
+    /** Label successfully assigned to ticket. */
+    Success,
+    /** Label already previously assigned to ticket. */
+    AlreadyExists,
+    /** Ticket does not exist. */
+    NoTicket,
+    /** Label does not exist. */
+    NoLabel,
+}
+
+export async function assignTicketLabel(
+    tid: TicketLabel['ticket_id'],
+    lid: TicketLabel['label_id'],
+) {
+    try {
+        const { count } = await sql`SELECT assign_label(${tid}, ${lid})`.execute();
+        strictEqual(count, 1);
+        return AssignTicketLabelResult.Success;
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(table_name, 'ticket_labels');
+
+        switch (code) {
+            case '23503':
+                switch (constraint_name) {
+                    case 'ticket_labels_ticket_id_fkey':
+                        return AssignTicketLabelResult.NoTicket;
+                    case 'ticket_labels_label_id_fkey':
+                        return AssignTicketLabelResult.NoLabel;
+                    default:
+                        assert(constraint_name);
+                        throw new UnexpectedConstraintName(constraint_name);
+                }
+            case '23505':
+                strictEqual(constraint_name, 'ticket_labels_pkey');
+                return AssignTicketLabelResult.AlreadyExists;
+            default:
+                throw new UnexpectedErrorCode(code);
+        }
+    }
+}
+
 export async function isTicketAuthor(tid: Ticket['ticket_id'], uid: Message['author_id']) {
     const [first, ...rest] =
         await sql`SELECT get_ticket_author(${tid}) = ${uid} AS result`.execute();
