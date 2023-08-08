@@ -37,7 +37,7 @@ export async function add(dept_id: Dept['dept_id'], uid: User['user_id'], head: 
 }
 
 /** Removes an {@linkcode Agent} from the {@linkcode Dept}. Returns `true` if successful, `false` otherwise. */
-export async function remove(dept_id: Agent['dept_id'], uid: Agent['user_id']) {
+export async function remove(did: Agent['dept_id'], uid: Agent['user_id']) {
     const { status } = await fetch('/api/agent', {
         method: 'DELETE',
         credentials: 'same-origin',
