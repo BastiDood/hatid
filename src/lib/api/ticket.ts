@@ -86,17 +86,19 @@ export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title'])
 }
 
 /** Edits the `title` field of a {@linkcode Priority}. Returns `false` if not found. */
-export async function editTicketDueDate(tid: Ticket['ticket_id'], due_date: Ticket['due_date']) {
-    const { status } = await fetch('/api/ticket/due_date', {
+export async function editDueDate(id: Ticket['ticket_id'], due: Ticket['due_date']) {
+    const { status } = await fetch('/api/ticket/due', {
         method: 'PATCH',
         credentials: 'same-origin',
-        body: new URLSearchParams({ tid, body: due_date.toString() }),
+        body: new URLSearchParams({ id, due: due.toISOString() }),
     });
     switch (status) {
         case StatusCodes.NO_CONTENT:
             return true;
-        case StatusCodes.NOT_FOUND:
+        case StatusCodes.PRECONDITION_FAILED:
             return false;
+        case StatusCodes.NOT_FOUND:
+            return null;
         case StatusCodes.BAD_REQUEST:
             throw new BadInput();
         case StatusCodes.UNAUTHORIZED:
