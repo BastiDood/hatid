@@ -1,4 +1,10 @@
-import { BadInput, InsufficientPermissions, InvalidSession, UnexpectedStatusCode } from './error';
+import {
+    BadInput,
+    EntityNotFound,
+    InsufficientPermissions,
+    InvalidSession,
+    UnexpectedStatusCode,
+} from './error';
 import { CreateTicketSchema, type Message, MessageSchema, type Ticket } from '$lib/model/ticket';
 import type { Label } from '$lib/model/label';
 import { StatusCodes } from 'http-status-codes';
@@ -100,8 +106,10 @@ export async function reply(ticket: Message['ticket_id'], body: Message['body'])
     switch (res.status) {
         case StatusCodes.CREATED:
             return MessageSchema.shape.message_id.parse(await res.json());
-        case StatusCodes.NOT_FOUND:
+        case StatusCodes.GONE:
             return null;
+        case StatusCodes.NOT_FOUND:
+            throw new EntityNotFound();
         case StatusCodes.BAD_REQUEST:
             throw new BadInput();
         case StatusCodes.UNAUTHORIZED:

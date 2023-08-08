@@ -30,3 +30,9 @@ export class BadInput extends Error {
         super('bad input');
     }
 }
+
+export class EntityNotFound extends Error {
+    constructor() {
+        super('entity not found');
+    }
+}
