@@ -62,7 +62,10 @@ export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title'])
     }
 }
 
-/** Edits the `title` field of a {@linkcode Priority}. Returns `false` if not found. */
+/**
+ * Edits the `due_date` field of a {@linkcode Ticket}. Returns `true` if successful.
+ * Returns `false` is the date is invalid. Otherwise, `null` if the ticket is not found.
+ */
 export async function editDueDate(id: Ticket['ticket_id'], due: Ticket['due_date']) {
     const { status } = await fetch('/api/ticket/due', {
         method: 'PATCH',
