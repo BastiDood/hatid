@@ -126,6 +126,24 @@ it('should complete a full user journey', async () => {
         // TODO: add test case when the agent actually does have permission
         expect(await db.editTicketTitle(tid, 'New Title')).toStrictEqual(true);
 
+        // Creates a priority, then assigned agent sets ticket priority
+        const bytes = getRandomValues(new Uint8Array(21));
+        // TODO: add test case that checks if an agent is assigned to the ticket
+        const priority = Buffer.from(bytes).toString('base64');
+        const pid = await db.createPriority(priority, 0);
+        expect(pid).not.toStrictEqual(0);
+
+        const nonExistentPrio = 9696;
+        expect(await db.assignTicketPriority(tid, pid)).toStrictEqual(
+            db.AssignTicketPriorityResult.Success,
+        );
+        expect(await db.assignTicketPriority(tid, nonExistentPrio)).toStrictEqual(
+            db.AssignTicketPriorityResult.InvalidPriority,
+        );
+        expect(await db.assignTicketPriority(nonExistentTicket, pid)).toStrictEqual(
+            db.AssignTicketPriorityResult.TicketNotFound,
+        );
+
         {
             const result = await db.editTicketDueDate(nonExistentTicket, new Date());
             expect(result).toBeNull();
