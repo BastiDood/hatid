@@ -296,16 +296,10 @@ export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id'])
  * Removes an {@linkcode Agent} user from the dept_agents table. Returns false if dept-user combo not found.
  */
 export async function removeDeptAgent(did: Agent['dept_id'], uid: Agent['user_id']) {
-    const { count } =
-        await sql`DELETE FROM dept_agents WHERE dept_id = ${did} AND user_id = ${uid}`.execute();
-    switch (count) {
-        case 0:
-            return false;
-        case 1:
-            return true;
-        default:
-            throw new UnexpectedRowCount(count);
-    }
+    const [first, ...rest] =
+        await sql`DELETE FROM dept_agents WHERE dept_id = ${did} AND user_id = ${uid} RETURNING head`.execute();
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined' ? null : AgentSchema.pick({ head: true }).parse(first).head;
 }
 
 /** Promotes a {@linkcode Agent} to a department head. Returns `true` if already a department head. */

@@ -82,7 +82,9 @@ export const DELETE: RequestHandler = async ({ cookies, request }) => {
             throw new AssertionError();
     }
 
-    const success = await removeDeptAgent(did, uid);
-    const status = success ? StatusCodes.NO_CONTENT : StatusCodes.NOT_FOUND;
+    const value = await removeDeptAgent(did, uid);
+    if (value === null) return new Response(null, { status: StatusCodes.NOT_FOUND });
+
+    const status = value ? StatusCodes.RESET_CONTENT : StatusCodes.NO_CONTENT;
     return new Response(null, { status });
 };
