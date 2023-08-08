@@ -8,12 +8,12 @@ import type { User } from '$lib/model/user';
  * Adds a new {@linkcode User} to a {@linkcode Dept}. Returns `true` if successful, `false` if the
  * {@linkcode Agent} already exists, and `null` if either the department or the user is not found.
  */
-export async function add(dept_id: Dept['dept_id'], uid: User['user_id'], head: Agent['head']) {
+export async function add(did: Dept['dept_id'], uid: User['user_id'], head: Agent['head']) {
     const { status } = await fetch('/api/agent', {
         method: 'POST',
         credentials: 'same-origin',
         body: new URLSearchParams({
-            did: dept_id.toString(10),
+            did: did.toString(10),
             uid,
             head: Number(head).toString(10),
         }),
@@ -37,12 +37,12 @@ export async function add(dept_id: Dept['dept_id'], uid: User['user_id'], head: 
 }
 
 /** Removes an {@linkcode Agent} from the {@linkcode Dept}. Returns `true` if successful, `false` otherwise. */
-export async function remove(dept_id: Agent['dept_id'], uid: Agent['user_id']) {
+export async function remove(did: Agent['dept_id'], uid: Agent['user_id']) {
     const { status } = await fetch('/api/agent', {
         method: 'DELETE',
         credentials: 'same-origin',
         body: new URLSearchParams({
-            did: dept_id.toString(10),
+            did: did.toString(10),
             uid,
         }),
     });
