@@ -100,8 +100,6 @@ it('should complete a full user journey', async () => {
         expect(await db.isTicketAuthor(nonExistentTicket, uid)).toBeNull();
         expect(await db.isTicketAuthor(tid, nonExistentUser)).toStrictEqual(false);
         expect(await db.isTicketAuthor(tid, uid)).toStrictEqual(true);
-
-        expect(await db.editTicketDueDate(tid, new Date)).toStrictEqual(true);
     }
 
     const coolLabel = await db.createLabel('Cool', 0xc0debeef);
@@ -128,12 +126,28 @@ it('should complete a full user journey', async () => {
         // TODO: add test case when the agent actually does have permission
         expect(await db.editTicketTitle(tid, 'New Title')).toStrictEqual(true);
 
-        expect(
-            await db.editTicketDueDate(nonExistentTicket, new Date(Date.now() + 1)),
-        ).toStrictEqual(false);
-        expect(await db.editTicketDueDate(tid, new Date(Date.now() + 2))).toStrictEqual(true);
+        {
+            const result = await db.editTicketDueDate(nonExistentTicket, new Date());
+            expect(result).toBeNull();
+        }
 
-        expect(await db.editTicketDueDate(tid, new Date(Date.now() - 1))).toStrictEqual(false);
+        {
+            const result = await db.editTicketDueDate(tid, new Date());
+            expect(result).toStrictEqual(false);
+        }
+
+        {
+            const due = new Date();
+            const future = due.getDate() + 5;
+            due.setDate(future);
+            const result = await db.editTicketDueDate(tid, due);
+            expect(result).toStrictEqual(true);
+        }
+
+        {
+            const result = await db.editTicketDueDate(tid, null);
+            expect(result).toStrictEqual(true);
+        }
     }
 
     expect(await db.subscribeDeptToLabel(0, 0)).toStrictEqual(db.SubscribeDeptToLabelResult.NoDept);

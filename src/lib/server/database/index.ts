@@ -459,13 +459,18 @@ export async function editTicketTitle(tid: Ticket['ticket_id'], title: Ticket['t
     }
 }
 
-export async function editTicketDueDate(tid: Ticket['ticket_id'], tdd: Ticket['due_date']) {
+/**
+ * Edits the `due_date` field of a {@linkcode Ticket}. Returns `true` if successful. Returns
+ * `false` if the new due date is invalid. Otherwise, returns `null` if ticket cannot be found.
+ */
+export async function editTicketDueDate(tid: Ticket['ticket_id'], due: Ticket['due_date'] | null) {
     try {
+        const date = due ?? 'infinity';
         const { count } =
-            await sql`UPDATE tickets SET due_date = ${tdd} WHERE ticket_id = ${tid}`.execute();
+            await sql`UPDATE tickets SET due_date = ${date} WHERE ticket_id = ${tid}`.execute();
         switch (count) {
             case 0:
-                return false;
+                return null;
             case 1:
                 return true;
             default:
@@ -476,16 +481,9 @@ export async function editTicketDueDate(tid: Ticket['ticket_id'], tdd: Ticket['d
         if (!isExpected) throw err;
 
         const { code, constraint_name } = err;
-
-        switch (code) {
-            case '23514':
-                strictEqual(constraint_name, 'expiration_check');
-                return false;
-
-            default:
-                assert(constraint_name);
-                throw new UnexpectedConstraintName(constraint_name);
-        }
+        strictEqual(code, '23514');
+        strictEqual(constraint_name, 'expiration_check');
+        return false;
     }
 }
 
