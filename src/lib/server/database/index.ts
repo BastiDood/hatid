@@ -473,7 +473,7 @@ export async function createReply(
 ) {
     try {
         const [first, ...rest] =
-            await sql`SELECT create_reply(${tid}, ${author}, ${body}) AS message_id WHERE message_id IS NOT NULL`.execute();
+            await sql`SELECT * FROM create_reply(${tid}, ${author}, ${body}) AS message_id WHERE message_id IS NOT NULL`.execute();
         strictEqual(rest.length, 0);
         return typeof first === 'undefined'
             ? null
