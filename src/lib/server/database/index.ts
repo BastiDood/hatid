@@ -296,7 +296,8 @@ export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id'])
  * Removes an {@linkcode Agent} user from the dept_agents table. Returns false if dept-user combo not found.
  */
 export async function removeDeptAgent(did: Agent['dept_id'], uid: Agent['user_id']) {
-    const { count } = await sql`DELETE FROM dept_agents WHERE dept_id = ${did} AND user_id = ${uid}`.execute();
+    const { count } =
+        await sql`DELETE FROM dept_agents WHERE dept_id = ${did} AND user_id = ${uid}`.execute();
     switch (count) {
         case 0:
             return false;

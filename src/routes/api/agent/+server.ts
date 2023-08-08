@@ -1,4 +1,9 @@
-import { AddDeptAgentResult, addDeptAgent, isHeadSession, removeDeptAgent } from '$lib/server/database';
+import {
+    AddDeptAgentResult,
+    addDeptAgent,
+    isHeadSession,
+    removeDeptAgent,
+} from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
