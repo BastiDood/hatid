@@ -8,11 +8,6 @@ overrides:
   blake3-wasm: ^3.0.0
   '@c4312/blake3-internal': ^3.0.0
 
-dependencies:
-  moment:
-    specifier: ^2.29.4
-    version: 2.29.4
-
 devDependencies:
   '@floating-ui/dom':
     specifier: ^1.5.1
@@ -1813,10 +1808,6 @@ packages:
       pkg-types: 1.0.3
       ufo: 1.2.0
     dev: true
-
-  /moment@2.29.4:
-    resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
-    dev: false
 
   /moo@0.5.2:
     resolution: {integrity: sha512-iSAJLHYKnX41mKcJKjqvnAN9sf0LMDTXDEvFv+ffuRR9a1MIuXLjMNL6EsnDHSkKLTWNqQQ5uo61P4EbU4NU+Q==}

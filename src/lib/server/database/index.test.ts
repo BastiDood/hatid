@@ -1,7 +1,6 @@
 import * as db from '.';
 import { afterAll, assert, describe, expect, it } from 'vitest';
 import { getRandomValues, randomUUID } from 'node:crypto';
-import { date } from 'zod';
 
 afterAll(() => db.end());
 
@@ -128,6 +127,8 @@ it('should complete a full user journey', async () => {
         expect(await db.canEditTicketTitle(tid, uid)).toStrictEqual(true);
         // TODO: add test case when the agent actually does have permission
         expect(await db.editTicketTitle(tid, 'New Title')).toStrictEqual(true);
+
+        expect(await db.editTicketDueDate(tid, new Date(Date.now()+1))).toStrictEqual(true);
     }
 
     expect(await db.subscribeDeptToLabel(0, 0)).toStrictEqual(db.SubscribeDeptToLabelResult.NoDept);
