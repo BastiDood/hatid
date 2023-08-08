@@ -67,6 +67,7 @@ export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title'])
             throw new UnexpectedStatusCode(status);
     }
 }
+
 /** Assigns the `priority_id` field of a {@linkcode Ticket} to set ticket priority. Returns `false` if not found. */
 export async function assignPriority(id: Ticket['ticket_id'], priority_id: Ticket['priority_id']) {
     const { status } = await fetch('/api/ticket/priority', {
