@@ -224,7 +224,7 @@ CREATE FUNCTION add_dept_agent (
     uid dept_agents.user_id %
     TYPE
 ) RETURNS VOID AS $$
-    INSERT INTO dept_agents (dept_id, user_id) VALUES (did, uid) ON CONFLICT (dept_id, user_id) DO NOTHING;
+    INSERT INTO dept_agents (dept_id, user_id) VALUES (did, uid);
 $$ LANGUAGE SQL;
 
 CREATE FUNCTION remove_dept_agent (

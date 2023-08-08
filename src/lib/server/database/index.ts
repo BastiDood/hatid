@@ -264,30 +264,31 @@ export const enum AddDeptAgentResult {
 export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id']) {
     try {
         const { count } = await sql`SELECT add_dept_agent(${did}, ${uid})`.execute();
-        switch (count) {
-            case 0:
-                return AddDeptAgentResult.AlreadyExists;
-            case 1:
-                return AddDeptAgentResult.Success;
-            default:
-                throw new UnexpectedRowCount(count);
-        }
+        strictEqual(count, 1);
+        return AddDeptAgentResult.Success;
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;
 
         const { code, table_name, constraint_name } = err;
-        strictEqual(code, '23503');
         strictEqual(table_name, 'dept_agents');
 
-        switch (constraint_name) {
-            case 'dept_agents_dept_id_fkey':
-                return AddDeptAgentResult.NoDept;
-            case 'dept_agents_user_id_fkey':
-                return AddDeptAgentResult.NoUser;
+        switch (code) {
+            case '23503':
+                switch (constraint_name) {
+                    case 'dept_agents_dept_id_fkey':
+                        return AddDeptAgentResult.NoDept;
+                    case 'dept_agents_user_id_fkey':
+                        return AddDeptAgentResult.NoUser;
+                    default:
+                        assert(constraint_name);
+                        throw new UnexpectedConstraintName(constraint_name);
+                }
+            case '23505':
+                assert(constraint_name, 'dept_agents_pkey');
+                return AddDeptAgentResult.AlreadyExists;
             default:
-                assert(constraint_name);
-                throw new UnexpectedConstraintName(constraint_name);
+                throw new UnexpectedErrorCode(code);
         }
     }
 }
