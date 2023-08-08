@@ -519,14 +519,8 @@ export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket
         const { code, table_name, constraint_name } = err;
         strictEqual(code, '23503');
         strictEqual(table_name, 'tickets');
-
-        switch (constraint_name) {
-            case 'tickets_priority_id_fkey':
-                return AssignTicketPriorityResult.NoPriority;
-            default:
-                assert(constraint_name);
-                throw new UnexpectedConstraintName(constraint_name);
-        }
+        strictEqual(constraint_name, 'tickets_priority_id_fkey');
+        return AssignTicketPriorityResult.NoPriority;
     }
 }
 
