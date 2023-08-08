@@ -8,12 +8,12 @@ import type { User } from '$lib/model/user';
  * Adds a new {@linkcode User} to a {@linkcode Dept}. Returns `true` if successful, `false` if the
  * {@linkcode Agent} already exists, and `null` if either the department or the user is not found.
  */
-export async function add(dept_id: Dept['dept_id'], uid: User['user_id'], head: Agent['head']) {
+export async function add(did: Dept['dept_id'], uid: User['user_id'], head: Agent['head']) {
     const { status } = await fetch('/api/agent', {
         method: 'POST',
         credentials: 'same-origin',
         body: new URLSearchParams({
-            did: dept_id.toString(10),
+            did: did.toString(10),
             uid,
             head: Number(head).toString(10),
         }),
@@ -23,6 +23,37 @@ export async function add(dept_id: Dept['dept_id'], uid: User['user_id'], head: 
             return true;
         case StatusCodes.CONFLICT:
             return false;
+        case StatusCodes.NOT_FOUND:
+            return null;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        case StatusCodes.FORBIDDEN:
+            throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(status);
+    }
+}
+
+/**
+ * Removes an {@linkcode Agent} from the {@linkcode Dept}. Returns the `head` value
+ * of the deleted agent or `null` if either the department or the user is not found.
+ */
+export async function remove(did: Agent['dept_id'], uid: Agent['user_id']) {
+    const { status } = await fetch('/api/agent', {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        body: new URLSearchParams({
+            did: did.toString(10),
+            uid,
+        }),
+    });
+    switch (status) {
+        case StatusCodes.NO_CONTENT:
+            return false;
+        case StatusCodes.RESET_CONTENT:
+            return true;
         case StatusCodes.NOT_FOUND:
             return null;
         case StatusCodes.BAD_REQUEST:

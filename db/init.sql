@@ -78,7 +78,7 @@ CREATE TABLE
         dept_id SERIAL NOT NULL,
         user_id GoogleUserId,
         PRIMARY KEY (ticket_id, dept_id, user_id),
-        FOREIGN KEY (dept_id, user_id) REFERENCES dept_agents (dept_id, user_id)
+        FOREIGN KEY (dept_id, user_id) REFERENCES dept_agents (dept_id, user_id) ON DELETE CASCADE
     );
 
 CREATE TABLE
@@ -225,6 +225,16 @@ CREATE FUNCTION add_dept_agent (
     TYPE
 ) RETURNS VOID AS $$
     INSERT INTO dept_agents (dept_id, user_id) VALUES (did, uid) ON CONFLICT (dept_id, user_id) DO NOTHING;
+$$ LANGUAGE SQL;
+
+CREATE FUNCTION remove_dept_agent (
+    did dept_agents.dept_id %
+    TYPE,
+    uid dept_agents.user_id %
+    TYPE
+) RETURNS dept_agents.head %
+TYPE AS $$
+    DELETE FROM dept_agents WHERE dept_id = did AND user_id = uid RETURNING head;
 $$ LANGUAGE SQL;
 
 CREATE FUNCTION set_head_for_agent (
