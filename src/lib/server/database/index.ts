@@ -264,30 +264,31 @@ export const enum AddDeptAgentResult {
 export async function addDeptAgent(did: Agent['dept_id'], uid: Agent['user_id']) {
     try {
         const { count } = await sql`SELECT add_dept_agent(${did}, ${uid})`.execute();
-        switch (count) {
-            case 0:
-                return AddDeptAgentResult.AlreadyExists;
-            case 1:
-                return AddDeptAgentResult.Success;
-            default:
-                throw new UnexpectedRowCount(count);
-        }
+        strictEqual(count, 1);
+        return AddDeptAgentResult.Success;
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;
 
         const { code, table_name, constraint_name } = err;
-        strictEqual(code, '23503');
         strictEqual(table_name, 'dept_agents');
 
-        switch (constraint_name) {
-            case 'dept_agents_dept_id_fkey':
-                return AddDeptAgentResult.NoDept;
-            case 'dept_agents_user_id_fkey':
-                return AddDeptAgentResult.NoUser;
+        switch (code) {
+            case '23503':
+                switch (constraint_name) {
+                    case 'dept_agents_dept_id_fkey':
+                        return AddDeptAgentResult.NoDept;
+                    case 'dept_agents_user_id_fkey':
+                        return AddDeptAgentResult.NoUser;
+                    default:
+                        assert(constraint_name);
+                        throw new UnexpectedConstraintName(constraint_name);
+                }
+            case '23505':
+                assert(constraint_name, 'dept_agents_pkey');
+                return AddDeptAgentResult.AlreadyExists;
             default:
-                assert(constraint_name);
-                throw new UnexpectedConstraintName(constraint_name);
+                throw new UnexpectedErrorCode(code);
         }
     }
 }
@@ -421,6 +422,52 @@ export async function createTicket(
 
         assert(constraint_name);
         throw new UnexpectedConstraintName(constraint_name);
+    }
+}
+
+export const enum AssignTicketLabelResult {
+    /** Label successfully assigned to ticket. */
+    Success,
+    /** Label already previously assigned to ticket. */
+    AlreadyExists,
+    /** Ticket does not exist. */
+    NoTicket,
+    /** Label does not exist. */
+    NoLabel,
+}
+
+export async function assignTicketLabel(
+    tid: TicketLabel['ticket_id'],
+    lid: TicketLabel['label_id'],
+) {
+    try {
+        const { count } = await sql`SELECT assign_label(${tid}, ${lid})`.execute();
+        strictEqual(count, 1);
+        return AssignTicketLabelResult.Success;
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(table_name, 'ticket_labels');
+
+        switch (code) {
+            case '23503':
+                switch (constraint_name) {
+                    case 'ticket_labels_ticket_id_fkey':
+                        return AssignTicketLabelResult.NoTicket;
+                    case 'ticket_labels_label_id_fkey':
+                        return AssignTicketLabelResult.NoLabel;
+                    default:
+                        assert(constraint_name);
+                        throw new UnexpectedConstraintName(constraint_name);
+                }
+            case '23505':
+                strictEqual(constraint_name, 'ticket_labels_pkey');
+                return AssignTicketLabelResult.AlreadyExists;
+            default:
+                throw new UnexpectedErrorCode(code);
+        }
     }
 }
 

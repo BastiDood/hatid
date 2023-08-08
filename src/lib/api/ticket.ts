@@ -5,7 +5,13 @@ import {
     InvalidSession,
     UnexpectedStatusCode,
 } from './error';
-import { CreateTicketSchema, type Message, MessageSchema, type Ticket } from '$lib/model/ticket';
+import {
+    CreateTicketSchema,
+    type Message,
+    MessageSchema,
+    type Ticket,
+    type TicketLabel,
+} from '$lib/model/ticket';
 import type { Label } from '$lib/model/label';
 import { StatusCodes } from 'http-status-codes';
 
@@ -145,5 +151,34 @@ export async function reply(ticket: Message['ticket_id'], body: Message['body'])
             throw new InvalidSession();
         default:
             throw new UnexpectedStatusCode(res.status);
+    }
+}
+
+/**
+ * Assigns a {@linkcode Label} to a {@linkcode Ticket}. Returns `true` if successful. If the label
+ * has previously been assigned to the same ticket, it returns `false`. Otherwise, if the ticket
+ * or the label do not exist, it returns `null`.
+ */
+export async function assignLabel(ticket: TicketLabel['ticket_id'], lid: TicketLabel['label_id']) {
+    const { status } = await fetch('/api/ticket/label', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: new URLSearchParams({ ticket, label: lid.toString(10) }),
+    });
+    switch (status) {
+        case StatusCodes.CREATED:
+            return true;
+        case StatusCodes.CONFLICT:
+            return false;
+        case StatusCodes.NOT_FOUND:
+            return null;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        case StatusCodes.FORBIDDEN:
+            throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(status);
     }
 }

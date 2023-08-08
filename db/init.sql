@@ -224,7 +224,7 @@ CREATE FUNCTION add_dept_agent (
     uid dept_agents.user_id %
     TYPE
 ) RETURNS VOID AS $$
-    INSERT INTO dept_agents (dept_id, user_id) VALUES (did, uid) ON CONFLICT (dept_id, user_id) DO NOTHING;
+    INSERT INTO dept_agents (dept_id, user_id) VALUES (did, uid);
 $$ LANGUAGE SQL;
 
 CREATE FUNCTION remove_dept_agent (
@@ -282,6 +282,15 @@ BEGIN
     RETURN mid;
 END;
 $$ LANGUAGE PLPGSQL;
+
+CREATE FUNCTION assign_label (
+    tid ticket_labels.ticket_id %
+    TYPE,
+    lid ticket_labels.label_id %
+    TYPE
+) RETURNS VOID AS $$
+    INSERT INTO ticket_labels (ticket_id, label_id) VALUES (tid, lid);
+$$ LANGUAGE SQL;
 
 CREATE FUNCTION create_ticket (
     title tickets.title %

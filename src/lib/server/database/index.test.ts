@@ -51,21 +51,23 @@ it('should complete a full user journey', async () => {
     expect(await db.isAdminSession(session_id)).toStrictEqual(false);
 
     const did = await db.createDept('Full User Journey');
-    expect(await db.isHeadSession(randomUUID(), 0)).toBeNull();
-    expect(await db.isHeadSession(randomUUID(), did)).toBeNull();
+    const nonExistentUser = randomUUID();
+    expect(await db.isHeadSession(nonExistentUser, 0)).toBeNull();
+    expect(await db.isHeadSession(nonExistentUser, did)).toBeNull();
     expect(await db.isHeadSession(session_id, 0)).toBeNull();
     expect(await db.isHeadSession(session_id, did)).toBeNull();
 
-    const nonExistentUser = randomUUID();
     expect(await db.addDeptAgent(0, nonExistentUser)).toStrictEqual(db.AddDeptAgentResult.NoDept);
     expect(await db.addDeptAgent(did, nonExistentUser)).toStrictEqual(db.AddDeptAgentResult.NoUser);
     expect(await db.addDeptAgent(0, uid)).toStrictEqual(db.AddDeptAgentResult.NoDept);
     expect(await db.addDeptAgent(did, uid)).toStrictEqual(db.AddDeptAgentResult.Success);
+    expect(await db.addDeptAgent(did, uid)).toStrictEqual(db.AddDeptAgentResult.AlreadyExists);
 
     expect(await db.removeDeptAgent(0, nonExistentUser)).toBeNull();
     expect(await db.removeDeptAgent(did, nonExistentUser)).toBeNull();
     expect(await db.removeDeptAgent(0, uid)).toBeNull();
     expect(await db.removeDeptAgent(did, uid)).toStrictEqual(false);
+    // TODO: add test case when the agent is actually the department head
     expect(await db.addDeptAgent(did, uid)).toStrictEqual(db.AddDeptAgentResult.Success);
 
     expect(await db.isHeadSession(session_id, did)).toStrictEqual(false);
@@ -87,6 +89,9 @@ it('should complete a full user journey', async () => {
     }
 
     const nonExistentTicket = randomUUID();
+    const coolLabel = await db.createLabel('Cool', 0xc0debeef);
+    expect(coolLabel).not.toStrictEqual(0);
+
     {
         // Valid user with no labels
         const result = await db.createTicket('No Labels', uid, 'oof', []);
@@ -100,9 +105,32 @@ it('should complete a full user journey', async () => {
         expect(await db.isTicketAuthor(nonExistentTicket, uid)).toBeNull();
         expect(await db.isTicketAuthor(tid, nonExistentUser)).toStrictEqual(false);
         expect(await db.isTicketAuthor(tid, uid)).toStrictEqual(true);
-    }
 
-    const coolLabel = await db.createLabel('Cool', 0xc0debeef);
+        {
+            const assignment = await db.assignTicketLabel(nonExistentTicket, 0);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.NoTicket);
+        }
+
+        {
+            const assignment = await db.assignTicketLabel(nonExistentTicket, coolLabel);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.NoTicket);
+        }
+
+        {
+            const assignment = await db.assignTicketLabel(tid, 0);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.NoLabel);
+        }
+
+        {
+            const assignment = await db.assignTicketLabel(tid, coolLabel);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.Success);
+        }
+
+        {
+            const assignment = await db.assignTicketLabel(tid, coolLabel);
+            expect(assignment).toStrictEqual(db.AssignTicketLabelResult.AlreadyExists);
+        }
+    }
 
     {
         // Invalid user with one label
