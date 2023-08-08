@@ -144,7 +144,7 @@ it('should complete a full user journey', async () => {
         }
 
         {
-            const result = await db.assignTicketPriority(nonExistentTicket, tid);
+            const result = await db.assignTicketPriority(nonExistentTicket, pid);
             expect(result).toStrictEqual(db.AssignTicketPriorityResult.TicketNotFound);
         }
 
