@@ -128,7 +128,7 @@ it('should complete a full user journey', async () => {
         // TODO: add test case when the agent actually does have permission
         expect(await db.editTicketTitle(tid, 'New Title')).toStrictEqual(true);
 
-        expect(await db.editTicketDueDate(tid, new Date(Date.now()+1))).toStrictEqual(true);
+        expect(await db.editTicketDueDate(tid, new Date(Date.now() + 1))).toStrictEqual(true);
     }
 
     expect(await db.subscribeDeptToLabel(0, 0)).toStrictEqual(db.SubscribeDeptToLabelResult.NoDept);
