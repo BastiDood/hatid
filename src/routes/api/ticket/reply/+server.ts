@@ -21,6 +21,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
 
     const result = await createReply(tid, user.user_id, body);
+    if (result === null) return new Response(null, { status: StatusCodes.GONE });
     if (typeof result === 'number') return json(result, { status: StatusCodes.CREATED });
 
     switch (result) {

@@ -475,7 +475,9 @@ export async function createReply(
         const [first, ...rest] =
             await sql`SELECT create_reply(${tid}, ${author}, ${body}) AS message_id WHERE message_id IS NOT NULL`.execute();
         strictEqual(rest.length, 0);
-        return typeof first === 'undefined' ? null : MessageSchema.pick({ message_id: true }).parse(first).message_id;
+        return typeof first === 'undefined'
+            ? null
+            : MessageSchema.pick({ message_id: true }).parse(first).message_id;
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;
