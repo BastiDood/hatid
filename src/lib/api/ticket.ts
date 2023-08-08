@@ -38,6 +38,7 @@ export async function create(
             throw new UnexpectedStatusCode(res.status);
     }
 }
+
 /** Edits the `title` field of a {@linkcode Ticket}. Returns `false` if not found. */
 export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title']) {
     const { status } = await fetch('/api/ticket/title', {
@@ -50,6 +51,34 @@ export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title'])
             return true;
         case StatusCodes.NOT_FOUND:
             return false;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        case StatusCodes.FORBIDDEN:
+            throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(status);
+    }
+}
+
+/**
+ * Edits the `due_date` field of a {@linkcode Ticket}. Returns `true` if successful.
+ * Returns `false` is the date is invalid. Otherwise, `null` if the ticket is not found.
+ */
+export async function editDueDate(id: Ticket['ticket_id'], due: Ticket['due_date']) {
+    const { status } = await fetch('/api/ticket/due', {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        body: new URLSearchParams({ id, due: due.toISOString() }),
+    });
+    switch (status) {
+        case StatusCodes.NO_CONTENT:
+            return true;
+        case StatusCodes.PRECONDITION_FAILED:
+            return false;
+        case StatusCodes.NOT_FOUND:
+            return null;
         case StatusCodes.BAD_REQUEST:
             throw new BadInput();
         case StatusCodes.UNAUTHORIZED:

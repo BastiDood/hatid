@@ -125,6 +125,29 @@ it('should complete a full user journey', async () => {
         expect(await db.canEditTicketTitle(tid, uid)).toStrictEqual(true);
         // TODO: add test case when the agent actually does have permission
         expect(await db.editTicketTitle(tid, 'New Title')).toStrictEqual(true);
+
+        {
+            const result = await db.editTicketDueDate(nonExistentTicket, new Date());
+            expect(result).toBeNull();
+        }
+
+        {
+            const result = await db.editTicketDueDate(tid, new Date());
+            expect(result).toStrictEqual(false);
+        }
+
+        {
+            const due = new Date();
+            const future = due.getDate() + 5;
+            due.setDate(future);
+            const result = await db.editTicketDueDate(tid, due);
+            expect(result).toStrictEqual(true);
+        }
+
+        {
+            const result = await db.editTicketDueDate(tid);
+            expect(result).toStrictEqual(true);
+        }
     }
 
     expect(await db.subscribeDeptToLabel(0, 0)).toStrictEqual(db.SubscribeDeptToLabelResult.NoDept);
