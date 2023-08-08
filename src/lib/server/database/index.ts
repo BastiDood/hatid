@@ -463,7 +463,10 @@ export async function editTicketTitle(tid: Ticket['ticket_id'], title: Ticket['t
  * Edits the `due_date` field of a {@linkcode Ticket}. Returns `true` if successful. Returns
  * `false` if the new due date is invalid. Otherwise, returns `null` if ticket cannot be found.
  */
-export async function editTicketDueDate(tid: Ticket['ticket_id'], due: Ticket['due_date'] | null) {
+export async function editTicketDueDate(
+    tid: Ticket['ticket_id'],
+    due: Ticket['due_date'] | null = null,
+) {
     try {
         const date = due ?? 'infinity';
         const { count } =

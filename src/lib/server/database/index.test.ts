@@ -145,7 +145,7 @@ it('should complete a full user journey', async () => {
         }
 
         {
-            const result = await db.editTicketDueDate(tid, null);
+            const result = await db.editTicketDueDate(tid);
             expect(result).toStrictEqual(true);
         }
     }
