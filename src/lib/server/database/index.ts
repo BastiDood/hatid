@@ -483,7 +483,7 @@ export async function editTicketDueDate(tid: Ticket['ticket_id'], tdd: Ticket['d
                 return false;
 
             default:
-                assert(code, constraint_name);
+                assert(constraint_name);
                 throw new UnexpectedConstraintName(constraint_name);
         }
     }
