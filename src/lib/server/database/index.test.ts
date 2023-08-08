@@ -133,16 +133,20 @@ it('should complete a full user journey', async () => {
         const pid = await db.createPriority(priority, 0);
         expect(pid).not.toStrictEqual(0);
 
-        const nonExistentPrio = 9696;
-        expect(await db.assignTicketPriority(tid, pid)).toStrictEqual(
-            db.AssignTicketPriorityResult.Success,
-        );
-        expect(await db.assignTicketPriority(tid, nonExistentPrio)).toStrictEqual(
-            db.AssignTicketPriorityResult.InvalidPriority,
-        );
-        expect(await db.assignTicketPriority(nonExistentTicket, pid)).toStrictEqual(
-            db.AssignTicketPriorityResult.TicketNotFound,
-        );
+        {
+            const result = await db.assignTicketPriority(tid, pid);
+            expect(result).toStrictEqual(db.AssignTicketPriorityResult.Success);
+        }
+
+        {
+            const result = await db.assignTicketPriority(tid, 0);
+            expect(result).toStrictEqual(db.AssignTicketPriorityResult.InvalidPriority);
+        }
+
+        {
+            const result = await db.assignTicketPriority(nonExistentTicket, tid);
+            expect(result).toStrictEqual(db.AssignTicketPriorityResult.TicketNotFound);
+        }
 
         {
             const result = await db.editTicketDueDate(nonExistentTicket, new Date());
