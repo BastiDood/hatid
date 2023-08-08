@@ -78,7 +78,7 @@ CREATE TABLE
         dept_id SERIAL NOT NULL,
         user_id GoogleUserId,
         PRIMARY KEY (ticket_id, dept_id, user_id),
-        FOREIGN KEY (dept_id, user_id) REFERENCES dept_agents (dept_id, user_id)
+        FOREIGN KEY (dept_id, user_id) REFERENCES dept_agents (dept_id, user_id) ON DELETE CASCADE
     );
 
 CREATE TABLE
