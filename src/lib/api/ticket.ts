@@ -67,6 +67,31 @@ export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title'])
             throw new UnexpectedStatusCode(status);
     }
 }
+/** Assigns the `priority_id` field of a {@linkcode Ticket} to set ticket priority. Returns `false` if not found. */
+export async function assignPriority(id: Ticket['ticket_id'], priority_id: Ticket['priority_id']) {
+    const { status } = await fetch('/api/ticket/priority', {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        body: new URLSearchParams({
+            id,
+            pid: priority_id.toString(10),
+        }),
+    });
+    switch (status) {
+        case StatusCodes.NO_CONTENT:
+            return true;
+        case StatusCodes.NOT_FOUND:
+            return false;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        case StatusCodes.FORBIDDEN:
+            throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(status);
+    }
+}
 
 /**
  * Edits the `due_date` field of a {@linkcode Ticket}. Returns `true` if successful.
