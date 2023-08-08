@@ -36,6 +36,32 @@ export async function add(dept_id: Dept['dept_id'], uid: User['user_id'], head: 
     }
 }
 
+/** Removes an {@linkcode Agent} from the {@linkcode Dept}. Returns `true` if successful, `false` otherwise. */
+export async function remove(dept_id: Agent['dept_id'], uid: Agent['user_id']) {
+    const { status } = await fetch('/api/agent', {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        body: new URLSearchParams({
+            did: dept_id.toString(10),
+            uid,
+        }),
+    });
+    switch (status) {
+        case StatusCodes.NO_CONTENT:
+            return true;
+        case StatusCodes.NOT_FOUND:
+            return false;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        case StatusCodes.FORBIDDEN:
+            throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(status);
+    }
+}
+
 /** Promotes a {@linkcode User} as the head of the {@linkcode Dept}. */
 export async function setHead(
     dept_id: Agent['dept_id'],
