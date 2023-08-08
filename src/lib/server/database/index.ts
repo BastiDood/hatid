@@ -490,6 +490,40 @@ export async function editTicketDueDate(
     }
 }
 
+export const enum AssignTicketPriorityResult {
+    /** Ticket priority successfully assigned. */
+    Success,
+    /** Ticket does not exist. */
+    NoTicket,
+    /** Provided priority id does not exist. */
+    NoPriority,
+}
+
+/** Assigns `priority_id` field of a {@linkcode Ticket}. Returns the {@linkcode AssignTicketPriorityResult} for the operation. */
+export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket['priority_id']) {
+    try {
+        const { count } =
+            await sql`UPDATE tickets SET priority_id = ${pid} WHERE ticket_id = ${tid}`.execute();
+        switch (count) {
+            case 0:
+                return AssignTicketPriorityResult.NoTicket;
+            case 1:
+                return AssignTicketPriorityResult.Success;
+            default:
+                throw new UnexpectedRowCount(count);
+        }
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(code, '23503');
+        strictEqual(table_name, 'tickets');
+        strictEqual(constraint_name, 'tickets_priority_id_fkey');
+        return AssignTicketPriorityResult.NoPriority;
+    }
+}
+
 export const enum CreateReplyResult {
     /** The provided {@linkcode Ticket} does not exist. */
     NoTicket = '0',
