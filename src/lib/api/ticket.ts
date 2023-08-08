@@ -68,14 +68,17 @@ export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title'])
     }
 }
 
-/** Assigns the `priority_id` field of a {@linkcode Ticket} to set ticket priority. Returns `false` if not found. */
-export async function assignPriority(id: Ticket['ticket_id'], priority_id: Ticket['priority_id']) {
+/**
+ * Assigns the `priority_id` field of a {@linkcode Ticket} to set ticket priority.
+ * Returns `true` if successful. Otherwise, it is `false`.
+ */
+export async function assignPriority(tid: Ticket['ticket_id'], pid: Ticket['priority_id']) {
     const { status } = await fetch('/api/ticket/priority', {
         method: 'PATCH',
         credentials: 'same-origin',
         body: new URLSearchParams({
-            id,
-            pid: priority_id.toString(10),
+            ticket: tid,
+            priority: pid.toString(10),
         }),
     });
     switch (status) {

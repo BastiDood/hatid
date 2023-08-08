@@ -25,7 +25,7 @@ function resultToCode(result: AssignTicketPriorityResult) {
 export const PATCH: RequestHandler = async ({ cookies, request }) => {
     const form = await request.formData();
 
-    const tid = form.get('id');
+    const tid = form.get('ticket');
     if (tid === null || tid instanceof File) throw error(StatusCodes.BAD_REQUEST);
 
     const priority = form.get('priority');
