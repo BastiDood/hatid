@@ -39,29 +39,6 @@ export async function create(
     }
 }
 
-/** Edits the `title` field of a {@linkcode Priority}. Returns `false` if not found. */
-export async function editTicketDueDate(tid: Ticket['ticket_id'], due: Ticket['due_date']) {
-    const { status } = await fetch('/api/ticket/due', {
-        method: 'PATCH',
-        credentials: 'same-origin',
-        body: new URLSearchParams({ tid, due: due.toISOString() }),
-    });
-    switch (status) {
-        case StatusCodes.NO_CONTENT:
-            return true;
-        case StatusCodes.NOT_FOUND:
-            return false;
-        case StatusCodes.BAD_REQUEST:
-            throw new BadInput();
-        case StatusCodes.UNAUTHORIZED:
-            throw new InvalidSession();
-        case StatusCodes.FORBIDDEN:
-            throw new InsufficientPermissions();
-        default:
-            throw new UnexpectedStatusCode(status);
-    }
-}
-
 /** Edits the `title` field of a {@linkcode Ticket}. Returns `false` if not found. */
 export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title']) {
     const { status } = await fetch('/api/ticket/title', {
