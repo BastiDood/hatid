@@ -13,8 +13,8 @@ function resultToCode(result: AssignTicketPriorityResult) {
     switch (result) {
         case AssignTicketPriorityResult.Success:
             return StatusCodes.NO_CONTENT;
-        case AssignTicketPriorityResult.TicketNotFound:
-        case AssignTicketPriorityResult.InvalidPriority:
+        case AssignTicketPriorityResult.NoTicket:
+        case AssignTicketPriorityResult.NoPriority:
             return StatusCodes.NOT_FOUND;
         default:
             throw new AssertionError();

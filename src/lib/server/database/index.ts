@@ -494,9 +494,9 @@ export const enum AssignTicketPriorityResult {
     /** Ticket priority successfully assigned. */
     Success,
     /** Ticket does not exist. */
-    TicketNotFound,
+    NoTicket,
     /** Provided priority id does not exist. */
-    InvalidPriority,
+    NoPriority,
 }
 
 /** Assigns `priority_id` field of a {@linkcode Ticket}. Returns the {@linkcode AssignTicketPriorityResult} for the operation. */
@@ -506,7 +506,7 @@ export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket
             await sql`UPDATE tickets SET priority_id = ${pid} WHERE ticket_id = ${tid}`.execute();
         switch (count) {
             case 0:
-                return AssignTicketPriorityResult.TicketNotFound;
+                return AssignTicketPriorityResult.NoTicket;
             case 1:
                 return AssignTicketPriorityResult.Success;
             default:
@@ -522,7 +522,7 @@ export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket
 
         switch (constraint_name) {
             case 'tickets_priority_id_fkey':
-                return AssignTicketPriorityResult.InvalidPriority;
+                return AssignTicketPriorityResult.NoPriority;
             default:
                 assert(constraint_name);
                 throw new UnexpectedConstraintName(constraint_name);
