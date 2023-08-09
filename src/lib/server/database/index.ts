@@ -582,10 +582,12 @@ export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket[
 }
 
 export const enum CreateReplyResult {
+    /** The ticket has already been closed. */
+    Closed = '0',
     /** The provided {@linkcode Ticket} does not exist. */
-    NoTicket = '0',
+    NoTicket = '1',
     /** The provided {@linkcode User} does not exist. */
-    NoUser = '1',
+    NoUser = '2',
 }
 
 export async function createReply(
@@ -598,7 +600,7 @@ export async function createReply(
             await sql`SELECT * FROM create_reply(${tid}, ${author}, ${body}) AS message_id WHERE message_id IS NOT NULL`.execute();
         strictEqual(rest.length, 0);
         return typeof first === 'undefined'
-            ? null
+            ? CreateReplyResult.Closed
             : MessageSchema.pick({ message_id: true }).parse(first).message_id;
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;

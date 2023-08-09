@@ -267,7 +267,12 @@ it('should complete a full user journey', async () => {
 
     expect(await db.setStatusForTicket(nonExistentTicket, false)).toBeNull();
     expect(await db.setStatusForTicket(tid, false)).toStrictEqual(true);
-    expect(await db.createReply(tid, uid, 'This ticket closed, fool!')).toBeNull();
+
+    {
+        const result = await db.createReply(tid, uid, 'This ticket closed, fool!');
+        expect(result).toStrictEqual(db.CreateReplyResult.Closed);
+    }
+
     expect(await db.setStatusForTicket(tid, true)).toStrictEqual(false);
 });
 
