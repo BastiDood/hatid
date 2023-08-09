@@ -4,6 +4,18 @@ import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
 
+function resultToCode(result: CreateReplyResult) {
+    switch (result) {
+        case CreateReplyResult.Closed:
+            return StatusCodes.GONE;
+        case CreateReplyResult.NoUser:
+        case CreateReplyResult.NoTicket:
+            return StatusCodes.NOT_FOUND;
+        default:
+            throw new AssertionError();
+    }
+}
+
 // eslint-disable-next-line func-style
 export const POST: RequestHandler = async ({ cookies, request }) => {
     const form = await request.formData();
@@ -21,14 +33,8 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
 
     const result = await createReply(tid, user.user_id, body);
-    if (result === null) return new Response(null, { status: StatusCodes.GONE });
     if (typeof result === 'number') return json(result, { status: StatusCodes.CREATED });
 
-    switch (result) {
-        case CreateReplyResult.NoUser:
-        case CreateReplyResult.NoTicket:
-            return new Response(null, { status: StatusCodes.NOT_FOUND });
-        default:
-            throw new AssertionError();
-    }
+    const status = resultToCode(result);
+    return new Response(null, { status });
 };

@@ -5,6 +5,7 @@ import {
     MessageSchema,
     type Ticket,
     type TicketLabel,
+    TicketSchema,
 } from '$lib/model/ticket';
 import { type Dept, type DeptLabel, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
@@ -485,7 +486,7 @@ export async function isAssignedAgent(tid: Ticket['ticket_id'], uid: Agent['user
     return NullableBooleanResult.parse(first).result;
 }
 
-export async function canEditTicketTitle(tid: Ticket['ticket_id'], uid: User['user_id']) {
+export async function canEditTicket(tid: Ticket['ticket_id'], uid: User['user_id']) {
     const [first, ...rest] =
         await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT * FROM get_assigned_agents(${tid})) AS result`.execute();
     strictEqual(rest.length, 0);
@@ -571,11 +572,22 @@ export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket
     }
 }
 
+export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket['open']) {
+    const [first, ...rest] =
+        await sql`SELECT * FROM set_status_for_ticket(${tid}, ${open}) AS open WHERE open IS NOT NULL`.execute();
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined'
+        ? null
+        : TicketSchema.pick({ open: true }).parse(first).open;
+}
+
 export const enum CreateReplyResult {
+    /** The ticket has already been closed. */
+    Closed = '0',
     /** The provided {@linkcode Ticket} does not exist. */
-    NoTicket = '0',
+    NoTicket = '1',
     /** The provided {@linkcode User} does not exist. */
-    NoUser = '1',
+    NoUser = '2',
 }
 
 export async function createReply(
@@ -588,7 +600,7 @@ export async function createReply(
             await sql`SELECT * FROM create_reply(${tid}, ${author}, ${body}) AS message_id WHERE message_id IS NOT NULL`.execute();
         strictEqual(rest.length, 0);
         return typeof first === 'undefined'
-            ? null
+            ? CreateReplyResult.Closed
             : MessageSchema.pick({ message_id: true }).parse(first).message_id;
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;
