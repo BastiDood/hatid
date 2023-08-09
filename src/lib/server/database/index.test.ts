@@ -261,11 +261,14 @@ it('should complete a full user journey', async () => {
         expect(result).toStrictEqual(db.CreateReplyResult.NoTicket);
     }
 
-    // TODO: Add test for attempting to reply to a closed ticket
-
     const replyId = await db.createReply(tid, uid, 'Valid Reply');
     assert(typeof replyId === 'number');
     expect(replyId).not.toStrictEqual(0);
+
+    expect(await db.setStatusForTicket(nonExistentTicket, false)).toBeNull();
+    expect(await db.setStatusForTicket(tid, false)).toStrictEqual(true);
+    expect(await db.createReply(tid, uid, 'This ticket closed, fool!')).toBeNull();
+    expect(await db.setStatusForTicket(tid, true)).toStrictEqual(false);
 });
 
 it('should reject promoting non-existent users', async () => {

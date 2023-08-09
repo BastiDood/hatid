@@ -342,3 +342,14 @@ CREATE FUNCTION get_assigned_agents (
 TYPE AS $$
     SELECT user_id FROM assignments WHERE ticket_id = tid;
 $$ LANGUAGE SQL;
+
+CREATE FUNCTION set_status_for_ticket (
+    tid tickets.ticket_id %
+    TYPE,
+    VALUE tickets.open %
+    TYPE
+) RETURNS tickets.open %
+TYPE AS $$
+    WITH _ AS (SELECT open FROM tickets WHERE ticket_id = tid)
+        UPDATE tickets SET open = value FROM _ WHERE ticket_id = tid RETURNING _.open;
+$$ LANGUAGE SQL;

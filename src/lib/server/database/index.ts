@@ -5,6 +5,7 @@ import {
     MessageSchema,
     type Ticket,
     type TicketLabel,
+    TicketSchema,
 } from '$lib/model/ticket';
 import { type Dept, type DeptLabel, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
@@ -569,6 +570,15 @@ export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket
         strictEqual(constraint_name, 'tickets_priority_id_fkey');
         return AssignTicketPriorityResult.NoPriority;
     }
+}
+
+export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket['open']) {
+    const [first, ...rest] =
+        await sql`SELECT * FROM set_status_for_ticket(${tid}, ${open}) AS open WHERE open IS NOT NULL`.execute();
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined'
+        ? null
+        : TicketSchema.pick({ open: true }).parse(first).open;
 }
 
 export const enum CreateReplyResult {
