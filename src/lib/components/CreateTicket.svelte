@@ -10,7 +10,7 @@
     let ticketLabel = '';
     let ticketDescription = '';
     // eslint-disable-next-line init-declarations
-    let result: string | null | undefined;
+    let result: Awaited<ReturnType<typeof create>> | null;
 
     async function createTicket(title: string, content: string, label: number[]) {
         result = await create(title, content, label);
