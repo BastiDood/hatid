@@ -182,3 +182,34 @@ export async function assignLabel(ticket: TicketLabel['ticket_id'], lid: TicketL
             throw new UnexpectedStatusCode(status);
     }
 }
+
+/**
+ * Changes the status of a {@linkcode Ticket}. Returns the previous value of `open`
+ * or `null` if the ticket does not exist.
+ */
+export async function setStatus(tid: Ticket['ticket_id'], open: Ticket['open']) {
+    const { status } = await fetch('/api/agent/head', {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        body: new URLSearchParams({
+            tid,
+            open: Number(open).toString(10),
+        }),
+    });
+    switch (status) {
+        case StatusCodes.NO_CONTENT:
+            return true;
+        case StatusCodes.RESET_CONTENT:
+            return false;
+        case StatusCodes.NOT_FOUND:
+            return null;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        case StatusCodes.FORBIDDEN:
+            throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(status);
+    }
+}
