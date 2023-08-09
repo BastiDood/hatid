@@ -486,7 +486,7 @@ export async function isAssignedAgent(tid: Ticket['ticket_id'], uid: Agent['user
     return NullableBooleanResult.parse(first).result;
 }
 
-export async function canEditTicketTitle(tid: Ticket['ticket_id'], uid: User['user_id']) {
+export async function canEditTicket(tid: Ticket['ticket_id'], uid: User['user_id']) {
     const [first, ...rest] =
         await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT * FROM get_assigned_agents(${tid})) AS result`.execute();
     strictEqual(rest.length, 0);

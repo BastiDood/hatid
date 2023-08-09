@@ -1,4 +1,4 @@
-import { canEditTicketTitle, editTicketTitle, getUserFromSession } from '$lib/server/database';
+import { canEditTicket, editTicketTitle, getUserFromSession } from '$lib/server/database';
 import type { RequestHandler } from '../$types';
 import { StatusCodes } from 'http-status-codes';
 import { error } from '@sveltejs/kit';
@@ -18,7 +18,7 @@ export const PATCH: RequestHandler = async ({ cookies, request }) => {
 
     const user = await getUserFromSession(sid);
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
-    if (!(await canEditTicketTitle(tid, user.user_id))) throw error(StatusCodes.FORBIDDEN);
+    if (!(await canEditTicket(tid, user.user_id))) throw error(StatusCodes.FORBIDDEN);
 
     const success = await editTicketTitle(tid, title);
     const status = success ? StatusCodes.NO_CONTENT : StatusCodes.NOT_FOUND;
