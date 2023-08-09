@@ -18,6 +18,8 @@
         "db:init": "initdb -D data -U postgres",
         "db:start": "postgres -D data",
         "db:template": "psql -U postgres -f db/init.sql -1 template1",
+        "db:schema": "psql -U postgres -f db/tables.sql -1 template1",
+        "db:func": "psql -U postgres -f db/funcs.sql -1 template1",
         "db:create": "createdb -U postgres",
         "db:drop": "dropdb -U postgres",
         "db:shell": "psql -U postgres"
