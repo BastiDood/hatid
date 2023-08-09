@@ -187,12 +187,12 @@ export async function assignLabel(ticket: TicketLabel['ticket_id'], lid: TicketL
  * Changes the status of a {@linkcode Ticket}. Returns the previous value of `open`
  * or `null` if the ticket does not exist.
  */
-export async function setStatus(tid: Ticket['ticket_id'], open: Ticket['open']) {
-    const { status } = await fetch('/api/agent/head', {
+export async function setStatus(id: Ticket['ticket_id'], open: Ticket['open']) {
+    const { status } = await fetch('/api/ticket/status', {
         method: 'PATCH',
         credentials: 'same-origin',
         body: new URLSearchParams({
-            tid,
+            id,
             open: Number(open).toString(10),
         }),
     });
