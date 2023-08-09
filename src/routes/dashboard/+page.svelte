@@ -3,8 +3,6 @@
     import CreateLabel from '$lib/components/CreateLabel.svelte';
     import CreatePriority from '$lib/components/CreatePriority.svelte';
     import CreateTicket from '$lib/components/CreateTicket.svelte';
-    // import CustomButton from '$lib/components/CustomButton.svelte';
-    // import CustomInput from '$lib/components/CustomInput.svelte';
     import Departments from '$lib/components/Departments.svelte';
     import Labels from '$lib/components/Labels.svelte';
     import Priorities from '$lib/components/Priorities.svelte';
