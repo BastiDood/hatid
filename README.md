@@ -25,7 +25,11 @@ pnpm db:start
 ```bash
 # Initialize the template/blueprint database. This allows us to
 # create and tear down multiple instantiations of the template.
-pnpm db:template
+pnpm db:schema
+
+# Also create the functions for the database. This can be rerun
+# as many times as needed without reinitializing the `data` folder.
+pnpm db:func
 
 # Instantiate a single instance of the template named `hatid`.
 # Of course, we may change this into any name we want.
