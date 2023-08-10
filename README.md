@@ -27,8 +27,10 @@ pnpm db:start
 # create and tear down multiple instantiations of the template.
 pnpm db:schema
 
-# Also create the functions for the database. This can be rerun
-# as many times as needed without reinitializing the `data` folder.
+# Also create the functions for the template database. This can be
+# rerun # as many times as needed without reinitializing the `data`
+# folder. Note that existing databases must be reinstantiated (i.e.,
+# drop then create again).
 pnpm db:func
 
 # Instantiate a single instance of the template named `hatid`.
