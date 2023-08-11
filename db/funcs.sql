@@ -235,7 +235,7 @@ REPLACE FUNCTION get_ticket_author (
 TYPE AS $$
     WITH _ AS (SELECT author_id, MIN(creation) FROM messages WHERE ticket_id = tid GROUP BY author_id)
         SELECT author_id FROM _;
-$$ LANGUAGE SQL;
+$$ STABLE LANGUAGE SQL;
 
 CREATE OR
 REPLACE FUNCTION get_assigned_agents (
@@ -244,7 +244,48 @@ REPLACE FUNCTION get_assigned_agents (
 ) RETURNS SETOF assignments.user_id %
 TYPE AS $$
     SELECT user_id FROM assignments WHERE ticket_id = tid;
-$$ LANGUAGE SQL;
+$$ STABLE LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION get_assigned_departments (
+    tid tickets.ticket_id %
+    TYPE
+) RETURNS TABLE (
+    dept_id depts.dept_id %
+    TYPE
+) AS $$
+    SELECT dept_id FROM dept_labels
+        WHERE label_id IN (SELECT label_id FROM ticket_labels WHERE ticket_id = tid)
+$$ STABLE LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION get_dept_agents (
+    did dept_agents.dept_id %
+    TYPE
+) RETURNS SETOF dept_agents.user_id %
+TYPE AS $$
+    SELECT user_id FROM dept_agents WHERE dept_id = did;
+$$ STABLE LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION get_eligible_agents (
+    tid tickets.ticket_id %
+    TYPE
+) RETURNS SETOF dept_agents.user_id %
+TYPE AS $$
+    SELECT DISTINCT get_dept_agents(dept_id) AS user_id FROM get_assigned_departments(tid);
+$$ STABLE LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION can_assign_self_to_ticket (
+    tid tickets.ticket_id %
+    TYPE,
+    uid dept_agents.user_id %
+    TYPE
+) RETURNS BOOLEAN AS $$
+    WITH _ AS (SELECT get_eligible_agents(tid))
+        SELECT uid IN (SELECT * FROM _) FROM _ WHERE _ IS NOT NULL;
+$$ STABLE LANGUAGE SQL;
 
 CREATE OR
 REPLACE FUNCTION get_agents_by_dept (
