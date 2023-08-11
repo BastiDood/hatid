@@ -632,11 +632,54 @@ export async function getUsersOutsideDept(did: Dept['dept_id']) {
     return UserSchema.array().parse(rows);
 }
 
-export async function canAssignSelfToTicket(tid: Ticket['ticket_id'], uid: Agent['user_id']) {
+export async function canAssignSelfToTicket(
+    tid: Ticket['ticket_id'],
+    did: Agent['dept_id'],
+    uid: Agent['user_id'],
+) {
     const [first, ...rest] =
-        await sql`SELECT can_assign_self_to_ticket(${tid}, ${uid}) AS result`.execute();
+        await sql`SELECT can_assign_self_to_ticket(${tid}, ${did}, ${uid}) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
+}
+
+export const enum AssignAgentToTicketResult {
+    /** {@linkcode Agent} successfully assigned to {@linkcode Ticket} */
+    Success,
+    /** {@linkcode Ticket} does not exist. */
+    NoTicket,
+    /** {@linkcode Agent} does not exist. */
+    NoAgent,
+}
+
+export async function assignAgentToTicket(
+    tid: Ticket['ticket_id'],
+    did: Agent['dept_id'],
+    uid: Agent['user_id'],
+) {
+    try {
+        const { count } =
+            await sql`SELECT assign_agent_to_ticket(${tid}, ${did}, ${uid})`;
+        strictEqual(count, 1);
+        return AssignAgentToTicketResult.Success;
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(code, '23503');
+        strictEqual(table_name, 'assignments');
+
+        switch (constraint_name) {
+            case 'assignments_ticket_id_fkey':
+                return AssignAgentToTicketResult.NoTicket;
+            case 'assignments_dept_id_user_id_fkey':
+                return AssignAgentToTicketResult.NoAgent;
+            default:
+                assert(constraint_name);
+                throw new UnexpectedConstraintName(constraint_name);
+        }
+    }
 }
 
 export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket['open']) {

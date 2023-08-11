@@ -270,20 +270,24 @@ $$ STABLE LANGUAGE SQL;
 CREATE OR
 REPLACE FUNCTION get_eligible_agents (
     tid tickets.ticket_id %
+    TYPE,
+    did dept_agents.dept_id %
     TYPE
 ) RETURNS SETOF dept_agents.user_id %
 TYPE AS $$
-    SELECT DISTINCT get_dept_agents(dept_id) AS user_id FROM get_assigned_departments(tid);
+    SELECT get_dept_agents(dept_id) AS user_id FROM get_assigned_departments(tid) WHERE dept_id = did;
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
 REPLACE FUNCTION can_assign_self_to_ticket (
     tid tickets.ticket_id %
     TYPE,
+    did dept_agents.dept_id %
+    TYPE,
     uid dept_agents.user_id %
     TYPE
 ) RETURNS BOOLEAN AS $$
-    WITH _ AS (SELECT get_eligible_agents(tid))
+    WITH _ AS (SELECT get_eligible_agents(tid, did))
         SELECT uid IN (SELECT * FROM _) FROM _ WHERE _ IS NOT NULL;
 $$ STABLE LANGUAGE SQL;
 
@@ -302,6 +306,18 @@ REPLACE FUNCTION get_users_outside_dept (
     TYPE
 ) RETURNS SETOF users AS $$
     SELECT * FROM users WHERE user_id NOT IN (SELECT * FROM get_agents_by_dept(did));
+$$ LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION assign_agent_to_ticket (
+    tid tickets.ticket_id %
+    TYPE,
+    did dept_agents.dept_id %
+    TYPE,
+    uid dept_agents.user_id %
+    TYPE
+) RETURNS VOID AS $$
+    INSERT INTO assignments (ticket_id, dept_id, user_id) VALUES (tid, did, uid);
 $$ LANGUAGE SQL;
 
 CREATE OR
