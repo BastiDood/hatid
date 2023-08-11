@@ -646,6 +646,8 @@ export async function canAssignSelfToTicket(
 export const enum AssignAgentToTicketResult {
     /** {@linkcode Agent} successfully assigned to {@linkcode Ticket} */
     Success,
+    /** {@linkcode Agent} has already been assigned before. */
+    Exists,
     /** {@linkcode Ticket} does not exist. */
     NoTicket,
     /** {@linkcode Agent} does not exist. */
@@ -666,17 +668,24 @@ export async function assignAgentToTicket(
         if (!isExpected) throw err;
 
         const { code, table_name, constraint_name } = err;
-        strictEqual(code, '23503');
         strictEqual(table_name, 'assignments');
 
-        switch (constraint_name) {
-            case 'assignments_ticket_id_fkey':
-                return AssignAgentToTicketResult.NoTicket;
-            case 'assignments_dept_id_user_id_fkey':
-                return AssignAgentToTicketResult.NoAgent;
+        switch (code) {
+            case '23503':
+                switch (constraint_name) {
+                    case 'assignments_ticket_id_fkey':
+                        return AssignAgentToTicketResult.NoTicket;
+                    case 'assignments_dept_id_user_id_fkey':
+                        return AssignAgentToTicketResult.NoAgent;
+                    default:
+                        assert(constraint_name);
+                        throw new UnexpectedConstraintName(constraint_name);
+                }
+            case '23505':
+                strictEqual(constraint_name, 'assignments_pkey');
+                return AssignAgentToTicketResult.Exists;
             default:
-                assert(constraint_name);
-                throw new UnexpectedConstraintName(constraint_name);
+                throw new UnexpectedErrorCode(code);
         }
     }
 }

@@ -338,6 +338,11 @@ it('should complete a full user journey', async () => {
     }
 
     {
+        const result = await db.assignAgentToTicket(tid, did, uid);
+        expect(result).toStrictEqual(db.AssignAgentToTicketResult.Exists);
+    }
+
+    {
         const result = await db.createReply(tid, nonExistentUser, 'No User');
         expect(result).toStrictEqual(db.CreateReplyResult.NoUser);
     }
