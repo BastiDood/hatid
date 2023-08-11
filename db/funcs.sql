@@ -247,6 +247,23 @@ TYPE AS $$
 $$ LANGUAGE SQL;
 
 CREATE OR
+REPLACE FUNCTION get_agents_by_dept (
+    did depts.dept_id %
+    TYPE
+) RETURNS dept_agents AS $$
+    SELECT *  FROM dept_agents WHERE dept_id = did;
+$$ LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION get_users_outside_dept (
+    did depts.dept_id %
+    TYPE
+) RETURNS users AS $$
+    SELECT * FROM users EXCEPT 
+    SELECT * FROM users WHERE user_id IN (SELECT user_id FROM get_agents_by_dept(did));
+$$ LANGUAGE SQL;
+
+CREATE OR
 REPLACE FUNCTION set_status_for_ticket (
     tid tickets.ticket_id %
     TYPE,

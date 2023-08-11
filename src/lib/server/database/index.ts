@@ -5,9 +5,10 @@ import {
     MessageSchema,
     type Ticket,
     type TicketLabel,
+    TicketLabelSchema,
     TicketSchema,
 } from '$lib/model/ticket';
-import { type Dept, type DeptLabel, DeptSchema } from '$lib/model/dept';
+import { type Dept, type DeptLabel, DeptLabelSchema, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
 import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
@@ -570,6 +571,68 @@ export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket
         strictEqual(constraint_name, 'tickets_priority_id_fkey');
         return AssignTicketPriorityResult.NoPriority;
     }
+}
+
+export async function getAgents() {
+    const rows = await sql`SELECT * FROM dept_agents`.execute();
+    return AgentSchema.array().parse(rows);
+}
+
+export async function getAgentByDept(did: Dept['dept_id']) {
+    const rows = await sql`SELECT * FROM get_agents_by_dept(${did})`.execute();
+    return AgentSchema.array().parse(rows);
+}
+
+export async function getDepartments() {
+    const rows = await sql`SELECT * FROM depts`.execute();
+    return DeptSchema.array().parse(rows);
+}
+
+export async function getDeptLabels() {
+    const rows = await sql`SELECT * FROM dept_labels`.execute();
+    return DeptLabelSchema.array().parse(rows);
+}
+
+export async function getLabels() {
+    const rows = await sql`SELECT label_id, title, color, 
+        CASE WHEN deadline IS NOT NULL THEN CAST(EXTRACT(days FROM deadline) AS INT)
+        END deadline FROM labels`.execute();
+    return LabelSchema.array().parse(rows);
+}
+
+export async function getMessages() {
+    const rows = await sql`SELECT * FROM messages`.execute();
+    return MessageSchema.array().parse(rows);
+}
+
+export async function getPendings() {
+    const rows = await sql`SELECT * FROM pendings`.execute();
+    return PendingSchema.array().parse(rows);
+}
+
+export async function getPriorities() {
+    const rows = await sql`SELECT * FROM priorities`.execute();
+    return PrioritySchema.array().parse(rows);
+}
+
+export async function getTickets() {
+    const rows = await sql`SELECT * FROM tickets`.execute();
+    return TicketSchema.array().parse(rows);
+}
+
+export async function getTicketLabels() {
+    const rows = await sql`SELECT * FROM ticket_labels`.execute();
+    return TicketLabelSchema.array().parse(rows);
+}
+
+export async function getUsers() {
+    const rows = await sql`SELECT * FROM users`.execute();
+    return UserSchema.array().parse(rows);
+}
+
+export async function getUsersOutsideDept(did: Dept['dept_id']) {
+    const rows = await sql`SELECT * FROM get_users_outside_dept(${did})`.execute();
+    return UserSchema.array().parse(rows);
 }
 
 export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket['open']) {

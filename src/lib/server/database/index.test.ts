@@ -77,6 +77,11 @@ it('should complete a full user journey', async () => {
     expect(await db.isHeadSession(session_id, did)).toStrictEqual(false);
 
     {
+        const { length } = await db.getAgents();
+        expect(length).toBeGreaterThan(0);
+    }
+
+    {
         // Invalid user with no labels
         const result = await db.createTicket('Invalid User', nonExistentUser, 'oof', []);
         expect(result).toStrictEqual(db.CreateTicketResult.NoAuthor);
@@ -274,6 +279,40 @@ it('should complete a full user journey', async () => {
     }
 
     expect(await db.setStatusForTicket(tid, true)).toStrictEqual(false);
+
+    // Testing most getters (except labels)
+
+    {
+        const { length } = await db.getAgents();
+        expect(length).toBeGreaterThan(0);
+    }
+
+    {
+        const { length } = await db.getUsers();
+        expect(length).toBeGreaterThan(0);
+    }
+
+    {
+        const { length } = await db.getAgentByDept(1);
+        expect(length).toBeGreaterThan(0);
+    }
+
+    {
+        await db.begin(async sql => {
+            const uid = randomUUID();
+            const bytes = getRandomValues(new Uint8Array(21));
+            const email = Buffer.from(bytes).toString('base64');
+            await sql.upsertUser({
+                user_id: uid,
+                name: 'Test1',
+                email: `${email}@example.com`,
+                picture: 'http://example.com/avatar.png',
+            });
+            return uid;
+        });
+        const { length } = await db.getUsersOutsideDept(1);
+        expect(length).toBeGreaterThan(0);
+    }
 });
 
 it('should reject promoting non-existent users', async () => {
@@ -288,6 +327,10 @@ it('should create and update labels', async () => {
 
     const other = await db.createLabel('Hello World', 0xc0debabe, 10);
     expect(other).not.toStrictEqual(0);
+
+    // Testing get labels
+    const { length } = await db.getLabels();
+    expect(length).toBeGreaterThan(0);
 
     expect(await db.editLabelTitle(lid, 'World Hello')).toStrictEqual(true);
     expect(await db.editLabelColor(lid, 0xdeadbeef)).toStrictEqual(true);
@@ -336,6 +379,12 @@ it('should create departments and update their names', async () => {
     const did = await db.createDept('HATiD Support');
     expect(did).not.toStrictEqual(0);
     expect(await db.editDeptName(did, 'PUSO/BULSA Support')).toStrictEqual(true);
+    // Testing getDepartments
+    {
+        // TODO: Refine testing to check for element inclusion
+        const { length } = await db.getDepartments();
+        expect(length).toBeGreaterThan(0);
+    }
 });
 
 describe.concurrent('invalid sessions', () => {
