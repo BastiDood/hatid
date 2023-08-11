@@ -632,6 +632,13 @@ export async function getUsersOutsideDept(did: Dept['dept_id']) {
     return UserSchema.array().parse(rows);
 }
 
+export async function canAssignSelfToTicket(tid: Ticket['ticket_id'], uid: Agent['user_id']) {
+    const [first, ...rest] =
+        await sql`SELECT can_assign_self_to_ticket(${tid}, ${uid}) AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
+}
+
 export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket['open']) {
     const [first, ...rest] =
         await sql`SELECT * FROM set_status_for_ticket(${tid}, ${open}) AS open WHERE open IS NOT NULL`.execute();
