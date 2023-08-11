@@ -658,8 +658,7 @@ export async function assignAgentToTicket(
     uid: Agent['user_id'],
 ) {
     try {
-        const { count } =
-            await sql`SELECT assign_agent_to_ticket(${tid}, ${did}, ${uid})`;
+        const { count } = await sql`SELECT assign_agent_to_ticket(${tid}, ${did}, ${uid})`;
         strictEqual(count, 1);
         return AssignAgentToTicketResult.Success;
     } catch (err) {
