@@ -25,7 +25,7 @@ it('should complete a full user journey', async () => {
         expect(stillPending).toBeNull();
     }
 
-    const uid = await db.begin(async sql => {
+    const { uid, email } = await db.begin(async sql => {
         const uid = randomUUID();
         const bytes = getRandomValues(new Uint8Array(21));
         const email = Buffer.from(bytes).toString('base64');
@@ -36,8 +36,19 @@ it('should complete a full user journey', async () => {
             picture: 'http://example.com/avatar.png',
         });
         await sql.upgradePending(session_id, uid, new Date(Date.now() + 10000));
-        return uid;
+        return { uid, email };
     });
+
+    {
+        const users = await db.getUsers();
+        expect(users).toContainEqual({
+            user_id: uid,
+            name: 'Test',
+            email: `${email}@example.com`,
+            picture: 'http://example.com/avatar.png',
+            admin: false,
+        });
+    }
 
     {
         const valid = await db.getUserFromSession(session_id);
@@ -51,6 +62,13 @@ it('should complete a full user journey', async () => {
     expect(await db.isAdminSession(session_id)).toStrictEqual(false);
 
     const did = await db.createDept('Full User Journey');
+    expect(did).not.toStrictEqual(0);
+
+    {
+        const depts = await db.getDepartments();
+        expect(depts).toContainEqual({ dept_id: did, name: 'Full User Journey' });
+    }
+
     const nonExistentUser = randomUUID();
     expect(await db.isHeadSession(nonExistentUser, 0)).toBeNull();
     expect(await db.isHeadSession(nonExistentUser, did)).toBeNull();
@@ -62,6 +80,11 @@ it('should complete a full user journey', async () => {
     expect(await db.addDeptAgent(0, uid)).toStrictEqual(db.AddDeptAgentResult.NoDept);
     expect(await db.addDeptAgent(did, uid)).toStrictEqual(db.AddDeptAgentResult.Success);
     expect(await db.addDeptAgent(did, uid)).toStrictEqual(db.AddDeptAgentResult.AlreadyExists);
+
+    {
+        const agents = await db.getAgentIdsByDept(did);
+        expect(agents).toContainEqual(uid);
+    }
 
     expect(await db.removeDeptAgent(0, nonExistentUser)).toBeNull();
     expect(await db.removeDeptAgent(did, nonExistentUser)).toBeNull();
@@ -91,6 +114,16 @@ it('should complete a full user journey', async () => {
     const nonExistentTicket = randomUUID();
     const coolLabel = await db.createLabel('Cool', 0xc0debeef);
     expect(coolLabel).not.toStrictEqual(0);
+
+    {
+        const labels = await db.getLabels();
+        expect(labels).toContainEqual({
+            label_id: coolLabel,
+            title: 'Cool',
+            color: 0xc0debeef,
+            deadline: null,
+        });
+    }
 
     {
         // Valid user with no labels
@@ -274,6 +307,29 @@ it('should complete a full user journey', async () => {
     }
 
     expect(await db.setStatusForTicket(tid, true)).toStrictEqual(false);
+
+    {
+        const { uid, email } = await db.begin(async sql => {
+            const uid = randomUUID();
+            const bytes = getRandomValues(new Uint8Array(21));
+            const email = Buffer.from(bytes).toString('base64');
+            await sql.upsertUser({
+                user_id: uid,
+                name: 'Test1',
+                email: `${email}@example.com`,
+                picture: 'http://example.com/avatar.png',
+            });
+            return { uid, email };
+        });
+        const users = await db.getUsersOutsideDept(did);
+        expect(users).toContainEqual({
+            user_id: uid,
+            name: 'Test1',
+            email: `${email}@example.com`,
+            picture: 'http://example.com/avatar.png',
+            admin: false,
+        });
+    }
 });
 
 it('should reject promoting non-existent users', async () => {
@@ -354,10 +410,13 @@ describe.concurrent('invalid sessions', () => {
     });
 });
 
-describe('invalid departments', () => {
-    // NOTE: As above, 0 is not a valid value in Postgres
-    it('should not edit the department name', async () => {
+describe.concurrent('invalid departments', () => {
+    it('should not edit the department name', async ({ expect }) => {
         const result = await db.editDeptName(0, 'Non-existent Support');
         expect(result).toStrictEqual(false);
+    });
+    it('should return zero rows for getter', async ({ expect }) => {
+        const empty = await db.getAgentIdsByDept(0);
+        expect(empty).toHaveLength(0);
     });
 });
