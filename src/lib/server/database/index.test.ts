@@ -293,7 +293,7 @@ it('should complete a full user journey', async () => {
     }
 
     {
-        const { length } = await db.getAgentByDept(1);
+        const { length } = await db.getAgentIdsByDept(1);
         expect(length).toBeGreaterThan(0);
     }
 

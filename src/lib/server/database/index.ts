@@ -573,14 +573,12 @@ export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket
     }
 }
 
-export async function getAgents() {
-    const rows = await sql`SELECT * FROM dept_agents`.execute();
-    return AgentSchema.array().parse(rows);
-}
-
-export async function getAgentByDept(did: Dept['dept_id']) {
-    const rows = await sql`SELECT * FROM get_agents_by_dept(${did})`.execute();
-    return AgentSchema.array().parse(rows);
+export async function getAgentIdsByDept(did: Dept['dept_id']) {
+    const rows = await sql`SELECT get_agents_by_dept(${did}) AS user_id`.execute();
+    return AgentSchema.pick({ user_id: true })
+        .array()
+        .parse(rows)
+        .map(agent => agent.user_id);
 }
 
 export async function getDepartments() {
@@ -594,9 +592,8 @@ export async function getDeptLabels() {
 }
 
 export async function getLabels() {
-    const rows = await sql`SELECT label_id, title, color, 
-        CASE WHEN deadline IS NOT NULL THEN CAST(EXTRACT(days FROM deadline) AS INT)
-        END deadline FROM labels`.execute();
+    const rows =
+        await sql`SELECT label_id, title, color, EXTRACT(days FROM deadline)::INT AS deadline FROM labels`.execute();
     return LabelSchema.array().parse(rows);
 }
 
