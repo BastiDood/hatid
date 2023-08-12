@@ -240,3 +240,29 @@ export async function assignSelf(ticket: Ticket['ticket_id'], dept: Agent['dept_
             throw new UnexpectedStatusCode(status);
     }
 }
+
+/**
+ * Assigns another {@linkcode Agent} to the {@linkcode Ticket}. If the ticket or the user cannot be found,
+ * this function returns `false`. Otherwise, it returns `true` on successful assignments.
+ */
+export async function assignOthers(ticket: Ticket['ticket_id'], dept: Agent['dept_id'], uid: Agent['user_id']) {
+    const { status } = await fetch('/api/ticket/assign', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: new URLSearchParams({ ticket, dept: dept.toString(10), uid }),
+    });
+    switch (status) {
+        case StatusCodes.CREATED:
+            return true;
+        case StatusCodes.NOT_FOUND:
+            return false;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        case StatusCodes.FORBIDDEN:
+            throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(status);
+    }
+}
