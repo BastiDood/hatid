@@ -5,7 +5,7 @@ import {
     getUserFromSession,
     isAssignedAgent,
     isAssignedDepartment,
-    isHeadSession
+    isHeadSession,
 } from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
@@ -54,7 +54,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     const user = await getUserFromSession(sid);
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
     const assigned = await isAssignedAgent(tid, user.user_id);
-    
+
     const canAssign = head || assigned;
     switch (canAssign && !(user.user_id === uid)) {
         case false:
