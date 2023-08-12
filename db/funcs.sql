@@ -320,6 +320,18 @@ REPLACE FUNCTION assign_agent_to_ticket (
     INSERT INTO assignments (ticket_id, dept_id, user_id) VALUES (tid, did, uid);
 $$ LANGUAGE SQL;
 
+CREATE OR 
+REPLACE FUNCTION remove_agent_from_ticket (
+    tid assignments.ticket_id %
+    TYPE,
+    did assignments.dept_id %
+    TYPE,
+    uid assignments.user_id %
+    TYPE
+) RETURNS VOID AS $$
+    DELETE FROM assignments WHERE ticket_id = tid AND dept_id = did AND user_id = uid;
+$$ LANGUAGE SQL;
+
 CREATE OR
 REPLACE FUNCTION set_status_for_ticket (
     tid tickets.ticket_id %

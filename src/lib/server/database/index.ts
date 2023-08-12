@@ -697,6 +697,22 @@ export async function assignAgentToTicket(
     }
 }
 
+export async function removeTicketAgent(
+    tid: Ticket['ticket_id'],
+    did: Agent['dept_id'],
+    uid: Agent['user_id'],
+) {
+    const { count } = await sql`SELECT remove_agent_from_ticket(${tid}, ${did}, ${uid})`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount(count);
+    }
+}
+
 export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket['open']) {
     const [first, ...rest] =
         await sql`SELECT * FROM set_status_for_ticket(${tid}, ${open}) AS open WHERE open IS NOT NULL`.execute();
