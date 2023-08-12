@@ -6,6 +6,7 @@ import {
     isAssignedAgent,
     isAssignedDepartment,
     isHeadSession,
+    removeTicketAgent
 } from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
@@ -78,5 +79,52 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     }
 
     const status = resultToCode(await assignAgentToTicket(tid, did, uid));
+    return new Response(null, { status });
+};
+
+
+// eslint-disable-next-line func-style
+export const DELETE: RequestHandler = async ({ cookies, request }) => {
+    const form = await request.formData();
+
+    const tid = form.get('tid');
+    if (tid === null || tid instanceof File) throw error(StatusCodes.BAD_REQUEST);
+    
+    const dept = form.get('dept');
+    if (dept === null || dept instanceof File) throw error(StatusCodes.BAD_REQUEST);
+    const did = parseInt(dept, 10);
+
+    const uid = form.get('uid');
+    if (uid === null || uid instanceof File) throw error(StatusCodes.BAD_REQUEST);
+
+    const sid = cookies.get('sid');
+    if (!sid) throw error(StatusCodes.UNAUTHORIZED);
+
+    // Permissions check
+    // Department assignment check
+    // TODO: Null check for isAssignedAgent and isAssignedDepartment
+    const deptStatus = await isAssignedDepartment(tid, did);
+    if (!deptStatus) throw error(StatusCodes.FORBIDDEN);
+
+    // Department head, assigned agent and self-assignment check
+    const head = await isHeadSession(sid, did);
+    if (head === null) throw error(StatusCodes.UNAUTHORIZED);
+
+    const user = await getUserFromSession(sid);
+    if (user === null) throw error(StatusCodes.UNAUTHORIZED);
+    const assigned = await isAssignedAgent(tid, user.user_id);
+
+    const canAssign = head || assigned;
+    switch (canAssign) {
+        case false:
+            throw error(StatusCodes.FORBIDDEN);
+        case true:
+            break;
+        default:
+            throw new AssertionError();
+    }
+
+    const value = await removeTicketAgent(tid, did, uid);
+    const status = value ? StatusCodes.RESET_CONTENT : StatusCodes.NO_CONTENT;
     return new Response(null, { status });
 };

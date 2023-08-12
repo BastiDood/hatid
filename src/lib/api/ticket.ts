@@ -270,3 +270,33 @@ export async function assignOthers(
             throw new UnexpectedStatusCode(status);
     }
 }
+
+/**
+ * Removes an {@linkcode Agent} from the {@linkcode Ticket}. Returns `true` if successful
+ * and `false` otherwise.
+ */
+export async function remove(tid: Ticket['ticket_id'], dept: Agent['dept_id'], uid: Agent['user_id']) {
+    const { status } = await fetch('/api/ticket/assign', {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        body: new URLSearchParams({
+            tid,
+            dept: dept.toString(10),
+            uid,
+        }),
+    });
+    switch (status) {
+        case StatusCodes.NO_CONTENT:
+            return false;
+        case StatusCodes.RESET_CONTENT:
+            return true;
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        case StatusCodes.FORBIDDEN:
+            throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(status);
+    }
+}
