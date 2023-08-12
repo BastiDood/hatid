@@ -358,7 +358,6 @@ it('should complete a full user journey', async () => {
         expect(result).toStrictEqual(db.AssignAgentToTicketResult.Success);
     }
 
-
     const replyId = await db.createReply(tid, uid, 'Valid Reply');
     assert(typeof replyId === 'number');
     expect(replyId).not.toStrictEqual(0);

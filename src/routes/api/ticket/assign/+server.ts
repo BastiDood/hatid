@@ -6,7 +6,7 @@ import {
     isAssignedAgent,
     isAssignedDepartment,
     isHeadSession,
-    removeTicketAgent
+    removeTicketAgent,
 } from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
@@ -82,14 +82,13 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     return new Response(null, { status });
 };
 
-
 // eslint-disable-next-line func-style
 export const DELETE: RequestHandler = async ({ cookies, request }) => {
     const form = await request.formData();
 
     const tid = form.get('tid');
     if (tid === null || tid instanceof File) throw error(StatusCodes.BAD_REQUEST);
-    
+
     const dept = form.get('dept');
     if (dept === null || dept instanceof File) throw error(StatusCodes.BAD_REQUEST);
     const did = parseInt(dept, 10);

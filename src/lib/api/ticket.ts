@@ -275,7 +275,11 @@ export async function assignOthers(
  * Removes an {@linkcode Agent} from the {@linkcode Ticket}. Returns `true` if successful
  * and `false` otherwise.
  */
-export async function remove(tid: Ticket['ticket_id'], dept: Agent['dept_id'], uid: Agent['user_id']) {
+export async function remove(
+    tid: Ticket['ticket_id'],
+    dept: Agent['dept_id'],
+    uid: Agent['user_id'],
+) {
     const { status } = await fetch('/api/ticket/assign', {
         method: 'DELETE',
         credentials: 'same-origin',
