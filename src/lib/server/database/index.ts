@@ -632,6 +632,64 @@ export async function getUsersOutsideDept(did: Dept['dept_id']) {
     return UserSchema.array().parse(rows);
 }
 
+export async function canAssignSelfToTicket(
+    tid: Ticket['ticket_id'],
+    did: Agent['dept_id'],
+    uid: Agent['user_id'],
+) {
+    const [first, ...rest] =
+        await sql`SELECT can_assign_self_to_ticket(${tid}, ${did}, ${uid}) AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
+}
+
+export const enum AssignAgentToTicketResult {
+    /** {@linkcode Agent} successfully assigned to {@linkcode Ticket} */
+    Success,
+    /** {@linkcode Agent} has already been assigned before. */
+    Exists,
+    /** {@linkcode Ticket} does not exist. */
+    NoTicket,
+    /** {@linkcode Agent} does not exist. */
+    NoAgent,
+}
+
+export async function assignAgentToTicket(
+    tid: Ticket['ticket_id'],
+    did: Agent['dept_id'],
+    uid: Agent['user_id'],
+) {
+    try {
+        const { count } = await sql`SELECT assign_agent_to_ticket(${tid}, ${did}, ${uid})`;
+        strictEqual(count, 1);
+        return AssignAgentToTicketResult.Success;
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(table_name, 'assignments');
+
+        switch (code) {
+            case '23503':
+                switch (constraint_name) {
+                    case 'assignments_ticket_id_fkey':
+                        return AssignAgentToTicketResult.NoTicket;
+                    case 'assignments_dept_id_user_id_fkey':
+                        return AssignAgentToTicketResult.NoAgent;
+                    default:
+                        assert(constraint_name);
+                        throw new UnexpectedConstraintName(constraint_name);
+                }
+            case '23505':
+                strictEqual(constraint_name, 'assignments_pkey');
+                return AssignAgentToTicketResult.Exists;
+            default:
+                throw new UnexpectedErrorCode(code);
+        }
+    }
+}
+
 export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket['open']) {
     const [first, ...rest] =
         await sql`SELECT * FROM set_status_for_ticket(${tid}, ${open}) AS open WHERE open IS NOT NULL`.execute();
