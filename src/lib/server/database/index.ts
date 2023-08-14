@@ -482,7 +482,14 @@ export async function isTicketAuthor(tid: Ticket['ticket_id'], uid: Message['aut
 
 export async function isAssignedAgent(tid: Ticket['ticket_id'], uid: Agent['user_id']) {
     const [first, ...rest] =
-        await sql`SELECT ${uid} IN get_assigned_agents(${tid}) AS result`.execute();
+        await sql`SELECT is_assigned_agent(${tid}, ${uid}) AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
+}
+
+export async function isAssignedDepartment(tid: Ticket['ticket_id'], did: Dept['dept_id']) {
+    const [first, ...rest] =
+        await sql`SELECT ${did} IN (SELECT * FROM get_assigned_departments(${tid})) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }
@@ -632,13 +639,24 @@ export async function getUsersOutsideDept(did: Dept['dept_id']) {
     return UserSchema.array().parse(rows);
 }
 
-export async function canAssignSelfToTicket(
+export async function isAssignableAgent(
     tid: Ticket['ticket_id'],
     did: Agent['dept_id'],
     uid: Agent['user_id'],
 ) {
     const [first, ...rest] =
-        await sql`SELECT can_assign_self_to_ticket(${tid}, ${did}, ${uid}) AS result`.execute();
+        await sql`SELECT is_assignable_agent(${tid}, ${did}, ${uid}) AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
+}
+
+export async function canAssignOthersToTicket(
+    tid: Ticket['ticket_id'],
+    did: Agent['dept_id'],
+    uid: Agent['user_id'],
+) {
+    const [first, ...rest] =
+        await sql`SELECT can_assign_others_to_ticket(${tid}, ${did}, ${uid}) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }
@@ -687,6 +705,23 @@ export async function assignAgentToTicket(
             default:
                 throw new UnexpectedErrorCode(code);
         }
+    }
+}
+
+export async function removeTicketAgent(
+    tid: Ticket['ticket_id'],
+    did: Agent['dept_id'],
+    uid: Agent['user_id'],
+) {
+    const { count } =
+        await sql`DELETE FROM assignments WHERE ticket_id = ${tid} AND dept_id = ${did} AND user_id = ${uid};`.execute();
+    switch (count) {
+        case 0:
+            return false;
+        case 1:
+            return true;
+        default:
+            throw new UnexpectedRowCount(count);
     }
 }
 

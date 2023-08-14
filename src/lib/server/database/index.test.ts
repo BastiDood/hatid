@@ -76,10 +76,10 @@ it('should complete a full user journey', async () => {
     expect(await db.isHeadSession(session_id, did)).toBeNull();
 
     const nonExistentTicket = randomUUID();
-    expect(await db.canAssignSelfToTicket(nonExistentTicket, 0, nonExistentUser)).toBeNull();
-    expect(await db.canAssignSelfToTicket(nonExistentTicket, 0, uid)).toBeNull();
-    expect(await db.canAssignSelfToTicket(nonExistentTicket, did, nonExistentUser)).toBeNull();
-    expect(await db.canAssignSelfToTicket(nonExistentTicket, did, uid)).toBeNull();
+    expect(await db.isAssignableAgent(nonExistentTicket, 0, nonExistentUser)).toBeNull();
+    expect(await db.isAssignableAgent(nonExistentTicket, 0, uid)).toBeNull();
+    expect(await db.isAssignableAgent(nonExistentTicket, did, nonExistentUser)).toBeNull();
+    expect(await db.isAssignableAgent(nonExistentTicket, did, uid)).toBeNull();
 
     expect(await db.addDeptAgent(0, nonExistentUser)).toStrictEqual(db.AddDeptAgentResult.NoDept);
     expect(await db.addDeptAgent(did, nonExistentUser)).toStrictEqual(db.AddDeptAgentResult.NoUser);
@@ -288,14 +288,14 @@ it('should complete a full user journey', async () => {
     expect(await db.isTicketAuthor(tid, nonExistentUser)).toStrictEqual(false);
     expect(await db.isTicketAuthor(tid, uid)).toStrictEqual(true);
 
-    expect(await db.canAssignSelfToTicket(nonExistentTicket, 0, nonExistentUser)).toBeNull();
-    expect(await db.canAssignSelfToTicket(nonExistentTicket, 0, uid)).toBeNull();
-    expect(await db.canAssignSelfToTicket(nonExistentTicket, did, nonExistentUser)).toBeNull();
-    expect(await db.canAssignSelfToTicket(nonExistentTicket, did, uid)).toBeNull();
-    expect(await db.canAssignSelfToTicket(tid, 0, nonExistentUser)).toBeNull();
-    expect(await db.canAssignSelfToTicket(tid, 0, uid)).toBeNull();
-    expect(await db.canAssignSelfToTicket(tid, did, nonExistentUser)).toStrictEqual(false);
-    expect(await db.canAssignSelfToTicket(tid, did, uid)).toStrictEqual(true);
+    expect(await db.isAssignableAgent(nonExistentTicket, 0, nonExistentUser)).toBeNull();
+    expect(await db.isAssignableAgent(nonExistentTicket, 0, uid)).toBeNull();
+    expect(await db.isAssignableAgent(nonExistentTicket, did, nonExistentUser)).toBeNull();
+    expect(await db.isAssignableAgent(nonExistentTicket, did, uid)).toBeNull();
+    expect(await db.isAssignableAgent(tid, 0, nonExistentUser)).toBeNull();
+    expect(await db.isAssignableAgent(tid, 0, uid)).toBeNull();
+    expect(await db.isAssignableAgent(tid, did, nonExistentUser)).toStrictEqual(false);
+    expect(await db.isAssignableAgent(tid, did, uid)).toStrictEqual(true);
 
     {
         const result = await db.assignAgentToTicket(nonExistentTicket, 0, nonExistentUser);
@@ -352,6 +352,25 @@ it('should complete a full user journey', async () => {
         expect(result).toStrictEqual(db.CreateReplyResult.NoTicket);
     }
 
+    {
+        expect(await db.removeTicketAgent(tid, did, uid)).toStrictEqual(true);
+        const result = await db.assignAgentToTicket(tid, did, uid);
+        expect(result).toStrictEqual(db.AssignAgentToTicketResult.Success);
+    }
+
+    expect(await db.removeTicketAgent(nonExistentTicket, 0, nonExistentUser)).toStrictEqual(false);
+    expect(await db.removeTicketAgent(nonExistentTicket, 0, uid)).toStrictEqual(false);
+
+    {
+        const result = await db.removeTicketAgent(nonExistentTicket, did, nonExistentUser);
+        expect(result).toStrictEqual(false);
+    }
+
+    expect(await db.removeTicketAgent(nonExistentTicket, did, uid)).toStrictEqual(false);
+    expect(await db.removeTicketAgent(tid, 0, nonExistentUser)).toStrictEqual(false);
+    expect(await db.removeTicketAgent(tid, 0, uid)).toStrictEqual(false);
+    expect(await db.removeTicketAgent(tid, did, nonExistentUser)).toStrictEqual(false);
+
     const replyId = await db.createReply(tid, uid, 'Valid Reply');
     assert(typeof replyId === 'number');
     expect(replyId).not.toStrictEqual(0);
@@ -365,6 +384,54 @@ it('should complete a full user journey', async () => {
     }
 
     expect(await db.setStatusForTicket(tid, true)).toStrictEqual(false);
+
+    // Assigned to ticket + not department head
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, 0, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, 0, uid)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, did, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, did, uid)).toStrictEqual(false);
+    expect(await db.canAssignOthersToTicket(tid, 0, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, 0, uid)).toStrictEqual(true);
+    expect(await db.canAssignOthersToTicket(tid, did, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, did, uid)).toStrictEqual(true);
+
+    expect(await db.setHeadForAgent(did, uid, true)).toStrictEqual(false);
+    expect(await db.isHeadSession(session_id, did)).toStrictEqual(true);
+
+    // Assigned to ticket + department head
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, 0, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, 0, uid)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, did, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, did, uid)).toStrictEqual(true);
+    expect(await db.canAssignOthersToTicket(tid, 0, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, 0, uid)).toStrictEqual(true);
+    expect(await db.canAssignOthersToTicket(tid, did, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, did, uid)).toStrictEqual(true);
+
+    expect(await db.removeTicketAgent(tid, did, uid)).toStrictEqual(true);
+
+    // Not assigned to ticket + department head
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, 0, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, 0, uid)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, did, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, did, uid)).toStrictEqual(true);
+    expect(await db.canAssignOthersToTicket(tid, 0, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, 0, uid)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, did, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, did, uid)).toStrictEqual(true);
+
+    expect(await db.setHeadForAgent(did, uid, false)).toStrictEqual(true);
+    expect(await db.isHeadSession(session_id, did)).toStrictEqual(false);
+
+    // Not assigned to ticket + not department head
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, 0, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, 0, uid)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, did, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(nonExistentTicket, did, uid)).toStrictEqual(false);
+    expect(await db.canAssignOthersToTicket(tid, 0, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, 0, uid)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, did, nonExistentUser)).toBeNull();
+    expect(await db.canAssignOthersToTicket(tid, did, uid)).toStrictEqual(false);
 
     {
         const { uid, email } = await db.begin(async sql => {
