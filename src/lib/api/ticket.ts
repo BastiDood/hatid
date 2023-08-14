@@ -242,8 +242,8 @@ export async function assignSelf(ticket: Ticket['ticket_id'], dept: Agent['dept_
 }
 
 /**
- * Assigns another {@linkcode Agent} to the {@linkcode Ticket}. If the ticket or the user cannot be found,
- * this function returns `false`. Otherwise, it returns `true` on successful assignments.
+ * Assigns another {@linkcode Agent} to the {@linkcode Ticket}. If the ticket or the user cannot
+ * be found, this function returns `false`. Otherwise, it returns `true` on successful assignments.
  */
 export async function assignOthers(
     ticket: Ticket['ticket_id'],
@@ -271,10 +271,7 @@ export async function assignOthers(
     }
 }
 
-/**
- * Removes an {@linkcode Agent} from the {@linkcode Ticket}. Returns `true` if successful
- * and `false` otherwise.
- */
+/** Removes an {@linkcode Agent} from the {@linkcode Ticket}. Returns `true` if successful. */
 export async function remove(
     ticket: Ticket['ticket_id'],
     dept: Agent['dept_id'],
