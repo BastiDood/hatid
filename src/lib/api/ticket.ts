@@ -248,12 +248,12 @@ export async function assignSelf(ticket: Ticket['ticket_id'], dept: Agent['dept_
 export async function assignOthers(
     ticket: Ticket['ticket_id'],
     dept: Agent['dept_id'],
-    uid: Agent['user_id'],
+    user: Agent['user_id'],
 ) {
     const { status } = await fetch('/api/ticket/assign', {
         method: 'POST',
         credentials: 'same-origin',
-        body: new URLSearchParams({ ticket, dept: dept.toString(10), uid }),
+        body: new URLSearchParams({ ticket, dept: dept.toString(10), user }),
     });
     switch (status) {
         case StatusCodes.CREATED:
