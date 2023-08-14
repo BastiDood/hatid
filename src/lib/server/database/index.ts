@@ -650,8 +650,6 @@ export async function isAssignableAgent(
     return NullableBooleanResult.parse(first).result;
 }
 
-// Currently assumes User still has a valid session
-// Note: TRUE OR NULL returns TRUE, FALSE OR NULL returns NULL.
 export async function canAssignOthersToTicket(
     tid: Ticket['ticket_id'],
     did: Agent['dept_id'],

@@ -341,6 +341,8 @@ REPLACE FUNCTION is_assigned_agent (
     SELECT uid IN (SELECT * FROM get_assigned_agents(tid));
 $$ LANGUAGE SQL;
 
+-- NOTE: Truth tables with `NULL` have special considerations.
+-- https://www.postgresql.org/docs/current/functions-logical.html
 CREATE OR
 REPLACE FUNCTION can_assign_others_to_ticket (
     tid tickets.ticket_id %
