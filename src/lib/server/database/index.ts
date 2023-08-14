@@ -702,7 +702,8 @@ export async function removeTicketAgent(
     did: Agent['dept_id'],
     uid: Agent['user_id'],
 ) {
-    const { count } = await sql`DELETE FROM assignments WHERE ticket_id = ${tid} AND dept_id = ${did} AND user_id = ${uid};`.execute();
+    const { count } =
+        await sql`DELETE FROM assignments WHERE ticket_id = ${tid} AND dept_id = ${did} AND user_id = ${uid};`.execute();
     switch (count) {
         case 0:
             return false;
