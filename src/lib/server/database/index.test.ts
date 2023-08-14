@@ -358,6 +358,16 @@ it('should complete a full user journey', async () => {
         expect(result).toStrictEqual(db.AssignAgentToTicketResult.Success);
     }
 
+    expect(await db.removeTicketAgent(nonExistentTicket, 0, nonExistentUser)).toStrictEqual(false);
+    expect(await db.removeTicketAgent(nonExistentTicket, 0, uid)).toStrictEqual(false);
+    expect(await db.removeTicketAgent(nonExistentTicket, did, nonExistentUser)).toStrictEqual(
+        false,
+    );
+    expect(await db.removeTicketAgent(nonExistentTicket, did, uid)).toStrictEqual(false);
+    expect(await db.removeTicketAgent(tid, 0, nonExistentUser)).toStrictEqual(false);
+    expect(await db.removeTicketAgent(tid, 0, uid)).toStrictEqual(false);
+    expect(await db.removeTicketAgent(tid, did, nonExistentUser)).toStrictEqual(false);
+
     const replyId = await db.createReply(tid, uid, 'Valid Reply');
     assert(typeof replyId === 'number');
     expect(replyId).not.toStrictEqual(0);
