@@ -41,19 +41,20 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     const sid = cookies.get('sid');
     if (!sid) throw error(StatusCodes.UNAUTHORIZED);
 
-    // Permissions check
-    // Department assignment check
-    // TODO: Null check for isAssignedAgent and isAssignedDepartment
     const deptStatus = await isAssignedDepartment(tid, did);
     if (!deptStatus) throw error(StatusCodes.FORBIDDEN);
 
     // Check if allowed to assign and guard against self-assignment
     const user = await getUserFromSession(sid);
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
-    const canAssign = await canAssignOthersToTicket(sid, did, tid, user.user_id);
-    if (canAssign === null) throw error(StatusCodes.UNAUTHORIZED);
 
-    switch (canAssign && user.user_id !== uid) {
+    // Assert that the target is not "self"
+    if (user.user_id === uid) throw error(StatusCodes.FORBIDDEN);
+
+    // Check if action-doer can assign others
+    switch (await canAssignOthersToTicket(tid, did, user.user_id)) {
+        case null:
+            throw error(StatusCodes.NOT_FOUND);
         case false:
             throw error(StatusCodes.FORBIDDEN);
         case true:
@@ -62,7 +63,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
             throw new AssertionError();
     }
 
-    // Assignable agent check - TODO: Probably should rename to isAssignableAgent check
+    // Check if the target can be assigned to the ticket
     switch (await isAssignableAgent(tid, did, uid)) {
         case null:
             throw error(StatusCodes.NOT_FOUND);
@@ -95,18 +96,14 @@ export const DELETE: RequestHandler = async ({ cookies, request }) => {
     const sid = cookies.get('sid');
     if (!sid) throw error(StatusCodes.UNAUTHORIZED);
 
-    // Permissions check
-    // Department assignment check
-    // TODO: Null check for isAssignedAgent and isAssignedDepartment
     const deptStatus = await isAssignedDepartment(tid, did);
     if (!deptStatus) throw error(StatusCodes.FORBIDDEN);
 
-    // Check if allowed to remove (same permission needed as assigning others)
     const user = await getUserFromSession(sid);
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
-    const canAssign = await canAssignOthersToTicket(sid, did, tid, user.user_id);
 
-    switch (canAssign) {
+    // Check if allowed to remove (same permission needed as assigning others)
+    switch (await canAssignOthersToTicket(tid, did, user.user_id)) {
         case null:
             throw error(StatusCodes.UNAUTHORIZED);
         case false:
