@@ -65,6 +65,17 @@ TYPE AS $$
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
+REPLACE FUNCTION is_head_agent (
+    did dept_agents.dept_id %
+    TYPE,
+    uid dept_agents.user_id %
+    TYPE
+) RETURNS dept_agents.head %
+TYPE AS $$
+    SELECT head FROM dept_agents WHERE dept_id = did AND user_id = uid;
+$$ STABLE LANGUAGE SQL;
+
+CREATE OR
 REPLACE FUNCTION set_admin_for_user (
     uid users.user_id %
     TYPE,
@@ -332,16 +343,14 @@ $$ LANGUAGE SQL;
 
 CREATE OR
 REPLACE FUNCTION can_assign_others_to_ticket (
-    sid sessions.session_id %
+    tid tickets.ticket_id %
     TYPE,
     did depts.dept_id %
-    TYPE,
-    tid tickets.ticket_id %
     TYPE,
     uid dept_agents.user_id %
     TYPE
 ) RETURNS BOOLEAN AS $$
-    SELECT is_head_session(sid, did) OR is_assigned_agent(tid, uid);
+    SELECT is_head_agent(did, uid) OR is_assigned_agent(tid, uid);
 $$ LANGUAGE SQL;
 
 CREATE OR

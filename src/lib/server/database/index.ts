@@ -489,7 +489,7 @@ export async function isAssignedAgent(tid: Ticket['ticket_id'], uid: Agent['user
 
 export async function isAssignedDepartment(tid: Ticket['ticket_id'], did: Dept['dept_id']) {
     const [first, ...rest] =
-        await sql`SELECT ${did} IN get_assigned_departments(${tid}) AS result`.execute();
+        await sql`SELECT ${did} IN (SELECT * FROM get_assigned_departments(${tid})) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }
@@ -653,13 +653,12 @@ export async function isAssignableAgent(
 // Currently assumes User still has a valid session
 // Note: TRUE OR NULL returns TRUE, FALSE OR NULL returns NULL.
 export async function canAssignOthersToTicket(
-    sid: Session['session_id'],
-    did: Agent['dept_id'],
     tid: Ticket['ticket_id'],
+    did: Agent['dept_id'],
     uid: Agent['user_id'],
 ) {
     const [first, ...rest] =
-        await sql`SELECT can_assign_others_to_ticket(${sid}, ${did}, ${tid}, ${uid}) AS result`.execute();
+        await sql`SELECT can_assign_others_to_ticket(${tid}, ${did}, ${uid}) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }
