@@ -276,7 +276,7 @@ export async function assignOthers(
  * and `false` otherwise.
  */
 export async function remove(
-    tid: Ticket['ticket_id'],
+    ticket: Ticket['ticket_id'],
     dept: Agent['dept_id'],
     user: Agent['user_id'],
 ) {
@@ -284,16 +284,16 @@ export async function remove(
         method: 'DELETE',
         credentials: 'same-origin',
         body: new URLSearchParams({
-            tid,
+            ticket,
             dept: dept.toString(10),
             user,
         }),
     });
     switch (status) {
         case StatusCodes.NO_CONTENT:
-            return false;
-        case StatusCodes.RESET_CONTENT:
             return true;
+        case StatusCodes.NOT_FOUND:
+            return false;
         case StatusCodes.BAD_REQUEST:
             throw new BadInput();
         case StatusCodes.UNAUTHORIZED:

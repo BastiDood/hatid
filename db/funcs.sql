@@ -279,7 +279,7 @@ TYPE AS $$
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
-REPLACE FUNCTION can_assign_self_to_ticket (
+REPLACE FUNCTION is_assignable_agent (
     tid tickets.ticket_id %
     TYPE,
     did dept_agents.dept_id %

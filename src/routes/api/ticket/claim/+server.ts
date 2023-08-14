@@ -1,8 +1,8 @@
 import {
     AssignAgentToTicketResult,
     assignAgentToTicket,
-    canAssignSelfToTicket,
     getUserFromSession,
+    isAssignableAgent,
 } from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
@@ -38,7 +38,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     const user = await getUserFromSession(sid);
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
 
-    switch (await canAssignSelfToTicket(tid, did, user.user_id)) {
+    switch (await isAssignableAgent(tid, did, user.user_id)) {
         case null:
             throw error(StatusCodes.NOT_FOUND);
         case false:

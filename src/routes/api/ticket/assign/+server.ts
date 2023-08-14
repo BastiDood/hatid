@@ -2,8 +2,8 @@ import {
     AssignAgentToTicketResult,
     assignAgentToTicket,
     canAssignOthersToTicket,
-    canAssignSelfToTicket,
     getUserFromSession,
+    isAssignableAgent,
     isAssignedDepartment,
     removeTicketAgent,
 } from '$lib/server/database';
@@ -53,7 +53,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     const canAssign = await canAssignOthersToTicket(sid, did, tid, user.user_id);
     if (canAssign === null) throw error(StatusCodes.UNAUTHORIZED);
 
-    switch (canAssign && !(user.user_id === uid)) {
+    switch (canAssign && user.user_id !== uid) {
         case false:
             throw error(StatusCodes.FORBIDDEN);
         case true:
@@ -63,7 +63,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     }
 
     // Assignable agent check - TODO: Probably should rename to isAssignableAgent check
-    switch (await canAssignSelfToTicket(tid, did, uid)) {
+    switch (await isAssignableAgent(tid, did, uid)) {
         case null:
             throw error(StatusCodes.NOT_FOUND);
         case false:
@@ -82,14 +82,14 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 export const DELETE: RequestHandler = async ({ cookies, request }) => {
     const form = await request.formData();
 
-    const tid = form.get('tid');
+    const tid = form.get('ticket');
     if (tid === null || tid instanceof File) throw error(StatusCodes.BAD_REQUEST);
 
     const dept = form.get('dept');
     if (dept === null || dept instanceof File) throw error(StatusCodes.BAD_REQUEST);
     const did = parseInt(dept, 10);
 
-    const uid = form.get('uid');
+    const uid = form.get('user');
     if (uid === null || uid instanceof File) throw error(StatusCodes.BAD_REQUEST);
 
     const sid = cookies.get('sid');
@@ -117,7 +117,7 @@ export const DELETE: RequestHandler = async ({ cookies, request }) => {
             throw new AssertionError();
     }
 
-    const value = await removeTicketAgent(tid, did, uid);
-    const status = value ? StatusCodes.RESET_CONTENT : StatusCodes.NO_CONTENT;
+    const success = await removeTicketAgent(tid, did, uid);
+    const status = success ? StatusCodes.NO_CONTENT : StatusCodes.NOT_FOUND;
     return new Response(null, { status });
 };
