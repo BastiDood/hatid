@@ -321,15 +321,27 @@ REPLACE FUNCTION assign_agent_to_ticket (
 $$ LANGUAGE SQL;
 
 CREATE OR
-REPLACE FUNCTION remove_agent_from_ticket (
-    tid assignments.ticket_id %
+REPLACE FUNCTION is_assigned_agent (
+    tid tickets.ticket_id %
     TYPE,
-    did assignments.dept_id %
-    TYPE,
-    uid assignments.user_id %
+    uid dept_agents.user_id %
     TYPE
-) RETURNS VOID AS $$
-    DELETE FROM assignments WHERE ticket_id = tid AND dept_id = did AND user_id = uid;
+) RETURNS BOOLEAN AS $$
+    SELECT uid IN (SELECT * FROM get_assigned_agents(tid));
+$$ LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION can_assign_others_to_ticket (
+    sid sessions.session_id %
+    TYPE,
+    did depts.dept_id %
+    TYPE,
+    tid tickets.ticket_id %
+    TYPE,
+    uid dept_agents.user_id %
+    TYPE
+) RETURNS BOOLEAN AS $$
+    SELECT is_head_session(sid, did) OR is_assigned_agent(tid, uid);
 $$ LANGUAGE SQL;
 
 CREATE OR

@@ -482,7 +482,7 @@ export async function isTicketAuthor(tid: Ticket['ticket_id'], uid: Message['aut
 
 export async function isAssignedAgent(tid: Ticket['ticket_id'], uid: Agent['user_id']) {
     const [first, ...rest] =
-        await sql`SELECT ${uid} IN get_assigned_agents(${tid}) AS result`.execute();
+        await sql`SELECT is_assigned_agent(${tid}, ${uid}) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }
@@ -646,6 +646,20 @@ export async function canAssignSelfToTicket(
 ) {
     const [first, ...rest] =
         await sql`SELECT can_assign_self_to_ticket(${tid}, ${did}, ${uid}) AS result`.execute();
+    strictEqual(rest.length, 0);
+    return NullableBooleanResult.parse(first).result;
+}
+
+// Currently assumes User still has a valid session
+// Note: TRUE OR NULL returns TRUE, FALSE OR NULL returns NULL.
+export async function canAssignOthersToTicket(
+    sid: Session['session_id'],
+    did: Agent['dept_id'],
+    tid: Ticket['ticket_id'],
+    uid: Agent['user_id'],
+) {
+    const [first, ...rest] =
+        await sql`SELECT can_assign_others_to_ticket(${sid}, ${did}, ${tid}, ${uid}) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }
