@@ -1,11 +1,10 @@
 import {
     AssignAgentToTicketResult,
     assignAgentToTicket,
+    canAssignOthersToTicket,
     canAssignSelfToTicket,
     getUserFromSession,
-    isAssignedAgent,
     isAssignedDepartment,
-    isHeadSession,
     removeTicketAgent,
 } from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
@@ -48,15 +47,12 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     const deptStatus = await isAssignedDepartment(tid, did);
     if (!deptStatus) throw error(StatusCodes.FORBIDDEN);
 
-    // Department head, assigned agent and self-assignment check
-    const head = await isHeadSession(sid, did);
-    if (head === null) throw error(StatusCodes.UNAUTHORIZED);
-
+    // Check if allowed to assign and guard against self-assignment
     const user = await getUserFromSession(sid);
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
-    const assigned = await isAssignedAgent(tid, user.user_id);
+    const canAssign = await canAssignOthersToTicket(sid, did, tid, user.user_id);
+    if (canAssign === null) throw error(StatusCodes.UNAUTHORIZED);
 
-    const canAssign = head || assigned;
     switch (canAssign && !(user.user_id === uid)) {
         case false:
             throw error(StatusCodes.FORBIDDEN);
@@ -105,16 +101,14 @@ export const DELETE: RequestHandler = async ({ cookies, request }) => {
     const deptStatus = await isAssignedDepartment(tid, did);
     if (!deptStatus) throw error(StatusCodes.FORBIDDEN);
 
-    // Department head, assigned agent and self-assignment check
-    const head = await isHeadSession(sid, did);
-    if (head === null) throw error(StatusCodes.UNAUTHORIZED);
-
+    // Check if allowed to remove (same permission needed as assigning others)
     const user = await getUserFromSession(sid);
     if (user === null) throw error(StatusCodes.UNAUTHORIZED);
-    const assigned = await isAssignedAgent(tid, user.user_id);
+    const canAssign = await canAssignOthersToTicket(sid, did, tid, user.user_id);
 
-    const canAssign = head || assigned;
     switch (canAssign) {
+        case null:
+            throw error(StatusCodes.UNAUTHORIZED);
         case false:
             throw error(StatusCodes.FORBIDDEN);
         case true:
