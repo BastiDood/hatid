@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     if (dept === null || dept instanceof File) throw error(StatusCodes.BAD_REQUEST);
     const did = parseInt(dept, 10) >> 0;
 
-    const uid = form.get('uid');
+    const uid = form.get('user');
     if (uid === null || uid instanceof File) throw error(StatusCodes.BAD_REQUEST);
 
     const sid = cookies.get('sid');

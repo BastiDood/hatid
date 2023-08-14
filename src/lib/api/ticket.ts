@@ -278,7 +278,7 @@ export async function assignOthers(
 export async function remove(
     tid: Ticket['ticket_id'],
     dept: Agent['dept_id'],
-    uid: Agent['user_id'],
+    user: Agent['user_id'],
 ) {
     const { status } = await fetch('/api/ticket/assign', {
         method: 'DELETE',
@@ -286,7 +286,7 @@ export async function remove(
         body: new URLSearchParams({
             tid,
             dept: dept.toString(10),
-            uid,
+            user,
         }),
     });
     switch (status) {
