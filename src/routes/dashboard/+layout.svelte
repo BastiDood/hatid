@@ -1,9 +1,10 @@
 <script lang="ts">
     import { AppBar, AppShell, Avatar } from '@skeletonlabs/skeleton';
     import type { LayoutServerData } from './$types';
+    import hatidLogo from '$lib/images/HATiD.png';
+
     // eslint-disable-next-line init-declarations
     export let data: LayoutServerData;
-    const src = '/HATiD.png';
     $: ({ name, email, picture } = data);
 </script>
 
@@ -11,7 +12,7 @@
     <AppBar slot="header" background="bg-red-950">
         <svelte:fragment slot="lead"
             ><span class="h3 p-2" style="font-weight: 700;">
-                <a href="/"><img src="{src}" alt="HATiD" class="h-10" /></a>
+                <a href="/"><img src="{hatidLogo}" alt="HATiD" class="h-10" /></a>
             </span></svelte:fragment
         >
         <svelte:fragment slot="trail" />
