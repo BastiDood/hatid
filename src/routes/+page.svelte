@@ -1,12 +1,21 @@
 <script lang="ts">
+    import Login from '@krowten/svelte-heroicons/icons/ArrowLeftOnRectangleIcon.svelte';
     import type { PageServerData } from './$types';
+    import logo from '$lib/images/HATiD.png';
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
+
+    $: ({ user } = data);
 </script>
 
-{#if data.user === null}
-    <a href="/auth/login" class="btn variant-filled">Sign in with Google</a>
+<img src="{logo}" alt="HATiD spelled with a ticket icon to emulate the letter H" />
+
+{#if user === null}
+    <a href="/auth/login" class="btn variant-filled">
+        <Login class="2-4 h-4" />
+        <span>Sign in with Google</span>
+    </a>
 {:else}
-    <a href="/dashboard" class="btn variant-filled">Go to Dashboard</a>
+    <a href="/dashboard" class="btn variant-filled"> Go to Dashboard </a>
 {/if}
