@@ -27,7 +27,7 @@
 
 <div class="card flex w-full overflow-hidden pb-2 pt-2">
     <Accordion>
-        {#each data as { label, deadline, color }}
+        {#each data as { label, deadline, color } (label)}
             <AccordionItem autocollapse>
                 <svelte:fragment slot="lead">
                     <h4 class="mb-2.5 text-2xl">

@@ -32,8 +32,8 @@
                 class="block w-full w-full rounded bg-clip-padding p-2.5 px-3 py-4 text-sm"
                 bind:value="{ticketLabel}"
             >
-                {#each labels as label, id}
-                    <option value="{id}">{label}</option>
+                {#each labels as label (label)}
+                    <option value="{label}">{label}</option>
                 {/each}
             </select>
         </div>

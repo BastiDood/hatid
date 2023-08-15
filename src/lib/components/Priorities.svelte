@@ -18,7 +18,7 @@
 
 <div class="card flex w-full overflow-hidden pb-2 pt-2">
     <Accordion>
-        {#each priorities as { title, prio }}
+        {#each priorities as { title, prio } (title)}
             <AccordionItem autocollapse>
                 <svelte:fragment slot="lead">
                     <h5 class="text-l font-medium leading-tight">

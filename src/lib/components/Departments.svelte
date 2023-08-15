@@ -11,7 +11,7 @@
 
 <div class="card flex w-full overflow-hidden pb-2 pt-2">
     <Accordion>
-        {#each departments as dept}
+        {#each departments as dept (dept)}
             <AccordionItem autocollapse>
                 <svelte:fragment slot="lead">
                     <h5 class="text-l">
