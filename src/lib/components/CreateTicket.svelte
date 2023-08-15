@@ -51,9 +51,7 @@
     </div>
     <div class="flex w-full gap-7 p-4">
         <div class="relative mb-3 w-full">
-            <button
-                on:click="{() => createTicket(ticketTitle, ticketDescription, labels)}"
-            >
+            <button on:click="{() => createTicket(ticketTitle, ticketDescription, labels)}">
                 Create Ticket
             </button>
         </div>
