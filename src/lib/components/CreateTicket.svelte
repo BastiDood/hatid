@@ -17,22 +17,13 @@
     }
 </script>
 
-<div
-    class="bg-initial card w-full flex-col items-center justify-center overflow-hidden"
-    style="background-color:#5F2E2E;"
->
+<div class="card w-full flex-col items-center justify-center overflow-hidden">
     <div class="flex grid w-full grid-cols-2 gap-7 p-4">
         <div class="relative mb-3 w-full">
-            <label
-                for="floatingInput"
-                class="text-md mb-2 block font-medium tracking-widest text-gray-900 dark:text-white"
-                style="font-family: Bebas Neue"
-            >
-                Ticket Title
-            </label>
+            <label for="floatingInput" class="text-md mb-2 block"> Ticket Title </label>
             <input
                 type="text"
-                class="focus:border-primary peer-focus:text-primary dark:focus:border-primary dark:peer-focus:text-primary peer m-0 block w-full rounded bg-red-950 bg-clip-padding px-3 py-4 text-base font-normal leading-tight text-neutral-700 placeholder-white transition duration-200 ease-linear focus:text-neutral-700 focus:outline-none dark:border-neutral-600 dark:text-neutral-200"
+                class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
                 id="floatingInput"
                 bind:value="{ticketTitle}"
                 placeholder="Ticket Title..."
@@ -40,15 +31,9 @@
         </div>
 
         <div class="relative mb-3 w-full">
-            <label
-                for="floatingSelect"
-                class="text-md mb-2 block font-medium tracking-widest text-gray-900 dark:text-white"
-                style="font-family: Bebas Neue"
-            >
-                Labels
-            </label>
+            <label for="floatingSelect" class="text-md mb-2 block"> Labels </label>
             <select
-                class="block w-full w-full rounded bg-red-950 bg-clip-padding p-2.5 px-3 py-4 text-sm text-gray-900 dark:bg-red-950 dark:text-white"
+                class="block w-full w-full rounded bg-clip-padding p-2.5 px-3 py-4 text-sm"
                 bind:value="{ticketLabel}"
             >
                 {#each labels as label}
@@ -59,15 +44,9 @@
     </div>
     <div class="flex w-full pl-4 pr-4">
         <div class="relative mb-3 w-full">
-            <label
-                for="floatingInput"
-                class="text-md mb-2 block font-medium tracking-widest text-gray-900 dark:text-white"
-                style="font-family: Bebas Neue"
-            >
-                Description
-            </label>
+            <label for="floatingInput" class="text-md mb-2 block"> Description </label>
             <textarea
-                class="focus:border-primary peer-focus:text-primary dark:focus:border-primary dark:peer-focus:text-primary peer m-0 block w-full rounded bg-red-950 bg-clip-padding px-3 py-4 text-base font-normal leading-tight text-neutral-700 placeholder-white transition duration-200 ease-linear focus:text-neutral-700 focus:outline-none dark:border-neutral-600 dark:text-neutral-200"
+                class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
                 id="floatingInput"
                 rows="{4}"
                 placeholder="Description..."
@@ -77,10 +56,7 @@
     <div class="flex w-full gap-7 p-4">
         <div class="relative mb-3 w-full">
             <button
-                data-te-ripple-init
-                data-te-ripple-color="light"
                 class="{buttonClass}"
-                style="background-color: white"
                 on:click="{() => createTicket(ticketTitle, ticketDescription, labels)}"
             >
                 Create Ticket

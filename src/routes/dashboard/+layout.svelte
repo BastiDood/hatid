@@ -9,70 +9,49 @@
 </script>
 
 <AppShell>
-    <AppBar slot="header" background="bg-red-950">
+    <AppBar slot="header">
         <svelte:fragment slot="lead"
-            ><span class="h3 p-2" style="font-weight: 700;">
+            ><span class="h3 p-2">
                 <a href="/"><img src="{hatidLogo}" alt="HATiD" class="h-10" /></a>
             </span></svelte:fragment
         >
         <svelte:fragment slot="trail" />
     </AppBar>
     <svelte:fragment slot="sidebarLeft">
-        <aside class="flex h-full w-60 flex-col items-center space-y-7 bg-[#1c212c] pb-2 pt-5">
+        <aside class="flex h-full w-60 flex-col items-center space-y-7 pb-2 pt-5">
             <br />
-            <Avatar
-                src="{picture}"
-                width="w-100"
-                slot="lead"
-                class="rounded-full border-2 border-white dark:border-white"
-            />
-            <span class="font-QuicksandMedium flex text-center">{name}<br />{email}</span>
+            <Avatar src="{picture}" width="w-100" slot="lead" class="rounded-full" />
+            <span class="flex text-center">{name}<br />{email}</span>
             <!-- menu items -->
-            <div class="flex w-full flex-col gap-y-1 fill-gray-500 pr-3 text-sm text-gray-500">
-                <div
-                    class="font-QuicksandMedium pl-4 text-[11px] text-xs uppercase text-gray-400/60"
-                >
-                    Menu
-                </div>
+            <div class="flex w-full flex-col gap-y-1 pr-3">
+                <div class="pl-4 uppercase">Menu</div>
 
                 <div class="group flex w-full select-none items-center gap-x-1.5">
-                    <div
-                        class="relative h-8 w-1 overflow-hidden rounded-xl bg-transparent transition-colors duration-200"
-                    >
-                        <div
-                            class="absolute left-0 top-0 h-[102%] w-full translate-y-0 bg-red-600 transition-all duration-300 group-hover:translate-y-0"
-                        ></div>
+                    <div class="relative h-8 w-1 overflow-hidden rounded-xl">
+                        <div class="absolute left-0 top-0 h-[102%] w-full translate-y-0"></div>
                     </div>
                     <a
-                        class="flex w-full items-center space-x-2 self-stretch rounded bg-white/10 pl-2 text-sm text-white transition-all duration-200 group-hover:bg-white/10 group-active:scale-95 dark:hover:text-white dark:group-hover:text-white"
+                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
-                        <svg
-                            class="h-5 w-5 !fill-red-500 transition-colors duration-200 group-hover:fill-red-600 dark:fill-gray-600"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                        >
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path
                                 d="M5 22h14a2 2 0 0 0 2-2v-9a1 1 0 0 0-.29-.71l-8-8a1 1 0 0 0-1.41 0l-8 8A1 1 0 0 0 3 11v9a2 2 0 0 0 2 2zm5-2v-5h4v5zm-5-8.59 7-7 7 7V20h-3v-5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v5H5z"
                             ></path>
                         </svg>
-                        <span class="font-QuicksandMedium">Dashboard</span>
+                        <span>Dashboard</span>
                     </a>
                 </div>
                 <div class="group flex w-full select-none items-center gap-x-1.5">
-                    <div
-                        class="relative h-8 w-1 overflow-hidden rounded-xl bg-transparent transition-colors duration-200"
-                    >
-                        <div
-                            class="absolute left-0 top-0 h-[102%] w-full translate-y-full bg-red-600 transition-all duration-300 group-hover:translate-y-0"
-                        ></div>
+                    <div class="relative h-8 w-1 overflow-hidden rounded-xl">
+                        <div class="absolute left-0 top-0 h-[102%] w-full translate-y-full"></div>
                     </div>
                     <a
-                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2 text-sm transition-all duration-200 group-hover:bg-white/10 group-active:scale-95 dark:hover:text-white dark:group-hover:text-white"
+                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
                         <svg
-                            class="h-5 w-5 transition-colors duration-200 group-hover:fill-red-600 dark:fill-gray-600"
+                            class="h-5 w-5"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -83,26 +62,18 @@
                                 d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-1.5A1.125 1.125 0 0118 18.375M20.625 4.5H3.375m17.25 0c.621 0 1.125.504 1.125 1.125M20.625 4.5h-1.5C18.504 4.5 18 5.004 18 5.625m3.75 0v1.5c0 .621-.504 1.125-1.125 1.125M3.375 4.5c-.621 0-1.125.504-1.125 1.125M3.375 4.5h1.5C5.496 4.5 6 5.004 6 5.625m-3.75 0v1.5c0 .621.504 1.125 1.125 1.125m0 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m1.5-3.75C5.496 8.25 6 7.746 6 7.125v-1.5M4.875 8.25C5.496 8.25 6 8.754 6 9.375v1.5m0-5.25v5.25m0-5.25C6 5.004 6.504 4.5 7.125 4.5h9.75c.621 0 1.125.504 1.125 1.125m1.125 2.625h1.5m-1.5 0A1.125 1.125 0 0118 7.125v-1.5m1.125 2.625c-.621 0-1.125.504-1.125 1.125v1.5m2.625-2.625c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125M18 5.625v5.25M7.125 12h9.75m-9.75 0A1.125 1.125 0 016 10.875M7.125 12C6.504 12 6 12.504 6 13.125m0-2.25C6 11.496 5.496 12 4.875 12M18 10.875c0 .621-.504 1.125-1.125 1.125M18 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m-12 5.25v-5.25m0 5.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125m-12 0v-1.5c0-.621-.504-1.125-1.125-1.125M18 18.375v-5.25m0 5.25v-1.5c0-.621.504-1.125 1.125-1.125M18 13.125v1.5c0 .621.504 1.125 1.125 1.125M18 13.125c0-.621.504-1.125 1.125-1.125M6 13.125v1.5c0 .621-.504 1.125-1.125 1.125M6 13.125C6 12.504 5.496 12 4.875 12m-1.5 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M19.125 12h1.5m0 0c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h1.5m14.25 0h1.5"
                             ></path>
                         </svg>
-                        <span class="font-QuicksandMedium">Tickets</span>
+                        <span>Tickets</span>
                     </a>
                 </div>
                 <div class="group flex w-full select-none items-center gap-x-1.5">
-                    <div
-                        class="relative h-8 w-1 overflow-hidden rounded-xl bg-transparent transition-colors duration-200"
-                    >
-                        <div
-                            class="absolute left-0 top-0 h-[102%] w-full translate-y-full bg-red-600 transition-all duration-300 group-hover:translate-y-0"
-                        ></div>
+                    <div class="relative h-8 w-1 overflow-hidden rounded-xl">
+                        <div class="absolute left-0 top-0 h-[102%] w-full translate-y-full"></div>
                     </div>
                     <a
-                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2 text-sm transition-all duration-200 group-hover:bg-white/10 group-active:scale-95 dark:hover:text-white dark:group-hover:text-white"
+                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
-                        <svg
-                            class="h-5 w-5 transition-colors duration-200 group-hover:fill-red-600 dark:fill-gray-600"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M9 3C6.23858 3 4 5.23858 4 8C4 10.7614 6.23858 13 9 13C11.7614 13 14 10.7614 14 8C14 5.23858 11.7614 3 9 3ZM6 8C6 6.34315 7.34315 5 9 5C10.6569 5 12 6.34315 12 8C12 9.65685 10.6569 11 9 11C7.34315 11 6 9.65685 6 8Z"
                             ></path>
@@ -123,30 +94,18 @@
             </div>
 
             <!-- menu items -->
-            <div class="flex w-full flex-col gap-y-1 fill-gray-500 pr-3 text-sm text-gray-500">
-                <div
-                    class="font-QuicksandMedium pl-4 text-[11px] text-xs uppercase text-gray-400/60"
-                >
-                    Profile
-                </div>
+            <div class="flex w-full flex-col gap-y-1 pr-3">
+                <div class="pl-4 uppercase">Profile</div>
 
                 <div class="group flex w-full select-none items-center gap-x-1.5">
-                    <div
-                        class="relative h-8 w-1 overflow-hidden rounded-xl bg-transparent transition-colors duration-200"
-                    >
-                        <div
-                            class="absolute left-0 top-0 h-[102%] w-full translate-y-full bg-red-600 transition-all duration-300 group-hover:translate-y-0"
-                        ></div>
+                    <div class="relative h-8 w-1 overflow-hidden rounded-xl">
+                        <div class="absolute left-0 top-0 h-[102%] w-full translate-y-full"></div>
                     </div>
                     <a
-                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2 text-sm transition-all duration-200 group-hover:bg-white/10 group-active:scale-95 dark:hover:text-white dark:group-hover:text-white"
+                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
-                        <svg
-                            class="h-5 w-5 transition-colors duration-200 group-hover:fill-red-600 dark:fill-gray-600"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                        >
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path
                                 d="m18.988 2.012 3 3L19.701 7.3l-3-3zM8 16h3l7.287-7.287-3-3L8 13z"
                             ></path>
@@ -154,57 +113,41 @@
                                 d="M19 19H8.158c-.026 0-.053.01-.079.01-.033 0-.066-.009-.1-.01H5V5h6.847l2-2H5c-1.103 0-2 .896-2 2v14c0 1.104.897 2 2 2h14a2 2 0 0 0 2-2v-8.668l-2 2V19z"
                             ></path>
                         </svg>
-                        <span class="font-QuicksandMedium">Edit profile</span>
+                        <span>Edit profile</span>
                     </a>
                 </div>
 
                 <div class="group flex w-full select-none items-center gap-x-1.5">
-                    <div
-                        class="relative h-8 w-1 overflow-hidden rounded-xl bg-transparent transition-colors duration-200"
-                    >
-                        <div
-                            class="absolute left-0 top-0 h-[102%] w-full translate-y-full bg-red-600 transition-all duration-300 group-hover:translate-y-0"
-                        ></div>
+                    <div class="relative h-8 w-1 overflow-hidden rounded-xl">
+                        <div class="absolute left-0 top-0 h-[102%] w-full translate-y-full"></div>
                     </div>
                     <a
-                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2 text-sm transition-all duration-200 group-hover:bg-white/10 group-active:scale-95 dark:hover:text-white dark:group-hover:text-white"
+                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
-                        <svg
-                            class="h-5 w-5 transition-colors duration-200 group-hover:fill-red-600 dark:fill-gray-600"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M13.8199 22H10.1799C9.71003 22 9.30347 21.673 9.20292 21.214L8.79592 19.33C8.25297 19.0921 7.73814 18.7946 7.26092 18.443L5.42392 19.028C4.97592 19.1709 4.48891 18.9823 4.25392 18.575L2.42992 15.424C2.19751 15.0165 2.27758 14.5025 2.62292 14.185L4.04792 12.885C3.98312 12.2961 3.98312 11.7019 4.04792 11.113L2.62292 9.816C2.27707 9.49837 2.19697 8.98372 2.42992 8.576L4.24992 5.423C4.48491 5.0157 4.97192 4.82714 5.41992 4.97L7.25692 5.555C7.50098 5.37416 7.75505 5.20722 8.01792 5.055C8.27026 4.91269 8.52995 4.78385 8.79592 4.669L9.20392 2.787C9.30399 2.32797 9.71011 2.00049 10.1799 2H13.8199C14.2897 2.00049 14.6958 2.32797 14.7959 2.787L15.2079 4.67C15.4887 4.79352 15.7622 4.93308 16.0269 5.088C16.2742 5.23078 16.5132 5.38736 16.7429 5.557L18.5809 4.972C19.0286 4.82967 19.515 5.01816 19.7499 5.425L21.5699 8.578C21.8023 8.98548 21.7223 9.49951 21.3769 9.817L19.9519 11.117C20.0167 11.7059 20.0167 12.3001 19.9519 12.889L21.3769 14.189C21.7223 14.5065 21.8023 15.0205 21.5699 15.428L19.7499 18.581C19.515 18.9878 19.0286 19.1763 18.5809 19.034L16.7429 18.449C16.5103 18.6203 16.2687 18.7789 16.0189 18.924C15.7567 19.0759 15.4863 19.2131 15.2089 19.335L14.7959 21.214C14.6954 21.6726 14.2894 21.9996 13.8199 22ZM11.9959 8C9.78678 8 7.99592 9.79086 7.99592 12C7.99592 14.2091 9.78678 16 11.9959 16C14.2051 16 15.9959 14.2091 15.9959 12C15.9959 9.79086 14.2051 8 11.9959 8Z"
                             ></path>
                         </svg>
-                        <span class="font-QuicksandMedium">Settings</span>
+                        <span>Settings</span>
                     </a>
                 </div>
 
                 <div class="group flex w-full select-none items-center gap-x-1.5">
-                    <div
-                        class="relative h-8 w-1 overflow-hidden rounded-xl bg-transparent transition-colors duration-200"
-                    >
-                        <div
-                            class="absolute left-0 top-0 h-[102%] w-full translate-y-full bg-red-600 transition-all duration-300 group-hover:translate-y-0"
-                        ></div>
+                    <div class="relative h-8 w-1 overflow-hidden rounded-xl">
+                        <div class="absolute left-0 top-0 h-[102%] w-full translate-y-full"></div>
                     </div>
                     <a
-                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2 text-sm transition-all duration-200 group-hover:bg-white/10 group-active:scale-95 dark:hover:text-white dark:group-hover:text-white"
+                        class="flex w-full items-center space-x-2 self-stretch rounded pl-2 text-sm"
                         href="/"
                     >
-                        <svg
-                            class="h-5 w-5 transition-colors duration-200 group-hover:fill-red-600 dark:fill-gray-600"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                        >
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path
                                 d="M19 21H5C3.89543 21 3 20.1046 3 19V15H5V19H19V5H5V9H3V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21ZM11 16V13H3V11H11V8L16 12L11 16Z"
                             ></path>
                         </svg>
-                        <span class="font-QuicksandMedium">Log out</span>
+                        <span>Log out</span>
                     </a>
                 </div>
             </div>

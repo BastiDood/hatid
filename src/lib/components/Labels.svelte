@@ -12,8 +12,7 @@
     let editableDeadline = true;
     let editableColor = true;
 
-    const buttonClass =
-        'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg';
+    const buttonClass = 'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs uppercase';
 
     function title() {
         // function title(lid: number, title: string) {
@@ -37,39 +36,30 @@
     }
 </script>
 
-<div
-    class="bg-initial card flex w-full overflow-hidden pb-2 pt-2"
-    style="background-color:#5F2E2E;"
->
+<div class="card flex w-full overflow-hidden pb-2 pt-2">
     <Accordion>
         {#each data as label}
             <AccordionItem autocollapse>
                 <svelte:fragment slot="lead">
-                    <h4 class="mb-2.5 text-2xl font-medium leading-tight">
+                    <h4 class="mb-2.5 text-2xl">
                         <span
-                            class="inline-block whitespace-nowrap rounded-[0.27rem] px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline text-[0.75em] font-bold leading-none"
-                            style="background-color: {label[2]};"></span>
+                            class="inline-block whitespace-nowrap rounded-[0.27rem] px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline text-[0.75em]"
+                        ></span>
                     </h4>
                 </svelte:fragment>
                 <svelte:fragment slot="summary">
-                    <h5 class="text-l font-medium leading-tight">
+                    <h5 class="text-l">
                         {label[0]}
                     </h5>
                 </svelte:fragment>
                 <svelte:fragment slot="content">
-                    <div class="w-full flex-row overflow-hidden rounded bg-[#828282] p-4 shadow">
+                    <div class="w-full flex-row overflow-hidden p-4">
                         <!-- edit title -->
                         <div class="relative mb-3 w-full">
-                            <label
-                                for="floatingInput"
-                                class="text-md mb-2 block font-medium tracking-widest text-gray-900 dark:text-white"
-                                style="font-family: Bebas Neue"
-                            >
-                                Title
-                            </label>
+                            <label for="floatingInput" class="text-md mb-2 block"> Title </label>
                             <input
                                 type="text"
-                                class="focus:border-primary peer-focus:text-primary dark:focus:border-primary dark:peer-focus:text-primary peer m-0 block w-full rounded bg-red-950 bg-clip-padding px-3 py-4 text-base font-normal leading-tight text-neutral-700 placeholder-white transition duration-200 ease-linear focus:text-neutral-700 focus:outline-none dark:border-neutral-600 dark:text-neutral-200"
+                                class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
                                 id="floatingInput"
                                 bind:value="{label[0]}"
                                 placeholder="{label[0]}"
@@ -77,28 +67,16 @@
                             />
                         </div>
 
-                        <button
-                            data-te-ripple-init
-                            data-te-ripple-color="light"
-                            class="{buttonClass}"
-                            style="background-color: white"
-                            on:click="{() => title()}"
-                        >
+                        <button class="{buttonClass}" on:click="{() => title()}">
                             {editableTitle ? 'EDIT' : 'SAVE'}
                         </button>
 
                         <!-- edit deadline -->
                         <div class="relative mb-3 w-full">
-                            <label
-                                for="floatingInput"
-                                class="text-md mb-2 block font-medium tracking-widest text-gray-900 dark:text-white"
-                                style="font-family: Bebas Neue"
-                            >
-                                Deadline
-                            </label>
+                            <label for="floatingInput" class="text-md mb-2 block"> Deadline </label>
                             <input
                                 type="date"
-                                class="focus:border-primary peer-focus:text-primary dark:focus:border-primary dark:peer-focus:text-primary peer m-0 block w-full rounded bg-red-950 bg-clip-padding px-3 py-4 text-base font-normal leading-tight text-neutral-700 placeholder-white transition duration-200 ease-linear focus:text-neutral-700 focus:outline-none dark:border-neutral-600 dark:text-neutral-200"
+                                class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
                                 id="floatingInput"
                                 placeholder="{label[1]}"
                                 bind:value="{label[1]}"
@@ -106,25 +84,13 @@
                             />
                         </div>
 
-                        <button
-                            data-te-ripple-init
-                            data-te-ripple-color="light"
-                            class="{buttonClass}"
-                            style="background-color: white"
-                            on:click="{() => deadline()}"
-                        >
+                        <button class="{buttonClass}" on:click="{() => deadline()}">
                             {editableDeadline ? 'EDIT' : 'SAVE'}
                         </button>
 
                         <!-- edit color -->
                         <div class="relative mb-3 w-full">
-                            <label
-                                for="floatingColor"
-                                class="text-md mb-2 block font-medium tracking-widest text-gray-900 dark:text-white"
-                                style="font-family: Bebas Neue"
-                            >
-                                Color
-                            </label>
+                            <label for="floatingColor" class="text-md mb-2 block"> Color </label>
                             <div class="grid w-full grid-cols-[auto_1fr] gap-2">
                                 <input
                                     class="input"
@@ -134,7 +100,7 @@
                                     disabled="{editableColor}"
                                 />
                                 <input
-                                    class="focus:border-primary peer-focus:text-primary dark:focus:border-primary dark:peer-focus:text-primary peer m-0 block w-full rounded bg-red-950 bg-clip-padding px-3 py-4 text-base font-normal leading-tight text-neutral-700 placeholder-white transition duration-200 ease-linear focus:text-neutral-700 focus:outline-none dark:border-neutral-600 dark:text-neutral-200"
+                                    class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
                                     id="floatingColor"
                                     type="text"
                                     bind:value="{label[2]}"
@@ -145,13 +111,7 @@
                             </div>
                         </div>
 
-                        <button
-                            data-te-ripple-init
-                            data-te-ripple-color="light"
-                            class="{buttonClass}"
-                            style="background-color: white"
-                            on:click="{() => color()}"
-                        >
+                        <button class="{buttonClass}" on:click="{() => color()}">
                             {editableColor ? 'EDIT' : 'SAVE'}
                         </button>
                     </div>
