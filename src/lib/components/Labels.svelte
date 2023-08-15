@@ -1,10 +1,9 @@
 <script lang="ts">
     import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-    // import { editColor, editDeadline, editTitle } from '$lib/api/label';
     const data = [
-        ['LABEL 1', '2001-09-06', '#000000'],
-        ['LABEL 2', '2001-09-07', '#cccccc'],
-        ['LABEL 3', '2001-09-08', '#ffffff'],
+        { label: 'LABEL 1', deadline: '2001-09-06', color: '#000000' },
+        { label: 'LABEL 2', deadline: '2001-09-07', color: '#cccccc' },
+        { label: 'LABEL 3', deadline: '2001-09-08', color: '#ffffff' },
     ];
 
     // let colorValue = '#000000';
@@ -14,21 +13,21 @@
 
     const buttonClass = 'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs uppercase';
 
-    function title() {
+    function toggleTitleEdit() {
         // function title(lid: number, title: string) {
         if (editableTitle) editableTitle = !editableTitle;
         // editTitle(lid, title);
         else editableTitle = !editableTitle;
     }
 
-    function color() {
+    function toggleColorEdit() {
         // function color(lid: number, color: any) {
         if (editableColor) editableColor = !editableColor;
         // editColor(lid, color);
         else editableColor = !editableColor;
     }
 
-    function deadline() {
+    function toggleDeadlineEdit() {
         // function deadline(lid: number, deadline: any) {
         if (editableDeadline) editableDeadline = !editableDeadline;
         // editDeadline(lid, deadline);
@@ -38,7 +37,7 @@
 
 <div class="card flex w-full overflow-hidden pb-2 pt-2">
     <Accordion>
-        {#each data as label}
+        {#each data as { label, deadline, color }}
             <AccordionItem autocollapse>
                 <svelte:fragment slot="lead">
                     <h4 class="mb-2.5 text-2xl">
@@ -49,7 +48,7 @@
                 </svelte:fragment>
                 <svelte:fragment slot="summary">
                     <h5 class="text-l">
-                        {label[0]}
+                        {label}
                     </h5>
                 </svelte:fragment>
                 <svelte:fragment slot="content">
@@ -61,14 +60,17 @@
                                 type="text"
                                 class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
                                 id="floatingInput"
-                                bind:value="{label[0]}"
-                                placeholder="{label[0]}"
+                                bind:value="{label}"
+                                placeholder="{label}"
                                 disabled="{editableTitle}"
                             />
                         </div>
-
-                        <button class="{buttonClass}" on:click="{() => title()}">
-                            {editableTitle ? 'EDIT' : 'SAVE'}
+                        <button class="{buttonClass}" on:click="{() => toggleTitleEdit()}">
+                            {#if editableTitle}
+                                EDIT
+                            {:else}
+                                SAVE
+                            {/if}
                         </button>
 
                         <!-- edit deadline -->
@@ -78,14 +80,18 @@
                                 type="date"
                                 class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
                                 id="floatingInput"
-                                placeholder="{label[1]}"
-                                bind:value="{label[1]}"
+                                placeholder="{deadline}"
+                                bind:value="{deadline}"
                                 disabled="{editableDeadline}"
                             />
                         </div>
 
-                        <button class="{buttonClass}" on:click="{() => deadline()}">
-                            {editableDeadline ? 'EDIT' : 'SAVE'}
+                        <button class="{buttonClass}" on:click="{() => toggleDeadlineEdit()}">
+                            {#if editableDeadline}
+                                EDIT
+                            {:else}
+                                SAVE
+                            {/if}
                         </button>
 
                         <!-- edit color -->
@@ -95,7 +101,7 @@
                                 <input
                                     class="input"
                                     type="color"
-                                    bind:value="{label[2]}"
+                                    bind:value="{color}"
                                     placeholder="#000000"
                                     disabled="{editableColor}"
                                 />
@@ -103,16 +109,19 @@
                                     class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
                                     id="floatingColor"
                                     type="text"
-                                    bind:value="{label[2]}"
+                                    bind:value="{color}"
                                     placeholder="#000000"
                                     readonly
                                     tabindex="-1"
                                 />
                             </div>
                         </div>
-
-                        <button class="{buttonClass}" on:click="{() => color()}">
-                            {editableColor ? 'EDIT' : 'SAVE'}
+                        <button class="{buttonClass}" on:click="{() => toggleColorEdit()}">
+                            {#if editableColor}
+                                EDIT
+                            {:else}
+                                SAVE
+                            {/if}
                         </button>
                     </div>
                 </svelte:fragment>

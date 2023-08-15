@@ -41,7 +41,11 @@
                             />
                         </div>
                         <button class="{buttonClass}" on:click="{() => department()}">
-                            {editableDepartment ? 'EDIT' : 'SAVE'}
+                            {#if editableDepartment}
+                                EDIT
+                            {:else}
+                                SAVE
+                            {/if}
                         </button>
                     </div>
                 </svelte:fragment>

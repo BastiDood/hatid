@@ -5,7 +5,6 @@
     const buttonClass =
         'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg';
 
-    let optionValue = 0;
     let ticketTitle = '';
     let ticketLabel = '';
     let ticketDescription = '';
@@ -36,8 +35,8 @@
                 class="block w-full w-full rounded bg-clip-padding p-2.5 px-3 py-4 text-sm"
                 bind:value="{ticketLabel}"
             >
-                {#each labels as label}
-                    <option value="{optionValue++}">{label}</option>
+                {#each labels as label, id}
+                    <option value="{id}">{label}</option>
                 {/each}
             </select>
         </div>
