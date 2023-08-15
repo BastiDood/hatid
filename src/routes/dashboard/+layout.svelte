@@ -1,12 +1,12 @@
 <script lang="ts">
     import { AppBar, AppShell, Avatar } from '@skeletonlabs/skeleton';
-    import Edit from 'svelte-material-icons/FileEditOutline.svelte';
-    import Home from 'svelte-material-icons/Home.svelte';
+    import Edit from '@krowten/svelte-heroicons/icons/PencilSquareIcon.svelte';
+    import Home from '@krowten/svelte-heroicons/icons/HomeIcon.svelte';
     import type { LayoutServerData } from './$types';
-    import Logout from 'svelte-material-icons/Logout.svelte';
-    import Settings from 'svelte-material-icons/Cog.svelte';
-    import Ticket from 'svelte-material-icons/TicketConfirmationOutline.svelte';
-    import User from 'svelte-material-icons/AccountMultipleOutline.svelte';
+    import Logout from '@krowten/svelte-heroicons/icons/ArrowRightOnRectangleIcon.svelte';
+    import Settings from '@krowten/svelte-heroicons/icons/Cog6ToothIcon.svelte';
+    import Ticket from '@krowten/svelte-heroicons/icons/TicketIcon.svelte';
+    import User from '@krowten/svelte-heroicons/icons/UsersIcon.svelte';
     import logo from '$lib/images/HATiD.png';
 
     // eslint-disable-next-line init-declarations
@@ -40,7 +40,7 @@
                         class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
-                        <Home />
+                        <Home class="h-4 w-4" solid />
                         <span>Dashboard</span>
                     </a>
                 </div>
@@ -52,7 +52,7 @@
                         class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
-                        <Ticket />
+                        <Ticket class="h-4 w-4" solid />
                         <span>Tickets</span>
                     </a>
                 </div>
@@ -64,7 +64,7 @@
                         class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
-                        <User />
+                        <User class="h-4 w-4" />
                         <span class="font-QuicksandMedium">Users</span>
                     </a>
                 </div>
@@ -82,7 +82,7 @@
                         class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
-                        <Edit />
+                        <Edit class="h-4 w-4" solid />
                         <span>Edit profile</span>
                     </a>
                 </div>
@@ -95,7 +95,7 @@
                         class="flex w-full items-center space-x-2 self-stretch rounded pl-2"
                         href="/dashboard"
                     >
-                        <Settings />
+                        <Settings class="h-4 w-4" solid />
                         <span>Settings</span>
                     </a>
                 </div>
@@ -108,7 +108,7 @@
                         class="flex w-full items-center space-x-2 self-stretch rounded pl-2 text-sm"
                         href="/"
                     >
-                        <Logout />
+                        <Logout class="h-4 w-4" />
                         <span>Log out</span>
                     </a>
                 </div>

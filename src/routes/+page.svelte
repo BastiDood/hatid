@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Google from 'svelte-material-icons/Google.svelte';
+    import Login from '@krowten/svelte-heroicons/icons/ArrowLeftOnRectangleIcon.svelte';
     import type { PageServerData } from './$types';
     import logo from '$lib/images/HATiD.png';
 
@@ -13,7 +13,7 @@
 
 {#if user === null}
     <a href="/auth/login" class="btn variant-filled">
-        <Google />
+        <Login class="2-4 h-4" />
         <span>Sign in with Google</span>
     </a>
 {:else}
