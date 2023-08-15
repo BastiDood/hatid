@@ -36,8 +36,6 @@
         <section class="flex w-1/4 gap-7 p-4 pt-12">
             <div class="relative mb-3 w-full">
                 <button
-                    data-te-ripple-init
-                    data-te-ripple-color="light"
                     class="btn variant-filled mb-2 block flex w-full rounded px-6 py-2.5 text-xs uppercase"
                     on:click="{() => handleClick(priorityTitle, priority)}"
                 >

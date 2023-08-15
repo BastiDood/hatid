@@ -16,7 +16,7 @@
     }
 </script>
 
-<div class="bg-initial card flex w-full overflow-hidden pb-2 pt-2">
+<div class="card flex w-full overflow-hidden pb-2 pt-2">
     <Accordion>
         {#each priorities as { title, prio }}
             <AccordionItem autocollapse>

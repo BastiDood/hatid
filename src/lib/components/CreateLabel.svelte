@@ -9,7 +9,7 @@
     let colorValue = 0x000000;
 </script>
 
-<div class="bg-initial card flex w-full overflow-hidden">
+<div class="card flex w-full overflow-hidden">
     <div class="relative mb-3 flex w-full flex-row">
         <section class="flex grid w-full grid-cols-4 place-items-end gap-7 p-4">
             <!-- title -->
@@ -19,7 +19,7 @@
                 </label>
                 <input
                     type="text"
-                    class="peer m-0 block w-full bg-clip-padding px-3 py-4 text-base placeholder-white"
+                    class="peer m-0 block w-full bg-clip-padding px-3 py-4 text-base"
                     id="floatingInput"
                     placeholder="Title..."
                     bind:value="{title}"
@@ -31,7 +31,7 @@
                 <label for="floatingInput" class="text-md mb-2 block"> Deadline </label>
                 <input
                     type="date"
-                    class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 text-base leading-tight placeholder-white"
+                    class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 text-base leading-tight"
                     id="floatingInput"
                     placeholder="yyyy-mm-dd..."
                     bind:value="{deadline}"
@@ -51,7 +51,7 @@
                         placeholder="#000000"
                     />
                     <input
-                        class="peer m-0 block w-full bg-clip-padding px-3 py-4 placeholder-white"
+                        class="peer m-0 block w-full bg-clip-padding px-3 py-4"
                         id="floatingColor"
                         type="text"
                         bind:value="{colorValue}"
