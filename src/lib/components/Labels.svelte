@@ -6,7 +6,6 @@
         { label: 'LABEL 3', deadline: '2001-09-08', color: '#ffffff' },
     ];
 
-    // let colorValue = '#000000';
     let editableTitle = true;
     let editableDeadline = true;
     let editableColor = true;
@@ -14,24 +13,15 @@
     const buttonClass = 'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs uppercase';
 
     function toggleTitleEdit() {
-        // function title(lid: number, title: string) {
-        if (editableTitle) editableTitle = !editableTitle;
-        // editTitle(lid, title);
-        else editableTitle = !editableTitle;
+        editableTitle = !editableTitle;
     }
 
     function toggleColorEdit() {
-        // function color(lid: number, color: any) {
-        if (editableColor) editableColor = !editableColor;
-        // editColor(lid, color);
-        else editableColor = !editableColor;
+        editableColor = !editableColor;
     }
 
     function toggleDeadlineEdit() {
-        // function deadline(lid: number, deadline: any) {
-        if (editableDeadline) editableDeadline = !editableDeadline;
-        // editDeadline(lid, deadline);
-        else editableDeadline = !editableDeadline;
+        editableDeadline = !editableDeadline;
     }
 </script>
 

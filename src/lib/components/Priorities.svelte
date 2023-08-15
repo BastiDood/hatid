@@ -8,17 +8,11 @@
     let editablePriorityTitle = true;
     let editablePriority = true;
     function priorityTitle() {
-        // function priorityTitle(pid:number, title:string) {
-        if (editablePriorityTitle) editablePriorityTitle = !editablePriorityTitle;
-        // editTitle(pid, title);
-        else editablePriorityTitle = !editablePriorityTitle;
+        editablePriorityTitle = !editablePriorityTitle;
     }
 
     function priority() {
-        // function priority(pid:number, priority:number) {
-        if (editablePriority) editablePriority = !editablePriority;
-        // edit(pid, priority);
-        else editablePriority = !editablePriority;
+        editablePriority = !editablePriority;
     }
 
     const buttonClass = 'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs';

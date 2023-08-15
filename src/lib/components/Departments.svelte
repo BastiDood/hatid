@@ -4,14 +4,10 @@
     // import { editName } from '$lib/api/dept';
     const departments = ['DEPARTMENT 1', 'DEPARTMENT 2', 'DEPARTMENT 3'];
     let editableDepartment = true;
-    // let result:any;
     const buttonClass =
         'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg';
-    function department() {
-        // function department(did: number, name: string) {
-        if (editableDepartment) editableDepartment = !editableDepartment;
-        // editName(did, name);
-        else editableDepartment = !editableDepartment;
+    function toggleDepartmentEdit() {
+        editableDepartment = !editableDepartment;
     }
 </script>
 
@@ -40,7 +36,7 @@
                                 disabled="{editableDepartment}"
                             />
                         </div>
-                        <button class="{buttonClass}" on:click="{() => department()}">
+                        <button class="{buttonClass}" on:click="{() => toggleDepartmentEdit()}">
                             {#if editableDepartment}
                                 EDIT
                             {:else}
