@@ -25,9 +25,6 @@
         'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg';
 </script>
 
-<h2 class="text-left text-3xl tracking-widest" style="color:black; font-family: Bebas Neue;">
-    PRIORITIES
-</h2>
 <div
     class="bg-initial card flex w-full overflow-hidden pb-2 pt-2"
     style="background-color:#5F2E2E;"

@@ -9,10 +9,6 @@
     let colorValue = 0x000000;
 </script>
 
-<h2 class="text-left text-3xl tracking-widest" style="color:black; font-family: Bebas Neue;">
-    CREATE LABEL
-</h2>
-
 <div class="bg-initial card flex w-full overflow-hidden" style="background-color:#5F2E2E;">
     <div class="relative mb-3 flex w-full flex-row">
         <section class="flex grid w-full grid-cols-4 place-items-end gap-7 p-4">

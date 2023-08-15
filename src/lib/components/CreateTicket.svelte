@@ -17,9 +17,6 @@
     }
 </script>
 
-<h2 class="text-left text-3xl tracking-widest" style="color:black; font-family: Bebas Neue;">
-    CREATE TICKET
-</h2>
 <div
     class="bg-initial card w-full flex-col items-center justify-center overflow-hidden"
     style="background-color:#5F2E2E;"

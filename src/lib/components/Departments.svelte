@@ -15,9 +15,6 @@
     }
 </script>
 
-<h2 class="text-left text-3xl tracking-widest" style="color:black; font-family: Bebas Neue;">
-    DEPARTMENTS
-</h2>
 <div
     class="bg-initial card flex w-full overflow-hidden pb-2 pt-2"
     style="background-color:#5F2E2E;"
