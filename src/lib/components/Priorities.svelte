@@ -14,8 +14,6 @@
     function priority() {
         editablePriority = !editablePriority;
     }
-
-    const buttonClass = 'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs';
 </script>
 
 <div class="bg-initial card flex w-full overflow-hidden pb-2 pt-2">
@@ -45,7 +43,7 @@
                                 disabled="{editablePriorityTitle}"
                             />
                         </div>
-                        <button class="{buttonClass}" on:click="{() => priorityTitle()}">
+                        <button on:click="{() => priorityTitle()}">
                             {#if editablePriorityTitle}
                                 EDIT
                             {:else}
@@ -63,7 +61,7 @@
                                 disabled="{editablePriority}"
                             />
                         </div>
-                        <button class="{buttonClass}" on:click="{() => priority()}">
+                        <button on:click="{() => priority()}">
                             {#if editablePriority}
                                 EDIT
                             {:else}

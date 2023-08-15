@@ -4,8 +4,6 @@
     // import { editName } from '$lib/api/dept';
     const departments = ['DEPARTMENT 1', 'DEPARTMENT 2', 'DEPARTMENT 3'];
     let editableDepartment = true;
-    const buttonClass =
-        'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg';
     function toggleDepartmentEdit() {
         editableDepartment = !editableDepartment;
     }
@@ -36,7 +34,7 @@
                                 disabled="{editableDepartment}"
                             />
                         </div>
-                        <button class="{buttonClass}" on:click="{() => toggleDepartmentEdit()}">
+                        <button on:click="{() => toggleDepartmentEdit()}">
                             {#if editableDepartment}
                                 EDIT
                             {:else}
