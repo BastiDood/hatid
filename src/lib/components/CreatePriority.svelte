@@ -1,7 +1,7 @@
 <script lang="ts">
     import { create } from '$lib/api/priority';
-    let PriorityTitle = '';
-    let Priority = 0;
+    let priorityTitle = '';
+    let priority = 0;
     // eslint-disable-next-line init-declarations
     let result: number | null | undefined;
     async function handleClick(priorityTitle: string, priority: number) {
@@ -18,7 +18,7 @@
                     type="text"
                     class="peer m-0 block w-full bg-clip-padding px-3 py-4 placeholder-white"
                     id="floatingInput"
-                    bind:value="{PriorityTitle}"
+                    bind:value="{priorityTitle}"
                     placeholder="Priority Title..."
                 />
             </div>
@@ -28,7 +28,7 @@
                     type="text"
                     class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4"
                     id="floatingInput2"
-                    bind:value="{Priority}"
+                    bind:value="{priority}"
                     placeholder="Priority..."
                 />
             </div>
@@ -39,7 +39,7 @@
                     data-te-ripple-init
                     data-te-ripple-color="light"
                     class="btn variant-filled mb-2 block flex w-full rounded px-6 py-2.5 text-xs uppercase"
-                    on:click="{() => handleClick(PriorityTitle, Priority)}"
+                    on:click="{() => handleClick(priorityTitle, priority)}"
                 >
                     Create Priority
                 </button>
