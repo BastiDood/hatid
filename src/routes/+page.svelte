@@ -26,14 +26,5 @@
         Sign in with Google
     </a>
 {:else}
-    <header class="bold h4 card-header flex items-center justify-center">ALREADY LOGGED IN</header>
-    <section class="p-4"></section>
-    <footer class="card-footer flex items-center justify-center">
-        <a
-            href="/dashboard"
-            class="btn variant-filled mb-2 flex w-full rounded px-6 py-2.5 text-xs"
-        >
-            Go to Dashboard
-        </a>
-    </footer>
+    <a href="/dashboard" class="btn variant-filled"> Go to Dashboard </a>
 {/if}
