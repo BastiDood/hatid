@@ -1,7 +1,11 @@
-<script>
-    import CreateLabel from '$lib/components/CreateLabel.svelte';
-    import Labels from '$lib/components/Labels.svelte';
+<script lang="ts">
+    import FormTrigger from '../FormTrigger.svelte';
+    import Labels from './Labels.svelte';
+    import type { PageServerData } from './$types';
+
+    export let data: PageServerData;
+    $: ({ labels } = data);
 </script>
 
-<CreateLabel />
+<FormTrigger component="createLabel" label="Create New Label" />
 <Labels />

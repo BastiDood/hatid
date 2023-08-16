@@ -1,7 +1,7 @@
 <script>
-    import CreateDepartment from '$lib/components/CreateDepartment.svelte';
-    import Departments from '$lib/components/Departments.svelte';
+    import FormTrigger from '../FormTrigger.svelte';
+    import Departments from './Departments.svelte';
 </script>
 
-<CreateDepartment />
+<FormTrigger component="createDept" label="Create New Department" />
 <Departments />

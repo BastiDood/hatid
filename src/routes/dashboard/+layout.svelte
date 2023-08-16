@@ -8,7 +8,10 @@
         LightSwitch,
     } from '@skeletonlabs/skeleton';
     import BuildingOffice from '@krowten/svelte-heroicons/icons/BuildingOfficeIcon.svelte';
-    import CreatePriority from '$lib/components/CreatePriority.svelte';
+    import CreateDepartment from './CreateDepartment.svelte';
+    import CreateLabel from './CreateLabel.svelte';
+    import CreatePriority from './CreatePriority.svelte';
+    import CreateTicket from './CreateTicket.svelte';
     import Inbox from '@krowten/svelte-heroicons/icons/InboxIcon.svelte';
     import type { LayoutServerData } from './$types';
     import Logout from '@krowten/svelte-heroicons/icons/ArrowRightOnRectangleIcon.svelte';
@@ -22,7 +25,10 @@
     $: ({ name, email, picture } = data);
 
     const components = {
+        createLabel: { ref: CreateLabel },
         createPriority: { ref: CreatePriority },
+        createDept: { ref: CreateDepartment },
+        createTicket: { ref: CreateTicket },
     };
 </script>
 

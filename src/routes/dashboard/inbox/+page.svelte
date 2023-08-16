@@ -1,5 +1,5 @@
 <script>
-    import CreateTicket from '$lib/components/CreateTicket.svelte';
+    import FormTrigger from '../FormTrigger.svelte';
 </script>
 
-<CreateTicket />
+<FormTrigger component="createTicket" label="Create New Ticket" />
