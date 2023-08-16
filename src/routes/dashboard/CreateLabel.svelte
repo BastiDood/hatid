@@ -1,71 +1,20 @@
 <script>
-    // import { create } from "$lib/api/label";
-    // async function handleClick (){
-    //     let returnValue = await create(title, colorValue, deadline);
-    // }
-    // function handleClick() {}
-    let title = '';
-    let deadline = '';
-    let colorValue = 0x000000;
+    import SubmitButton from './SubmitButton.svelte';
 </script>
 
-<div class="card flex w-full overflow-hidden border-token rounded-container-token">
-    <div class="relative mb-3 flex w-full flex-row">
-        <section class="flex grid w-full grid-cols-4 place-items-end gap-7 p-4">
-            <!-- title -->
-            <div class="relative mb-3 w-full">
-                <label for="floatingInput" class="mb-2 block"> Title </label>
-                <input
-                    type="text"
-                    class="input"
-                    id="floatingInput"
-                    placeholder="Title..."
-                    bind:value="{title}"
-                />
-            </div>
-
-            <!-- date -->
-            <div class="relative mb-3 w-full">
-                <label for="floatingInput" class="text-md mb-2 block"> Deadline </label>
-                <input
-                    type="date"
-                    class="input"
-                    id="floatingInput"
-                    placeholder="yyyy-mm-dd..."
-                    bind:value="{deadline}"
-                />
-            </div>
-
-            <!-- color picker -->
-            <div class="relative mb-3 w-full">
-                <label for="floatingColor"> Color </label>
-                <div class="grid w-full grid-cols-[auto_1fr] gap-2">
-                    <input
-                        class="input"
-                        type="color"
-                        bind:value="{colorValue}"
-                        placeholder="#000000"
-                    />
-                    <input
-                        class="input"
-                        id="floatingColor"
-                        type="text"
-                        bind:value="{colorValue}"
-                        placeholder="#000000"
-                        readonly
-                        tabindex="-1"
-                    />
-                </div>
-            </div>
-
-            <!-- button -->
-            <div class="relative mb-3 w-full">
-                <button type="button" class="btn variant-filled">
-                    <!-- on:click="{handleClick}"
-                > -->
-                    Create Label
-                </button>
-            </div>
-        </section>
-    </div>
-</div>
+<!-- TODO: Migrate to SvelteKit form actions. -->
+<form method="POST" enctype="application/x-www-form-urlencoded" class="card space-y-4 p-4">
+    <label class="label">
+        <span>Title</span>
+        <input required type="text" name="title" class="input" placeholder="Title" />
+    </label>
+    <label class="label">
+        <span>Color</span>
+        <input required type="color" name="color" class="input" />
+    </label>
+    <label class="label">
+        <span>Deadline</span>
+        <input type="number" name="deadline" min="1" max="365" class="input" placeholder="Days" />
+    </label>
+    <SubmitButton />
+</form>

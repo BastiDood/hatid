@@ -598,6 +598,12 @@ export async function getDeptLabels() {
     return DeptLabelSchema.array().parse(rows);
 }
 
+export async function getLabelsByDeptWithoutDeadline(did: Dept['dept_id']) {
+    const rows =
+        await sql`SELECT label_id, title, color FROM get_labels_by_dept(${did}) WHERE label_id IS NOT NULL`.execute();
+    return LabelSchema.pick({ label_id: true, title: true, color: true }).array().parse(rows);
+}
+
 export async function getLabels() {
     const rows =
         await sql`SELECT label_id, title, color, EXTRACT(days FROM deadline)::INT AS deadline FROM labels`.execute();
