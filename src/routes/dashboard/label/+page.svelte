@@ -8,4 +8,4 @@
 </script>
 
 <FormTrigger component="createLabel" label="Create New Label" />
-<Labels />
+<Labels {labels} />
