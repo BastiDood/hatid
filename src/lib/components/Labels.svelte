@@ -40,9 +40,7 @@
                     </h5>
                 </svelte:fragment>
                 <svelte:fragment slot="content">
-                    <div
-                        class="w-full flex-row overflow-hidden p-4 rounded-token"
-                    >
+                    <div class="w-full flex-row overflow-hidden p-4 rounded-token">
                         <!-- edit title -->
                         <div class="relative mb-3 w-full">
                             <label for="floatingInput" class="label"> Title </label>
