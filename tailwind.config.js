@@ -12,6 +12,5 @@ export default {
     theme: {
         extend: {},
     },
-    plugins: [TailwindForms],
-    plugins: skeleton(),
+    plugins: [TailwindForms, ...skeleton()],
 };
