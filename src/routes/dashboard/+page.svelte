@@ -8,7 +8,9 @@
     import Priorities from '$lib/components/Priorities.svelte';
 </script>
 
-<div class="ml-10 mr-10 mt-10 flex h-full flex-col space-y-7 pb-2 pl-5 pr-5 pt-5">
+<div
+    class="bg-surface-backdrop-token ml-10 mr-10 mt-10 flex h-full flex-col space-y-7 pb-2 pl-5 pr-5 pt-5 border-token rounded-container-token"
+>
     <h2 class="text-left">CREATE LABEL</h2>
     <CreateLabel />
 

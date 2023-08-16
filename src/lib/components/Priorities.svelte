@@ -16,9 +16,11 @@
     }
 </script>
 
-<div class="card flex w-full overflow-hidden pb-2 pt-2">
+<div
+    class="text-tokenflex bg-primary-backdrop-token w-full overflow-hidden pb-2 pt-2 border-token rounded-token font-token"
+>
     <Accordion>
-        {#each priorities as { title, prio } (title)}
+        {#each priorities as { title, prio }}
             <AccordionItem autocollapse>
                 <svelte:fragment slot="lead">
                     <h5 class="text-l font-medium leading-tight">
@@ -29,21 +31,25 @@
                     <section></section>
                 </svelte:fragment>
                 <svelte:fragment slot="content">
-                    <div class="w-full flex-row overflow-hidden rounded bg-[#828282] p-4">
+                    <div
+                        class="bg-secondary-backdrop-token text-token w-full flex-row overflow-hidden rounded p-4 rounded-token font-token"
+                    >
                         <div class="relative mb-3 w-full">
-                            <label for="floatingInput" class="text-md mb-2 block">
-                                Priority Title
-                            </label>
+                            <label for="floatingInput" class="label"> Priority Title </label>
                             <input
                                 type="text"
-                                class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
+                                class="input"
                                 id="floatingInput"
                                 bind:value="{title}"
                                 placeholder="Priority Title..."
                                 disabled="{editablePriorityTitle}"
                             />
                         </div>
-                        <button on:click="{() => priorityTitle()}">
+                        <button
+                            type="button"
+                            class="btn variant-filled-primary"
+                            on:click="{() => priorityTitle()}"
+                        >
                             {#if editablePriorityTitle}
                                 EDIT
                             {:else}
@@ -51,17 +57,21 @@
                             {/if}
                         </button>
                         <div class="relative mb-3 w-full">
-                            <label for="floatingInput" class="text-md mb-2 block"> Priority </label>
+                            <label for="floatingInput" class="label"> Priority </label>
                             <input
                                 type="text"
-                                class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
+                                class="input"
                                 id="floatingInput"
                                 bind:value="{prio}"
                                 placeholder="Priority..."
                                 disabled="{editablePriority}"
                             />
                         </div>
-                        <button on:click="{() => priority()}">
+                        <button
+                            type="button"
+                            class="btn variant-filled-primary"
+                            on:click="{() => priority()}"
+                        >
                             {#if editablePriority}
                                 EDIT
                             {:else}

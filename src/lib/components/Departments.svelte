@@ -9,7 +9,9 @@
     }
 </script>
 
-<div class="card flex w-full overflow-hidden pb-2 pt-2">
+<div
+    class="bg-primary-backdrop-token text-token flex w-full overflow-hidden pb-2 pt-2 border-token rounded-token font-token"
+>
     <Accordion>
         {#each departments as dept (dept)}
             <AccordionItem autocollapse>
@@ -22,19 +24,25 @@
                     <section></section>
                 </svelte:fragment>
                 <svelte:fragment slot="content">
-                    <div class="w-full flex-row overflow-hidden rounded p-4">
+                    <div
+                        class="bg-secondary-backdrop-token w-full flex-row overflow-hidden rounded p-4"
+                    >
                         <div class="relative mb-3 w-full">
-                            <label for="floatingInput" class="text-md mb-2 block"> Title </label>
+                            <label for="floatingInput" class="label"> Title </label>
                             <input
                                 type="text"
-                                class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
+                                class="input"
                                 id="floatingInput"
                                 bind:value="{dept}"
                                 placeholder="{dept}"
                                 disabled="{editableDepartment}"
                             />
                         </div>
-                        <button on:click="{() => toggleDepartmentEdit()}">
+                        <button
+                            type="button"
+                            class="btn variant-filled"
+                            on:click="{() => toggleDepartmentEdit()}"
+                        >
                             {#if editableDepartment}
                                 EDIT
                             {:else}

@@ -8,16 +8,18 @@
     let deptName = '';
 </script>
 
-<div class="card flex w-full flex-col items-center justify-center overflow-hidden">
+<div
+    class="card bg-primary-backdrop-token flex w-full flex-col items-center justify-center overflow-hidden rounded-token"
+>
     <div class="relative flex w-full flex-row">
         <section class="flex w-3/4 gap-7 p-4">
             <div class="relative w-full">
-                <label for="floatingInput" class="text-md mb-2 block font-medium tracking-widest">
+                <label for="floatingInput" class="text-token mb-2 block tracking-widest font-token">
                     Department Name
                 </label>
                 <input
                     type="text"
-                    class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 text-base font-normal leading-tight placeholder-white ease-linear"
+                    class="input"
                     id="floatingInput"
                     bind:value="{deptName}"
                     placeholder="Department Name..."
@@ -28,7 +30,8 @@
             <!-- button -->
             <div class="relative mb-3 w-full">
                 <button
-                    class="btn variant-filled mb-2 block flex w-full rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal"
+                    type="button"
+                    class="btn variant-filled"
                     on:click="{() => handleClick(deptName)}"
                 >
                     Create Department
