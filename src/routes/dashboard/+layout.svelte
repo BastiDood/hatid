@@ -7,9 +7,12 @@
         Avatar,
         LightSwitch,
     } from '@skeletonlabs/skeleton';
-    import Home from '@krowten/svelte-heroicons/icons/HomeIcon.svelte';
+    import BuildingOffice from '@krowten/svelte-heroicons/icons/BuildingOfficeIcon.svelte';
+    import Inbox from '@krowten/svelte-heroicons/icons/InboxIcon.svelte';
     import type { LayoutServerData } from './$types';
     import Logout from '@krowten/svelte-heroicons/icons/ArrowRightOnRectangleIcon.svelte';
+    import QueueList from '@krowten/svelte-heroicons/icons/QueueListIcon.svelte';
+    import Tag from '@krowten/svelte-heroicons/icons/TagIcon.svelte';
     import logo from '$lib/images/HATiD.png';
 
     // eslint-disable-next-line init-declarations
@@ -26,11 +29,23 @@
             <Avatar src="{picture}" class="w-8" />
         </svelte:fragment>
     </AppBar>
-    <slot />
-    <AppRail slot="sidebarLeft" width="w-24" regionTrail="mb-4">
-        <AppRailAnchor href="/dashboard">
-            <Home slot="lead" class="h-8 w-8" solid />
-            <span>Dashboard</span>
+    <AppRail slot="sidebarLeft" regionTrail="mb-4">
+        <AppRailAnchor href="/dashboard/inbox">
+            <Inbox slot="lead" class="h-8 w-8" solid />
+            <span>Inbox</span>
+        </AppRailAnchor>
+        <!-- Use `data.admin` to remove this for non-admin people. -->
+        <AppRailAnchor href="/dashboard/priority">
+            <QueueList slot="lead" class="h-8 w-8" solid />
+            <span>Priorities</span>
+        </AppRailAnchor>
+        <AppRailAnchor href="/dashboard/label">
+            <Tag slot="lead" class="h-8 w-8" solid />
+            <span>Labels</span>
+        </AppRailAnchor>
+        <AppRailAnchor href="/dashboard/dept">
+            <BuildingOffice slot="lead" class="h-8 w-8" solid />
+            <span>Departments</span>
         </AppRailAnchor>
         <!-- TODO: Use the logout endpoint here. -->
         <button
@@ -39,7 +54,10 @@
             class="flex w-full appearance-none flex-col items-center justify-center gap-1"
         >
             <Logout class="block h-8 w-8" />
-            <span>Logout</span>
+            <span class="app-rail-label text-xs font-bold">Logout</span>
         </button>
     </AppRail>
+    <main class="m-10 flex flex-col">
+        <slot />
+    </main>
 </AppShell>
