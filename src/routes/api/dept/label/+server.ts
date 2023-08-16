@@ -1,12 +1,29 @@
 import {
     SubscribeDeptToLabelResult,
+    getLabelsByDeptWithoutDeadline,
+    getUserFromSession,
     isHeadSession,
     subscribeDeptToLabel,
 } from '$lib/server/database';
+import { error, json } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
-import { error } from '@sveltejs/kit';
+
+// eslint-disable-next-line func-style
+export const GET: RequestHandler = async ({ cookies, url: { searchParams } }) => {
+    const dept = searchParams.get('dept');
+    if (dept === null) throw error(StatusCodes.BAD_REQUEST);
+    const did = parseInt(dept, 10);
+
+    const sid = cookies.get('sid');
+    if (!sid) throw error(StatusCodes.UNAUTHORIZED);
+
+    // TODO: session has expired so we must inform the client that they should log in again
+    const user = await getUserFromSession(sid);
+    if (user === null) throw error(StatusCodes.UNAUTHORIZED);
+    return json(await getLabelsByDeptWithoutDeadline(did));
+};
 
 function resultToCode(result: SubscribeDeptToLabelResult) {
     switch (result) {
@@ -32,7 +49,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 
     const label = form.get('label');
     if (label === null || label instanceof File) throw error(StatusCodes.BAD_REQUEST);
-    const lid = parseInt(dept, 10);
+    const lid = parseInt(label, 10);
 
     const sid = cookies.get('sid');
     if (!sid) throw error(StatusCodes.UNAUTHORIZED);

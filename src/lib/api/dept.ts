@@ -1,5 +1,6 @@
 import { BadInput, InsufficientPermissions, InvalidSession, UnexpectedStatusCode } from './error';
 import { type Dept, type DeptLabel, DeptSchema } from '$lib/model/dept';
+import { LabelSchema } from '$lib/model/label';
 import { StatusCodes } from 'http-status-codes';
 
 /** Creates a new {@linkcode Dept} and returns the ID. */
@@ -18,6 +19,36 @@ export async function create(name: Dept['name']) {
             throw new InvalidSession();
         case StatusCodes.FORBIDDEN:
             throw new InsufficientPermissions();
+        default:
+            throw new UnexpectedStatusCode(res.status);
+    }
+}
+
+/** Gets a list of all the {@linkcode Dept} in the system. */
+export async function getAll() {
+    const res = await fetch('/api/dept', { credentials: 'same-origin' });
+    switch (res.status) {
+        case StatusCodes.OK:
+            return DeptSchema.array().parse(await res.json());
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
+        default:
+            throw new UnexpectedStatusCode(res.status);
+    }
+}
+
+/** Gets a list of all the {@linkcode Dept} in the system. */
+export async function getLabels(did: DeptLabel['dept_id']) {
+    const res = await fetch(`/api/dept/label?dept=${did}`, { credentials: 'same-origin' });
+    switch (res.status) {
+        case StatusCodes.OK:
+            return LabelSchema.pick({ label_id: true, title: true, color: true })
+                .array()
+                .parse(await res.json());
+        case StatusCodes.BAD_REQUEST:
+            throw new BadInput();
+        case StatusCodes.UNAUTHORIZED:
+            throw new InvalidSession();
         default:
             throw new UnexpectedStatusCode(res.status);
     }

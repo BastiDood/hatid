@@ -6,8 +6,13 @@
         AppShell,
         Avatar,
         LightSwitch,
+        Modal,
     } from '@skeletonlabs/skeleton';
     import BuildingOffice from '@krowten/svelte-heroicons/icons/BuildingOfficeIcon.svelte';
+    import CreateDepartment from './CreateDepartment.svelte';
+    import CreateLabel from './CreateLabel.svelte';
+    import CreatePriority from './CreatePriority.svelte';
+    import CreateTicket from './CreateTicket.svelte';
     import Inbox from '@krowten/svelte-heroicons/icons/InboxIcon.svelte';
     import type { LayoutServerData } from './$types';
     import Logout from '@krowten/svelte-heroicons/icons/ArrowRightOnRectangleIcon.svelte';
@@ -18,8 +23,16 @@
     // eslint-disable-next-line init-declarations
     export let data: LayoutServerData;
     $: ({ name, email, picture } = data);
+
+    const components = {
+        createLabel: { ref: CreateLabel },
+        createPriority: { ref: CreatePriority },
+        createDept: { ref: CreateDepartment },
+        createTicket: { ref: CreateTicket },
+    };
 </script>
 
+<Modal components="{components}" />
 <AppShell>
     <AppBar slot="header" background="bg-primary-active-token">
         <a href="/" slot="lead"><img src="{logo}" alt="HATiD" class="h-8" /></a>
@@ -34,7 +47,7 @@
             <Inbox slot="lead" class="h-8 w-8" solid />
             <span>Inbox</span>
         </AppRailAnchor>
-        <!-- Use `data.admin` to remove this for non-admin people. -->
+        <!-- TODO: Use `data.admin` to remove this for non-admin people. -->
         <AppRailAnchor href="/dashboard/priority">
             <QueueList slot="lead" class="h-8 w-8" solid />
             <span>Priorities</span>
@@ -57,7 +70,7 @@
             <span class="app-rail-label text-xs font-bold">Logout</span>
         </button>
     </AppRail>
-    <main class="m-10 flex flex-col">
+    <div class="m-10 flex flex-col space-y-4">
         <slot />
-    </main>
+    </div>
 </AppShell>

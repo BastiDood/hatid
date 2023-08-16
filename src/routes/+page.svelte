@@ -6,7 +6,6 @@
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
-
     $: ({ user } = data);
 </script>
 
