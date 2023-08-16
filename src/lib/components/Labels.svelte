@@ -24,7 +24,7 @@
 </script>
 
 <div
-    class="card bg-primary-backdrop-token text-token flex w-full overflow-hidden pb-2 pt-2 border-token rounded-token font-token"
+    class="card bg-primary-backdrop-token flex w-full overflow-hidden pb-2 pt-2 border-token rounded-token"
 >
     <Accordion>
         {#each data as { label, deadline, color } (label)}
@@ -43,7 +43,7 @@
                 </svelte:fragment>
                 <svelte:fragment slot="content">
                     <div
-                        class="bg-secondary-backdrop-token text-token w-full flex-row overflow-hidden p-4 rounded-token font-token"
+                        class="bg-secondary-backdrop-token w-full flex-row overflow-hidden p-4 rounded-token"
                     >
                         <!-- edit title -->
                         <div class="relative mb-3 w-full">

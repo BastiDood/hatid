@@ -17,7 +17,7 @@
 </script>
 
 <div
-    class="text-tokenflex bg-primary-backdrop-token w-full overflow-hidden pb-2 pt-2 border-token rounded-token font-token"
+    class="text-tokenflex bg-primary-backdrop-token w-full overflow-hidden pb-2 pt-2 border-token rounded-token"
 >
     <Accordion>
         {#each priorities as { title, prio }}
@@ -32,7 +32,7 @@
                 </svelte:fragment>
                 <svelte:fragment slot="content">
                     <div
-                        class="bg-secondary-backdrop-token text-token w-full flex-row overflow-hidden rounded p-4 rounded-token font-token"
+                        class="bg-secondary-backdrop-token text-token w-full flex-row overflow-hidden rounded p-4 rounded-token"
                     >
                         <div class="relative mb-3 w-full">
                             <label for="floatingInput" class="label"> Priority Title </label>

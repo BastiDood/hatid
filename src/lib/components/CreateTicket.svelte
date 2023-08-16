@@ -14,7 +14,7 @@
 </script>
 
 <div
-    class="bg-primary-backdrop-token text-token w-full flex-col items-center justify-center overflow-hidden border-token rounded-container-token font-token"
+    class="bg-primary-backdrop-token w-full flex-col items-center justify-center overflow-hidden border-token rounded-container-token"
 >
     <div class="flex grid w-full grid-cols-2 gap-7 p-4">
         <div class="relative mb-3 w-full">

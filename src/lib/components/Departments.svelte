@@ -10,7 +10,7 @@
 </script>
 
 <div
-    class="bg-primary-backdrop-token text-token flex w-full overflow-hidden pb-2 pt-2 border-token rounded-token font-token"
+    class="bg-primary-backdrop-token flex w-full overflow-hidden pb-2 pt-2 border-token rounded-token"
 >
     <Accordion>
         {#each departments as dept (dept)}

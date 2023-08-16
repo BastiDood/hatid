@@ -10,7 +10,7 @@
 </script>
 
 <div
-    class="bg-primary-400-500-token text-token flex w-full flex-col items-center justify-center overflow-hidden border-token rounded-container-token font-token"
+    class="bg-primary-400-500-token flex w-full flex-col items-center justify-center overflow-hidden border-token rounded-container-token"
 >
     <div class="relative mb-3 flex w-full flex-row">
         <section class="flex w-3/4 gap-7 p-4">
