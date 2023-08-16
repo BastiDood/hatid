@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Label } from '$lib/model/Label';
+    import type { Label } from '$lib/model/label';
     export let labels: Label[];
 </script>
 
