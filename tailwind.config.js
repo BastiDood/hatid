@@ -1,8 +1,9 @@
-import { join } from 'path';
+import TailwindForms from '@tailwindcss/forms';
+import { join } from 'node:path';
 import skeleton from '@skeletonlabs/skeleton/tailwind/skeleton.cjs';
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
     darkMode: 'class',
     content: [
         './src/**/*.{html,js,svelte,ts}',
@@ -11,9 +12,6 @@ module.exports = {
     theme: {
         extend: {},
     },
-    plugins: [
-        require('@tailwindcss/forms'),
-        // ...
-    ],
-    plugins: [...skeleton()],
+    plugins: [TailwindForms],
+    plugins: skeleton(),
 };
