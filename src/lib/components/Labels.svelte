@@ -41,7 +41,7 @@
                 </svelte:fragment>
                 <svelte:fragment slot="content">
                     <div
-                        class="bg-secondary-backdrop-token w-full flex-row overflow-hidden p-4 rounded-token"
+                        class="w-full flex-row overflow-hidden p-4 rounded-token"
                     >
                         <!-- edit title -->
                         <div class="relative mb-3 w-full">

@@ -23,7 +23,7 @@
                 </svelte:fragment>
                 <svelte:fragment slot="content">
                     <div
-                        class="bg-secondary-backdrop-token w-full flex-row overflow-hidden rounded p-4"
+                        class="w-full flex-row overflow-hidden rounded p-4"
                     >
                         <div class="relative mb-3 w-full">
                             <label for="floatingInput" class="label"> Title </label>
