@@ -1,6 +1,7 @@
 <script lang="ts">
-    import Login from '@krowten/svelte-heroicons/icons/ArrowLeftOnRectangleIcon.svelte';
+    import Fa from 'svelte-fa';
     import type { PageServerData } from './$types';
+    import { faGoogle } from '@fortawesome/free-brands-svg-icons';
     import logo from '$lib/images/HATiD.png';
 
     // eslint-disable-next-line init-declarations
@@ -13,7 +14,7 @@
 
 {#if user === null}
     <a href="/auth/login" class="btn variant-filled">
-        <Login class="2-4 h-4" />
+        <Fa icon="{faGoogle}" />
         <span>Sign in with Google</span>
     </a>
 {:else}
