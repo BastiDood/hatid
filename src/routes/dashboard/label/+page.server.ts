@@ -1,8 +1,8 @@
-import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
 import type { Label } from '$lib/model/label';
+import type { PageServerLoad } from './$types';
 import { StatusCodes } from 'http-status-codes';
 import { getLabels } from '$lib/server/database';
+import { redirect } from '@sveltejs/kit';
 
 interface Output {
     labels: Label[];

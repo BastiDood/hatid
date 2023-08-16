@@ -2,7 +2,9 @@
     import Plus from '@krowten/svelte-heroicons/icons/PlusIcon.svelte';
     import { modalStore } from '@skeletonlabs/skeleton';
 
+    // eslint-disable-next-line init-declarations
     export let component: string;
+    // eslint-disable-next-line init-declarations
     export let label: string;
 
     function triggerModalComponent() {

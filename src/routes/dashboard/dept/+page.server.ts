@@ -1,8 +1,8 @@
-import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
 import type { Dept } from '$lib/model/dept';
+import type { PageServerLoad } from './$types';
 import { StatusCodes } from 'http-status-codes';
 import { getDepartments } from '$lib/server/database';
+import { redirect } from '@sveltejs/kit';
 
 interface Output {
     depts: Dept[];

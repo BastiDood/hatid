@@ -1,5 +1,7 @@
 <script lang="ts">
     import type { Label } from '$lib/model/label';
+
+    // eslint-disable-next-line init-declarations
     export let labels: Label[];
 </script>
 

@@ -1,8 +1,8 @@
-import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Priority } from '$lib/model/priority';
 import { StatusCodes } from 'http-status-codes';
 import { getPriorities } from '$lib/server/database';
+import { redirect } from '@sveltejs/kit';
 
 interface Output {
     priorities: Priority[];

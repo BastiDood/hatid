@@ -1,5 +1,7 @@
 <script lang="ts">
     import type { Dept } from '$lib/model/dept';
+
+    // eslint-disable-next-line init-declarations
     export let depts: Dept[];
 </script>
 

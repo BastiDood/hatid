@@ -1,5 +1,7 @@
 <script lang="ts">
     import type { Priority } from '$lib/model/priority';
+
+    // eslint-disable-next-line init-declarations
     export let priorities: Priority[];
 </script>
 
