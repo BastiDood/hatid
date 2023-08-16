@@ -8,18 +8,13 @@ overrides:
   blake3-wasm: ^3.0.0
   '@c4312/blake3-internal': ^3.0.0
 
-dependencies:
-  '@fortawesome/free-brands-svg-icons':
-    specifier: ^6.4.2
-    version: 6.4.2
-  svelte-fa:
-    specifier: ^3.0.4
-    version: 3.0.4
-
 devDependencies:
   '@floating-ui/dom':
     specifier: ^1.5.1
     version: 1.5.1
+  '@fortawesome/free-brands-svg-icons':
+    specifier: ^6.4.2
+    version: 6.4.2
   '@krowten/svelte-heroicons':
     specifier: ^0.1.0
     version: 0.1.0
@@ -83,6 +78,9 @@ devDependencies:
   svelte-check:
     specifier: ^3.5.0
     version: 3.5.0(postcss@8.4.27)(svelte@4.2.0)
+  svelte-fa:
+    specifier: ^3.0.4
+    version: 3.0.4
   tailwindcss:
     specifier: ^3.3.3
     version: 3.3.3
@@ -383,7 +381,7 @@ packages:
     resolution: {integrity: sha512-1DgP7f+XQIJbLFCTX1V2QnxVmpLdKdzzo2k8EmvDOePfchaIGQ9eCHj2up3/jNEbZuBqel5OxiaOJf37TWauRA==}
     engines: {node: '>=6'}
     requiresBuild: true
-    dev: false
+    dev: true
 
   /@fortawesome/free-brands-svg-icons@6.4.2:
     resolution: {integrity: sha512-LKOwJX0I7+mR/cvvf6qIiqcERbdnY+24zgpUSouySml+5w8B4BJOx8EhDR/FTKAu06W12fmUIcv6lzPSwYKGGg==}
@@ -391,7 +389,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@fortawesome/fontawesome-common-types': 6.4.2
-    dev: false
+    dev: true
 
   /@humanwhocodes/config-array@0.11.10:
     resolution: {integrity: sha512-KVVjQmNUepDVGXNuoRRdmmEjruj0KfiGSbS8LVc12LMsWDQzRXJ0qdhN8L8uUigKpfEHRhlaQFY0ib1tnUbNeQ==}
@@ -2536,7 +2534,7 @@ packages:
 
   /svelte-fa@3.0.4:
     resolution: {integrity: sha512-y04vEuAoV1wwVDItSCzPW7lzT6v1bj/y1p+W1V+NtIMpQ+8hj8MBkx7JFD7JHSnalPU1QiI8BVfguqheEA3nPg==}
-    dev: false
+    dev: true
 
   /svelte-hmr@0.15.3(svelte@4.2.0):
     resolution: {integrity: sha512-41snaPswvSf8TJUhlkoJBekRrABDXDMdpNpT2tfHIv4JuhgvHqLMhEPGtaQn0BmbNSTkuz2Ed20DF2eHw0SmBQ==}
