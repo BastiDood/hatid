@@ -1,10 +1,3 @@
-@font-face {
-    font-family: 'Bebas Neue';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Bebas Neue'), url('$lib/fonts/BebasNeue/Regular.woff2') format('woff2');
-}
-
 html,
 body {
     @apply h-full overflow-hidden;
