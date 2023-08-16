@@ -10,7 +10,11 @@
 </script>
 
 <div
+<<<<<<< HEAD
     class="card bg-primary-backdrop-token flex w-full overflow-hidden border-token rounded-container-token"
+=======
+    class="card bg-primary-backdrop-token text-token flex w-full overflow-hidden border-token rounded-container-token font-token"
+>>>>>>> 2f9a92e... chore: refactor buttons, labels, and inputs
 >
     <div class="relative mb-3 flex w-full flex-row">
         <section class="flex grid w-full grid-cols-4 place-items-end gap-7 p-4">

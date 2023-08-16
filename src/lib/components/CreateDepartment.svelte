@@ -14,7 +14,7 @@
     <div class="relative flex w-full flex-row">
         <section class="flex w-3/4 gap-7 p-4">
             <div class="relative w-full">
-                <label for="floatingInput" class="text-token mb-2 block tracking-widest">
+                <label for="floatingInput" class="mb-2 block tracking-widest">
                     Department Name
                 </label>
                 <input
