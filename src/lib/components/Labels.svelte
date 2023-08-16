@@ -23,13 +23,7 @@
     }
 </script>
 
-<div
-<<<<<<< HEAD
-    class="card bg-primary-backdrop-token flex w-full overflow-hidden pb-2 pt-2 border-token rounded-token"
-=======
-    class="card bg-primary-backdrop-token text-token flex w-full overflow-hidden pb-2 pt-2 border-token rounded-token font-token"
->>>>>>> 2f9a92e... chore: refactor buttons, labels, and inputs
->
+<div class="card flex w-full overflow-hidden pb-2 pt-2 border-token rounded-token">
     <Accordion>
         {#each data as { label, deadline, color } (label)}
             <AccordionItem autocollapse>
@@ -47,11 +41,7 @@
                 </svelte:fragment>
                 <svelte:fragment slot="content">
                     <div
-<<<<<<< HEAD
                         class="bg-secondary-backdrop-token w-full flex-row overflow-hidden p-4 rounded-token"
-=======
-                        class="bg-secondary-backdrop-token text-token w-full flex-row overflow-hidden p-4 rounded-token font-token"
->>>>>>> 2f9a92e... chore: refactor buttons, labels, and inputs
                     >
                         <!-- edit title -->
                         <div class="relative mb-3 w-full">

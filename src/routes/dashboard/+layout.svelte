@@ -18,7 +18,7 @@
 </script>
 
 <AppShell>
-    <AppBar slot="header" background="bg-primary-400-500-token">
+    <AppBar slot="header" background="bg-primary-active-token">
         <a href="/" slot="lead"><img src="{logo}" alt="HATiD" class="h-8" /></a>
         <svelte:fragment slot="trail">
             <LightSwitch />

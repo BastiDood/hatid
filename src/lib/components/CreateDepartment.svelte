@@ -8,9 +8,7 @@
     let deptName = '';
 </script>
 
-<div
-    class="card bg-primary-backdrop-token flex w-full flex-col items-center justify-center overflow-hidden rounded-token"
->
+<div class="card flex w-full flex-col items-center justify-center overflow-hidden rounded-token">
     <div class="relative flex w-full flex-row">
         <section class="flex w-3/4 gap-7 p-4">
             <div class="relative w-full">
