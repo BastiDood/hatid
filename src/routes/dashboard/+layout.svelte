@@ -23,7 +23,7 @@
         <svelte:fragment slot="trail">
             <LightSwitch />
             <a href="mailto:{email}">{name}</a>
-            <Avatar src="{picture}" class="w-10" />
+            <Avatar src="{picture}" class="w-8" />
         </svelte:fragment>
     </AppBar>
     <slot />
