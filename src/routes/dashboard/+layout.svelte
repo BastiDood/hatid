@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AppBar, AppShell, Avatar } from '@skeletonlabs/skeleton';
+    import { AppBar, AppShell, Avatar, LightSwitch } from '@skeletonlabs/skeleton';
     import Edit from '@krowten/svelte-heroicons/icons/PencilSquareIcon.svelte';
     import Home from '@krowten/svelte-heroicons/icons/HomeIcon.svelte';
     import type { LayoutServerData } from './$types';
@@ -15,13 +15,9 @@
 </script>
 
 <AppShell>
-    <AppBar slot="header">
-        <svelte:fragment slot="lead"
-            ><span class="h3 p-2">
-                <a href="/"><img src="{logo}" alt="HATiD" class="h-10" /></a>
-            </span></svelte:fragment
-        >
-        <svelte:fragment slot="trail" />
+    <AppBar slot="header" background="bg-primary-400-500-token">
+        <a href="/" slot="lead"><img src="{logo}" alt="HATiD" class="h-8" /></a>
+        <LightSwitch slot="trail" />
     </AppBar>
     <svelte:fragment slot="sidebarLeft">
         <aside class="flex h-full w-60 flex-col items-center space-y-7 pb-2 pt-5">
