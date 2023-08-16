@@ -10,8 +10,6 @@
     let editableDeadline = true;
     let editableColor = true;
 
-    const buttonClass = 'btn variant-filled mb-2 block flex rounded px-6 py-2.5 text-xs uppercase';
-
     function toggleTitleEdit() {
         editableTitle = !editableTitle;
     }
@@ -25,7 +23,7 @@
     }
 </script>
 
-<div class="card flex w-full overflow-hidden pb-2 pt-2">
+<div class="card flex w-full overflow-hidden pb-2 pt-2 border-token rounded-token">
     <Accordion>
         {#each data as { label, deadline, color } (label)}
             <AccordionItem autocollapse>
@@ -42,20 +40,24 @@
                     </h5>
                 </svelte:fragment>
                 <svelte:fragment slot="content">
-                    <div class="w-full flex-row overflow-hidden p-4">
+                    <div class="w-full flex-row overflow-hidden p-4 rounded-token">
                         <!-- edit title -->
                         <div class="relative mb-3 w-full">
-                            <label for="floatingInput" class="text-md mb-2 block"> Title </label>
+                            <label for="floatingInput" class="label"> Title </label>
                             <input
                                 type="text"
-                                class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
+                                class="input"
                                 id="floatingInput"
                                 bind:value="{label}"
                                 placeholder="{label}"
                                 disabled="{editableTitle}"
                             />
                         </div>
-                        <button class="{buttonClass}" on:click="{() => toggleTitleEdit()}">
+                        <button
+                            type="button"
+                            class="btn variant-filled"
+                            on:click="{() => toggleTitleEdit()}"
+                        >
                             {#if editableTitle}
                                 EDIT
                             {:else}
@@ -65,10 +67,10 @@
 
                         <!-- edit deadline -->
                         <div class="relative mb-3 w-full">
-                            <label for="floatingInput" class="text-md mb-2 block"> Deadline </label>
+                            <label for="floatingInput" class="label"> Deadline </label>
                             <input
                                 type="date"
-                                class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
+                                class="input"
                                 id="floatingInput"
                                 placeholder="{deadline}"
                                 bind:value="{deadline}"
@@ -76,7 +78,11 @@
                             />
                         </div>
 
-                        <button class="{buttonClass}" on:click="{() => toggleDeadlineEdit()}">
+                        <button
+                            type="button"
+                            class="btn variant-filled"
+                            on:click="{() => toggleDeadlineEdit()}"
+                        >
                             {#if editableDeadline}
                                 EDIT
                             {:else}
@@ -96,7 +102,7 @@
                                     disabled="{editableColor}"
                                 />
                                 <input
-                                    class="peer m-0 block w-full rounded bg-clip-padding px-3 py-4 placeholder-white"
+                                    class="input"
                                     id="floatingColor"
                                     type="text"
                                     bind:value="{color}"
@@ -106,7 +112,11 @@
                                 />
                             </div>
                         </div>
-                        <button class="{buttonClass}" on:click="{() => toggleColorEdit()}">
+                        <button
+                            type="button"
+                            class="btn variant-filled"
+                            on:click="{() => toggleColorEdit()}"
+                        >
                             {#if editableColor}
                                 EDIT
                             {:else}
