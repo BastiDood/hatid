@@ -4,6 +4,6 @@ The following assets below have been retrieved from external sources. As such, t
 
 | File                      | Author        | License                                          |
 | ------------------------- | ------------- | ------------------------------------------------ |
-| `fonts/BebasNeue/*.woff2` | [Dharma Type] | [SIL OFL 1.1](./src/lib/fonts/BebasNeue/OFL.txt) |
+| `fonts/PublicSans/*.woff2` | [The Public Sans Project Authors] | [SIL OFL 1.1](./src/lib/fonts/PublicSans/OFL.txt) |
 
-[Dharma Type]: https://dharmatype.com/
+[The Public Sans Project Authors]: https://github.com/uswds/public-sans
