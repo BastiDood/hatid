@@ -25,7 +25,6 @@
     }) satisfies SubmitFunction;
 </script>
 
-<!-- TODO: Migrate to SvelteKit form actions. -->
 <form
     method="POST"
     enctype="application/x-www-form-urlencoded"
