@@ -31,7 +31,7 @@
                 message: `New ticket created due at ${due.toLocaleString()}.`,
                 background: 'variant-filled-success',
                 action: {
-                    label: 'Go to Inbox',
+                    label: 'Go to Thread',
                     response() {
                         return goto(`/dashboard/inbox/${tid}#${mid}`);
                     },
