@@ -10,16 +10,16 @@
     const ResultSchema = z.object({ id: LabelSchema.shape.label_id });
 
     const submit: SubmitFunction = ({ formData }) => {
-        const name = formData.get('color');
-        console.log(name);
+        const name = formData.get('title');
         assert(typeof name === 'string');
         return async ({ result, update }) => {
+            console.log(result);
             assert(result.type === 'success');
             const { id } = ResultSchema.parse(result.data);
             await update();
             modalStore.close();
             toastStore.trigger({
-                background: 'variant-ghost-success',
+                background: 'variant-filled-success',
                 message: `Created new label "${name}" with ID ${id}.`,
             });
         };
@@ -38,7 +38,7 @@
     </label>
     <label class="label">
         <span>Color</span>
-        <input required type="color" name="color" class="input" />
+        <input required type="color" name="color" value="#000000" class="input" />
     </label>
     <label class="label">
         <span>Deadline</span>

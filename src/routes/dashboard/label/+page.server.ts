@@ -1,5 +1,5 @@
 import { createLabel, getLabels, isAdminSession } from '$lib/server/database';
-import { error, json, redirect } from '@sveltejs/kit';
+import { error, fail, json, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { Label } from '$lib/model/label';
 import type { Actions, PageServerLoad } from './$types';
@@ -22,15 +22,17 @@ export const actions = {
         const form = await request.formData();
 
         const title = form.get('title');
-        if (title === null || title instanceof File) throw error(StatusCodes.BAD_REQUEST);
+        if (title === null || title instanceof File) return fail(StatusCodes.BAD_REQUEST);
 
         const color = form.get('color');
-        if (color === null || color instanceof File) throw error(StatusCodes.BAD_REQUEST);
+        if (color === null || color instanceof File) return fail(StatusCodes.BAD_REQUEST);
         const hex = parseInt(color.slice(1), 16) << 8 | 0xff;
         
         const deadline = form.get('deadline');
-        if (deadline instanceof File) throw error(StatusCodes.BAD_REQUEST);
-        const days = deadline === null ? null : parseInt(deadline, 10);
+        if (deadline === null || deadline instanceof File) return fail(StatusCodes.BAD_REQUEST);
+
+        // FIXME: Consider the `NaN` case as a security measure.
+        const days = deadline.length === 0 ? null : parseInt(deadline, 10);
 
         const sid = cookies.get('sid');
         if (!sid) throw error(StatusCodes.UNAUTHORIZED);

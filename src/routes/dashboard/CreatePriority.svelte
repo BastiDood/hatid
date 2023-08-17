@@ -18,7 +18,7 @@
             await update();
             modalStore.close();
             toastStore.trigger({
-                background: 'variant-ghost-success',
+                background: 'variant-filled-success',
                 message: `Created new priority "${name}" with ID ${id}.`,
             });
         };

@@ -22,7 +22,7 @@ export const actions = {
         const form = await request.formData();
 
         const name = form.get('name');
-        if (name === null || name instanceof File) throw fail(StatusCodes.BAD_REQUEST);
+        if (name === null || name instanceof File) return fail(StatusCodes.BAD_REQUEST);
 
         const sid = cookies.get('sid');
         if (!sid) throw error(StatusCodes.UNAUTHORIZED);

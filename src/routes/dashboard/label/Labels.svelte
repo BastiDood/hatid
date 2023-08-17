@@ -26,7 +26,7 @@
                 <tr>
                     <td>{label_id}</td>
                     <td>{title}</td>
-                    <td><input type="color" class="input" value="#{hex}" /></td>
+                    <td><input type="color" value="#{hex}" class="input" /></td>
                     <td>
                         {#if deadline !== null}
                             {deadline} Days
