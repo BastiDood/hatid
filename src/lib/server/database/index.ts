@@ -580,12 +580,10 @@ export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket
     }
 }
 
-export async function getAgentIdsByDept(did: Dept['dept_id']) {
-    const rows = await sql`SELECT get_agents_by_dept(${did}) AS user_id`.execute();
-    return AgentSchema.pick({ user_id: true })
-        .array()
-        .parse(rows)
-        .map(agent => agent.user_id);
+export async function getAgentsByDept(did: Dept['dept_id']) {
+    const rows =
+        await sql`SELECT * FROM get_agents_by_dept(${did}) AS _ WHERE _ IS NOT NULL`.execute();
+    return UserSchema.array().parse(rows);
 }
 
 export async function getDepartments() {
