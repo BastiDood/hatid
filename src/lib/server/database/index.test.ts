@@ -118,14 +118,15 @@ it('should complete a full user journey', async () => {
         expect(result).toStrictEqual(db.CreateTicketResult.NoLabels);
     }
 
-    const coolLabel = await db.createLabel('Cool', 0xc0debeef);
-    expect(coolLabel).not.toStrictEqual(0);
+    const label = Buffer.from(getRandomValues(new Uint8Array(21))).toString('base64');
+    const coolLabel = await db.createLabel(label, 0xc0debeef);
+    assert(coolLabel !== null && coolLabel !== 0);
 
     {
         const labels = await db.getLabels();
         expect(labels).toContainEqual({
             label_id: coolLabel,
-            title: 'Cool',
+            title: label,
             color: 0xc0debeef,
             deadline: null,
         });
@@ -465,13 +466,20 @@ it('should reject promoting non-existent users', async () => {
 });
 
 it('should create and update labels', async () => {
-    const lid = await db.createLabel('Hello World', 0xc0debabe, null);
-    expect(lid).not.toStrictEqual(0);
+    const first = Buffer.from(getRandomValues(new Uint8Array(21))).toString('base64');
+    const second = Buffer.from(getRandomValues(new Uint8Array(21))).toString('base64');
+    const third = Buffer.from(getRandomValues(new Uint8Array(21))).toString('base64');
 
-    const other = await db.createLabel('Hello World', 0xc0debabe, 10);
-    expect(other).not.toStrictEqual(0);
+    const lid = await db.createLabel(first, 0xc0debabe, null);
+    assert(lid !== null && lid !== 0);
 
-    expect(await db.editLabelTitle(lid, 'World Hello')).toStrictEqual(true);
+    const repeated = await db.createLabel(first, 0xc0debabe, null);
+    expect(repeated).toBeNull();
+
+    const other = await db.createLabel(second, 0xc0debabe, 10);
+    assert(other !== null && other !== 0);
+
+    expect(await db.editLabelTitle(lid, third)).toStrictEqual(true);
     expect(await db.editLabelColor(lid, 0xdeadbeef)).toStrictEqual(true);
     expect(await db.editLabelDeadline(lid, null)).toStrictEqual(true);
     expect(await db.editLabelDeadline(lid, 5)).toStrictEqual(true);

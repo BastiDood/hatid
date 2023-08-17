@@ -101,14 +101,6 @@ TYPE AS $$
     INSERT INTO labels (title, color, deadline) VALUES (title, color, deadline) RETURNING label_id;
 $$ LANGUAGE SQL;
 
-CREATE OR
-REPLACE FUNCTION get_labels_by_dept (
-    did dept_labels.dept_id %
-    TYPE
-) RETURNS labels AS $$
-    SELECT labels.* FROM dept_labels INNER JOIN labels USING (label_id) WHERE dept_id = did;
-$$ LANGUAGE SQL;
-
 -- PRIORITY FUNCTIONS
 CREATE OR
 REPLACE FUNCTION create_priority (

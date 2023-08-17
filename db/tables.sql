@@ -57,7 +57,7 @@ CREATE TABLE
 CREATE TABLE
     priorities (
         priority_id SERIAL NOT NULL,
-        title VARCHAR(32) UNIQUE,
+        title VARCHAR(32) NOT NULL UNIQUE,
         priority INT NOT NULL,
         PRIMARY KEY (priority_id)
     );
@@ -94,7 +94,7 @@ CREATE TABLE
 CREATE TABLE
     labels (
         label_id SERIAL NOT NULL,
-        title VARCHAR(32) NOT NULL,
+        title VARCHAR(32) NOT NULL UNIQUE,
         color INT NOT NULL, -- Red Green Blue Alpha (RGBA)
         deadline INTERVAL DAY,
         PRIMARY KEY (label_id)

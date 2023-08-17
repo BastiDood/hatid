@@ -7,12 +7,12 @@
         Avatar,
         LightSwitch,
         Modal,
+        Toast,
     } from '@skeletonlabs/skeleton';
     import BuildingOffice from '@krowten/svelte-heroicons/icons/BuildingOfficeIcon.svelte';
     import CreateDepartment from './CreateDepartment.svelte';
     import CreateLabel from './CreateLabel.svelte';
     import CreatePriority from './CreatePriority.svelte';
-    import CreateTicket from './CreateTicket.svelte';
     import Inbox from '@krowten/svelte-heroicons/icons/InboxIcon.svelte';
     import type { LayoutServerData } from './$types';
     import Logout from '@krowten/svelte-heroicons/icons/ArrowRightOnRectangleIcon.svelte';
@@ -29,10 +29,10 @@
         createLabel: { ref: CreateLabel },
         createPriority: { ref: CreatePriority },
         createDept: { ref: CreateDepartment },
-        createTicket: { ref: CreateTicket },
     };
 </script>
 
+<Toast />
 <Modal components="{components}" />
 <AppShell>
     <AppBar slot="header" background="bg-primary-active-token">
@@ -43,7 +43,7 @@
             <Avatar src="{picture}" class="w-8" />
         </svelte:fragment>
     </AppBar>
-    <AppRail slot="sidebarLeft" regionTrail="mb-4">
+    <AppRail slot="sidebarLeft" width="w-24" regionTrail="mb-4">
         <AppRailAnchor href="/dashboard/inbox">
             <Inbox slot="lead" class="h-8 w-8" solid />
             <span>Inbox</span>
