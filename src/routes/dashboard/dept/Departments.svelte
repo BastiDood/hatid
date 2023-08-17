@@ -17,7 +17,7 @@
             {#each depts as { dept_id, name } (dept_id)}
                 <tr>
                     <td>{dept_id}</td>
-                    <td>{name}</td>
+                    <td><a class="anchor" href="/dashboard/dept/{dept_id}">{name}</a></td>
                 </tr>
             {/each}
         </tbody>

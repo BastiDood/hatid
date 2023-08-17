@@ -57,13 +57,13 @@
             <Tag slot="lead" class="h-8 w-8" solid />
             <span>Labels</span>
         </AppRailAnchor>
-        <AppRailAnchor href="/dashboard/dept">
-            <BuildingOffice slot="lead" class="h-8 w-8" solid />
-            <span>Departments</span>
-        </AppRailAnchor>
         <AppRailAnchor href="/dashboard/user">
             <Users slot="lead" class="h-8 w-8" solid />
             <span>Users</span>
+        </AppRailAnchor>
+        <AppRailAnchor href="/dashboard/dept">
+            <BuildingOffice slot="lead" class="h-8 w-8" solid />
+            <span>Departments</span>
         </AppRailAnchor>
         <!-- TODO: Use the logout endpoint here. -->
         <button

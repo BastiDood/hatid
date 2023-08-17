@@ -1,1 +1,0 @@
-<p>Agents tab</p>
