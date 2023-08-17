@@ -15,7 +15,11 @@
     }
 </script>
 
-<button type="submit" class="btn variant-filled-primary m-auto" on:click="{triggerModalComponent}">
+<button
+    type="submit"
+    class="btn variant-filled-secondary m-auto"
+    on:click="{triggerModalComponent}"
+>
     <Plus class="h-4 w-4" />
     <span>{label}</span>
 </button>

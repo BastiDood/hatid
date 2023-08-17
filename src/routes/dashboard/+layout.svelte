@@ -38,7 +38,7 @@
 <Toast />
 <Modal components="{components}" />
 <AppShell>
-    <AppBar slot="header" background="bg-primary-active-token">
+    <AppBar slot="header">
         <a href="/" slot="lead"><img src="{logo}" alt="HATiD" class="h-8" /></a>
         <svelte:fragment slot="trail">
             <LightSwitch />

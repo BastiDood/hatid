@@ -12,10 +12,10 @@
 <img src="{logo}" alt="HATiD spelled with a ticket icon to emulate the letter H" />
 
 {#if user === null}
-    <a href="/auth/login" class="btn variant-filled">
+    <a href="/auth/login" class="btn variant-filled-primary">
         <Fa icon="{faGoogle}" />
         <span>Sign in with Google</span>
     </a>
 {:else}
-    <a href="/dashboard" class="btn variant-filled"> Go to Dashboard </a>
+    <a href="/dashboard" class="btn variant-filled-primary"> Go to Dashboard </a>
 {/if}
