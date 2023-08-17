@@ -3,27 +3,6 @@ import { type Dept, type DeptLabel, DeptSchema } from '$lib/model/dept';
 import { LabelSchema } from '$lib/model/label';
 import { StatusCodes } from 'http-status-codes';
 
-/** Creates a new {@linkcode Dept} and returns the ID. */
-export async function create(name: Dept['name']) {
-    const res = await fetch('/api/dept', {
-        method: 'POST',
-        credentials: 'same-origin',
-        body: new URLSearchParams({ name }),
-    });
-    switch (res.status) {
-        case StatusCodes.CREATED:
-            return DeptSchema.shape.dept_id.parse(await res.json());
-        case StatusCodes.BAD_REQUEST:
-            throw new BadInput();
-        case StatusCodes.UNAUTHORIZED:
-            throw new InvalidSession();
-        case StatusCodes.FORBIDDEN:
-            throw new InsufficientPermissions();
-        default:
-            throw new UnexpectedStatusCode(res.status);
-    }
-}
-
 /** Gets a list of all the {@linkcode Dept} in the system. */
 export async function getAll() {
     const res = await fetch('/api/dept', { credentials: 'same-origin' });

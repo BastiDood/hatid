@@ -1,9 +1,35 @@
-<script>
+<script lang="ts">
+    import { DeptSchema } from '$lib/model/dept';
     import SubmitButton from './SubmitButton.svelte';
+    import type { SubmitFunction } from '@sveltejs/kit';
+    import assert from '$lib/assert';
+    import { enhance } from '$app/forms';
+    import { toastStore } from '@skeletonlabs/skeleton';
+    import { z } from 'zod';
+
+    const ResultSchema = z.object({ id: DeptSchema.shape.dept_id });
+
+    const submit: SubmitFunction = ({ formData }) => {
+        const name = formData.get('name');
+        assert(typeof name === 'string');
+        return ({ result, update }) => {
+            assert(result.type === 'success');
+            const { id } = ResultSchema.parse(result.data);
+            toastStore.trigger({
+                background: 'variant-ghost-success',
+                message: `Created new department "${name}" with ID ${id}.`,
+            });
+            return update();
+        };
+    };
 </script>
 
-<!-- TODO: Migrate to SvelteKit form actions. -->
-<form method="POST" enctype="application/x-www-form-urlencoded" class="card space-y-4 p-4">
+<form
+    method="POST"
+    enctype="application/x-www-form-urlencoded"
+    use:enhance="{submit}"
+    class="card space-y-4 p-4"
+>
     <label class="label">
         <span>Name</span>
         <input required type="text" name="name" class="input" placeholder="Name" />

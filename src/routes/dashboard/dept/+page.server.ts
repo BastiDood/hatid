@@ -1,8 +1,8 @@
 import { createDept, getDepartments, isAdminSession } from '$lib/server/database';
-import { error, json, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { Dept } from '$lib/model/dept';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { StatusCodes } from 'http-status-codes';
 
 interface Output {
@@ -22,7 +22,7 @@ export const actions = {
         const form = await request.formData();
 
         const name = form.get('name');
-        if (name === null || name instanceof File) throw error(StatusCodes.BAD_REQUEST);
+        if (name === null || name instanceof File) throw fail(StatusCodes.BAD_REQUEST);
 
         const sid = cookies.get('sid');
         if (!sid) throw error(StatusCodes.UNAUTHORIZED);
@@ -41,6 +41,6 @@ export const actions = {
         }
 
         const id = await createDept(name);
-        return json(id, { status: StatusCodes.CREATED });
+        return { id };
     },
-};
+} satisfies Actions;
