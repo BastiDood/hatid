@@ -140,10 +140,22 @@ export async function createLabel(
     // [right-shift]: https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-signedRightShift
     const hex = color >> 0;
     const deadline = days === null ? null : `${days} days`;
-    const [first, ...rest] =
-        await sql`SELECT create_label(${title}, ${hex}, ${deadline}::INTERVAL DAY) AS label_id`.execute();
-    strictEqual(rest.length, 0);
-    return LabelSchema.pick({ label_id: true }).parse(first).label_id;
+
+    try {
+        const [first, ...rest] =
+            await sql`SELECT create_label(${title}, ${hex}, ${deadline}::INTERVAL DAY) AS label_id`.execute();
+        strictEqual(rest.length, 0);
+        return LabelSchema.pick({ label_id: true }).parse(first).label_id;
+    } catch (err) {
+        const isExpected = err instanceof pg.PostgresError;
+        if (!isExpected) throw err;
+
+        const { code, table_name, constraint_name } = err;
+        strictEqual(code, '23505');
+        strictEqual(table_name, 'labels');
+        strictEqual(constraint_name, 'labels_title_key');
+        return null;
+    }
 }
 
 /** Edits the `title` field of a {@linkcode Label}. Returns `false` if not found. */
