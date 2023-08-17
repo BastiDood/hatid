@@ -18,6 +18,7 @@
     import Logout from '@krowten/svelte-heroicons/icons/ArrowRightOnRectangleIcon.svelte';
     import QueueList from '@krowten/svelte-heroicons/icons/QueueListIcon.svelte';
     import Tag from '@krowten/svelte-heroicons/icons/TagIcon.svelte';
+    import Users from '@krowten/svelte-heroicons/icons/UsersIcon.svelte';
     import logo from '$lib/images/HATiD.png';
 
     // eslint-disable-next-line init-declarations
@@ -59,6 +60,10 @@
         <AppRailAnchor href="/dashboard/dept">
             <BuildingOffice slot="lead" class="h-8 w-8" solid />
             <span>Departments</span>
+        </AppRailAnchor>
+        <AppRailAnchor href="/dashboard/users">
+            <Users slot="lead" class="h-8 w-8" solid />
+            <span>Manage Users</span>
         </AppRailAnchor>
         <!-- TODO: Use the logout endpoint here. -->
         <button
