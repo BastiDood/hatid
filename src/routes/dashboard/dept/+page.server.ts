@@ -1,8 +1,8 @@
+import type { Actions, PageServerLoad } from './$types';
 import { createDept, getDepartments, isAdminSession } from '$lib/server/database';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { Dept } from '$lib/model/dept';
-import type { Actions, PageServerLoad } from './$types';
 import { StatusCodes } from 'http-status-codes';
 
 interface Output {

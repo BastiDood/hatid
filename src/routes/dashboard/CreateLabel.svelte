@@ -1,11 +1,11 @@
 <script lang="ts">
+    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
+    import { LabelSchema } from '$lib/model/label';
     import SubmitButton from './SubmitButton.svelte';
     import type { SubmitFunction } from '@sveltejs/kit';
     import assert from '$lib/assert';
     import { enhance } from '$app/forms';
-    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
     import { z } from 'zod';
-    import { LabelSchema } from '$lib/model/label';
 
     const ResultSchema = z.object({ id: LabelSchema.shape.label_id });
 
@@ -13,7 +13,6 @@
         const name = formData.get('title');
         assert(typeof name === 'string');
         return async ({ result, update }) => {
-            console.log(result);
             assert(result.type === 'success');
             const { id } = ResultSchema.parse(result.data);
             await update();

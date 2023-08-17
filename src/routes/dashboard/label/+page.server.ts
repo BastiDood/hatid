@@ -1,8 +1,8 @@
+import type { Actions, PageServerLoad } from './$types';
 import { createLabel, getLabels, isAdminSession } from '$lib/server/database';
-import { error, fail, json, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { Label } from '$lib/model/label';
-import type { Actions, PageServerLoad } from './$types';
 import { StatusCodes } from 'http-status-codes';
 
 interface Output {

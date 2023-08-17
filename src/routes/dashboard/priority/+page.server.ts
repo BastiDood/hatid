@@ -1,7 +1,7 @@
+import type { Actions, PageServerLoad } from './$types';
 import { createPriority, getPriorities, isAdminSession } from '$lib/server/database';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
-import type { Actions, PageServerLoad } from './$types';
 import type { Priority } from '$lib/model/priority';
 import { StatusCodes } from 'http-status-codes';
 

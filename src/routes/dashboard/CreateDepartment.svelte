@@ -1,10 +1,10 @@
 <script lang="ts">
+    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
     import { DeptSchema } from '$lib/model/dept';
     import SubmitButton from './SubmitButton.svelte';
     import type { SubmitFunction } from '@sveltejs/kit';
     import assert from '$lib/assert';
     import { enhance } from '$app/forms';
-    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
     import { z } from 'zod';
 
     const ResultSchema = z.object({ id: DeptSchema.shape.dept_id });

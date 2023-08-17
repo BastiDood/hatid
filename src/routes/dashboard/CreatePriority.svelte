@@ -1,11 +1,11 @@
 <script lang="ts">
+    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
+    import { PrioritySchema } from '$lib/model/priority';
     import SubmitButton from './SubmitButton.svelte';
     import type { SubmitFunction } from '@sveltejs/kit';
     import assert from '$lib/assert';
     import { enhance } from '$app/forms';
-    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
     import { z } from 'zod';
-    import { PrioritySchema } from '$lib/model/priority';
 
     const ResultSchema = z.object({ id: PrioritySchema.shape.priority_id });
 
