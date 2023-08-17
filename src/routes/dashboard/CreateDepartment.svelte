@@ -4,7 +4,7 @@
     import type { SubmitFunction } from '@sveltejs/kit';
     import assert from '$lib/assert';
     import { enhance } from '$app/forms';
-    import { toastStore } from '@skeletonlabs/skeleton';
+    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
     import { z } from 'zod';
 
     const ResultSchema = z.object({ id: DeptSchema.shape.dept_id });
@@ -12,14 +12,15 @@
     const submit: SubmitFunction = ({ formData }) => {
         const name = formData.get('name');
         assert(typeof name === 'string');
-        return ({ result, update }) => {
+        return async ({ result, update }) => {
             assert(result.type === 'success');
             const { id } = ResultSchema.parse(result.data);
+            await update();
+            modalStore.close();
             toastStore.trigger({
                 background: 'variant-ghost-success',
                 message: `Created new department "${name}" with ID ${id}.`,
             });
-            return update();
         };
     };
 </script>
