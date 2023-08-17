@@ -18,7 +18,7 @@ export const load = (async ({ parent }) => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-    default: async ({ cookies, request }) => {
+    async default({ cookies, request }) {
         const form = await request.formData();
 
         const title = form.get('title');
