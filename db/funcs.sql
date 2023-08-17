@@ -314,9 +314,8 @@ CREATE OR
 REPLACE FUNCTION get_agents_by_dept (
     did dept_agents.dept_id %
     TYPE
-) RETURNS SETOF dept_agents.user_id %
-TYPE AS $$
-    SELECT user_id FROM dept_agents WHERE dept_id = did;
+) RETURNS users AS $$
+    SELECT users.* FROM dept_agents INNER JOIN users USING (user_id) WHERE dept_id = did;
 $$ LANGUAGE SQL;
 
 CREATE OR
@@ -324,7 +323,7 @@ REPLACE FUNCTION get_users_outside_dept (
     did depts.dept_id %
     TYPE
 ) RETURNS SETOF users AS $$
-    SELECT * FROM users WHERE user_id NOT IN (SELECT * FROM get_agents_by_dept(did));
+    SELECT * FROM users WHERE user_id NOT IN (SELECT user_id FROM dept_agents WHERE dept_id = did);
 $$ LANGUAGE SQL;
 
 CREATE OR

@@ -88,8 +88,9 @@ it('should complete a full user journey', async () => {
     expect(await db.addDeptAgent(did, uid)).toStrictEqual(db.AddDeptAgentResult.AlreadyExists);
 
     {
-        const agents = await db.getAgentIdsByDept(did);
-        expect(agents).toContainEqual(uid);
+        const agents = await db.getAgentsByDept(did);
+        const ids = agents.map(u => u.user_id);
+        expect(ids).toContainEqual(uid);
     }
 
     expect(await db.removeDeptAgent(0, nonExistentUser)).toBeNull();
@@ -541,7 +542,7 @@ describe.concurrent('invalid departments', () => {
         expect(result).toStrictEqual(false);
     });
     it('should return zero rows for getter', async ({ expect }) => {
-        const empty = await db.getAgentIdsByDept(0);
+        const empty = await db.getAgentsByDept(0);
         expect(empty).toHaveLength(0);
     });
 });
