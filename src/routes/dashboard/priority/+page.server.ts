@@ -1,7 +1,7 @@
 import { createPriority, getPriorities, isAdminSession } from '$lib/server/database';
 import { error, json, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import type { Priority } from '$lib/model/priority';
 import { StatusCodes } from 'http-status-codes';
 
@@ -45,6 +45,6 @@ export const actions = {
         }
 
         const id = await createPriority(title, priority);
-        return json(id, { status: StatusCodes.CREATED });
+        return { id };
     },
-};
+} satisfies Actions;

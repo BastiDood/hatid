@@ -1,5 +1,6 @@
 import { CreateTicketResult, createTicket, getUserFromSession } from '$lib/server/database';
 import { error, json } from '@sveltejs/kit';
+import type { Actions } from './$types';
 import { AssertionError } from 'node:assert/strict';
 import { StatusCodes } from 'http-status-codes';
 
@@ -35,4 +36,4 @@ export const actions = {
                 throw new AssertionError();
         }
     },
-};
+} satisfies Actions;

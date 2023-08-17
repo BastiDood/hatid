@@ -2,7 +2,7 @@ import { createLabel, getLabels, isAdminSession } from '$lib/server/database';
 import { error, json, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { Label } from '$lib/model/label';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { StatusCodes } from 'http-status-codes';
 
 interface Output {
@@ -26,8 +26,8 @@ export const actions = {
 
         const color = form.get('color');
         if (color === null || color instanceof File) throw error(StatusCodes.BAD_REQUEST);
-        const hex = parseInt(color, 16);
-
+        const hex = parseInt(color.slice(1), 16) << 8 | 0xff;
+        
         const deadline = form.get('deadline');
         if (deadline instanceof File) throw error(StatusCodes.BAD_REQUEST);
         const days = deadline === null ? null : parseInt(deadline, 10);
@@ -49,6 +49,6 @@ export const actions = {
         }
 
         const id = await createLabel(title, hex, days);
-        return json(id, { status: StatusCodes.CREATED });
+        return { id };
     },
-};
+} satisfies Actions;
