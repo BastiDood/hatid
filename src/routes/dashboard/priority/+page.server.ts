@@ -1,9 +1,9 @@
+import { createPriority, getPriorities, isAdminSession } from '$lib/server/database';
+import { error, json, redirect } from '@sveltejs/kit';
+import { AssertionError } from 'node:assert/strict';
 import type { PageServerLoad } from './$types';
 import type { Priority } from '$lib/model/priority';
-import { AssertionError } from 'node:assert/strict';
 import { StatusCodes } from 'http-status-codes';
-import { createPriority, getPriorities, isAdminSession } from '$lib/server/database';
-import { error, redirect, json } from '@sveltejs/kit';
 
 interface Output {
     priorities: Priority[];
@@ -18,7 +18,7 @@ export const load: PageServerLoad<Output> = async ({ parent }) => {
 };
 
 export const actions = {
-    default: async({ cookies, request }) => {
+    default: async ({ cookies, request }) => {
         const form = await request.formData();
 
         const title = form.get('title');
@@ -46,5 +46,5 @@ export const actions = {
 
         const id = await createPriority(title, priority);
         return json(id, { status: StatusCodes.CREATED });
-    }
-}
+    },
+};

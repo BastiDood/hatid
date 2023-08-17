@@ -1,10 +1,10 @@
+import { CreateTicketResult, createTicket, getUserFromSession } from '$lib/server/database';
+import { error, json } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
-import { error , json } from '@sveltejs/kit';
-import { createTicket, CreateTicketResult, getUserFromSession } from '$lib/server/database';
 import { StatusCodes } from 'http-status-codes';
 
 export const actions = {
-    default: async({ cookies, request }) => {
+    default: async ({ cookies, request }) => {
         const form = await request.formData();
 
         const title = form.get('title');
@@ -34,5 +34,5 @@ export const actions = {
             default:
                 throw new AssertionError();
         }
-    }
-}
+    },
+};

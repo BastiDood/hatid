@@ -1,10 +1,9 @@
+import { createLabel, getLabels, isAdminSession } from '$lib/server/database';
+import { error, json, redirect } from '@sveltejs/kit';
+import { AssertionError } from 'node:assert/strict';
 import type { Label } from '$lib/model/label';
 import type { PageServerLoad } from './$types';
-import { AssertionError } from 'node:assert/strict';
 import { StatusCodes } from 'http-status-codes';
-import { createLabel, getLabels, isAdminSession } from '$lib/server/database';
-import { error, redirect, json } from '@sveltejs/kit';
-
 
 interface Output {
     labels: Label[];
@@ -19,7 +18,7 @@ export const load: PageServerLoad<Output> = async ({ parent }) => {
 };
 
 export const actions = {
-    default: async({ cookies, request }) => {
+    default: async ({ cookies, request }) => {
         const form = await request.formData();
 
         const title = form.get('title');
@@ -51,5 +50,5 @@ export const actions = {
 
         const id = await createLabel(title, hex, days);
         return json(id, { status: StatusCodes.CREATED });
-    }
-}
+    },
+};
