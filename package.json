@@ -26,7 +26,6 @@
         "db:admin": "psql -U postgres -f db/admin.sql -1"
     },
     "devDependencies": {
-        "@floating-ui/dom": "^1.5.1",
         "@fortawesome/free-brands-svg-icons": "^6.4.2",
         "@krowten/svelte-heroicons": "^0.1.0",
         "@skeletonlabs/skeleton": "^1.12.0",
