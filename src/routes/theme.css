@@ -1,14 +1,42 @@
 @font-face {
-    font-family: 'Bebas Neue';
+    font-family: 'Public Sans';
     font-style: normal;
-    font-weight: 400;
-    src: local('Bebas Neue'), url('$lib/fonts/BebasNeue/Regular.woff2') format('woff2');
+    font-weight: 500;
+    src: local('Public Sans'), url('$lib/fonts/PublicSans/Medium.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Public Sans';
+    font-style: italic;
+    font-weight: 500;
+    src: local('Public Sans'), url('$lib/fonts/PublicSans/Medium-Italic.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Public Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Public Sans'), url('$lib/fonts/PublicSans/Bold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Public Sans';
+    font-style: italic;
+    font-weight: 700;
+    src: local('Public Sans'), url('$lib/fonts/PublicSans/Bold-Italic.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Public Sans';
+    font-style: normal;
+    font-weight: 900;
+    src: local('Public Sans'), url('$lib/fonts/PublicSans/Black.woff2') format('woff2');
 }
 
 :root {
     /* =~= Theme Properties =~= */
-    --theme-font-family-base: 'Bebas Neue', system-ui;
-    --theme-font-family-heading: 'Bebas Neue', system-ui;
+    --theme-font-family-base: 'Public Sans', system-ui;
+    --theme-font-family-heading: 'Public Sans', system-ui;
     --theme-font-color-base: 0 0 0;
     --theme-font-color-dark: 255 255 255;
     --theme-rounded-base: 8px;
