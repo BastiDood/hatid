@@ -61,9 +61,9 @@
             <BuildingOffice slot="lead" class="h-8 w-8" solid />
             <span>Departments</span>
         </AppRailAnchor>
-        <AppRailAnchor href="/dashboard/users">
+        <AppRailAnchor href="/dashboard/user">
             <Users slot="lead" class="h-8 w-8" solid />
-            <span>Manage Users</span>
+            <span>Users</span>
         </AppRailAnchor>
         <!-- TODO: Use the logout endpoint here. -->
         <button

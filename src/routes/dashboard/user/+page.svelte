@@ -8,19 +8,17 @@
     export let data: PageServerData;
     $: ({ users } = data);
 
-    let activeTab: number = 0;
+    // eslint-disable-next-line init-declarations
+    let activeTab = 0;
 </script>
 
 <TabGroup>
-    <Tab bind:group="{activeTab}" name="Users" value="{0}">Users</Tab>
-    <Tab bind:group="{activeTab}" name="Agents" value="{1}">Agents</Tab>
-
+    <Tab bind:group="{activeTab}" value="{0}" name="users" selected>Users</Tab>
+    <Tab bind:group="{activeTab}" value="{1}" name="agents">Agents</Tab>
     <svelte:fragment slot="panel">
         {#if activeTab === 0}
-            <h2 class="h3 font-bold">Users Directory</h2>
             <Users users="{users}" />
         {:else if activeTab === 1}
-            <h2 class="h3 font-bold">Agents Directory</h2>
             <Agents />
         {/if}
     </svelte:fragment>
