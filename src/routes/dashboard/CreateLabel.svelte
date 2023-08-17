@@ -9,7 +9,7 @@
 
     const ResultSchema = z.object({ id: LabelSchema.shape.label_id });
 
-    const submit: SubmitFunction = ({ formData }) => {
+    const submit = (({ formData }) => {
         const name = formData.get('title');
         assert(typeof name === 'string');
         return async ({ result, update }) => {
@@ -23,15 +23,16 @@
                 message: `Created new label "${name}" with ID ${id}.`,
             });
         };
-    };
+    }) satisfies SubmitFunction;
 </script>
 
 <!-- TODO: Migrate to SvelteKit form actions. -->
-<form 
-    method="POST" 
+<form
+    method="POST"
     enctype="application/x-www-form-urlencoded"
-    use:enhance="{submit}" 
-    class="card space-y-4 p-4">
+    use:enhance="{submit}"
+    class="card space-y-4 p-4"
+>
     <label class="label">
         <span>Title</span>
         <input required type="text" name="title" class="input" placeholder="Title" />

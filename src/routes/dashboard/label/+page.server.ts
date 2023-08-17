@@ -26,8 +26,8 @@ export const actions = {
 
         const color = form.get('color');
         if (color === null || color instanceof File) return fail(StatusCodes.BAD_REQUEST);
-        const hex = parseInt(color.slice(1), 16) << 8 | 0xff;
-        
+        const hex = (parseInt(color.slice(1), 16) << 8) | 0xff;
+
         const deadline = form.get('deadline');
         if (deadline === null || deadline instanceof File) return fail(StatusCodes.BAD_REQUEST);
 

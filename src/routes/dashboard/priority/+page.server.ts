@@ -1,5 +1,5 @@
 import { createPriority, getPriorities, isAdminSession } from '$lib/server/database';
-import { error, json, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import type { Actions, PageServerLoad } from './$types';
 import type { Priority } from '$lib/model/priority';
@@ -22,10 +22,10 @@ export const actions = {
         const form = await request.formData();
 
         const title = form.get('title');
-        if (title === null || title instanceof File) throw error(StatusCodes.BAD_REQUEST);
+        if (title === null || title instanceof File) return fail(StatusCodes.BAD_REQUEST);
 
         const prio = form.get('priority');
-        if (prio === null || prio instanceof File) throw error(StatusCodes.BAD_REQUEST);
+        if (prio === null || prio instanceof File) return fail(StatusCodes.BAD_REQUEST);
         const priority = parseInt(prio, 10);
 
         const sid = cookies.get('sid');

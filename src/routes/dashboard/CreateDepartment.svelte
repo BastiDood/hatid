@@ -9,7 +9,7 @@
 
     const ResultSchema = z.object({ id: DeptSchema.shape.dept_id });
 
-    const submit: SubmitFunction = ({ formData }) => {
+    const submit = (({ formData }) => {
         const name = formData.get('name');
         assert(typeof name === 'string');
         return async ({ result, update }) => {
@@ -22,7 +22,7 @@
                 message: `Created new department "${name}" with ID ${id}.`,
             });
         };
-    };
+    }) satisfies SubmitFunction;
 </script>
 
 <form
