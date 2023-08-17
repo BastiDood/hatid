@@ -15,11 +15,11 @@
     import CreatePriority from './CreatePriority.svelte';
     import Inbox from '@krowten/svelte-heroicons/icons/InboxIcon.svelte';
     import type { LayoutServerData } from './$types';
+    import Logo from '$lib/icons/logo.svelte';
     import Logout from '@krowten/svelte-heroicons/icons/ArrowRightOnRectangleIcon.svelte';
     import QueueList from '@krowten/svelte-heroicons/icons/QueueListIcon.svelte';
     import Tag from '@krowten/svelte-heroicons/icons/TagIcon.svelte';
     import Users from '@krowten/svelte-heroicons/icons/UsersIcon.svelte';
-    import logo from '$lib/images/HATiD.png';
     import { page } from '$app/stores';
 
     $: ({ pathname } = $page.url);
@@ -39,7 +39,7 @@
 <Modal components="{components}" />
 <AppShell>
     <AppBar slot="header">
-        <a href="/" slot="lead"><img src="{logo}" alt="HATiD" class="h-8" /></a>
+        <a href="/" slot="lead"><Logo /></a>
         <svelte:fragment slot="trail">
             <LightSwitch />
             <a href="mailto:{email}">{name}</a>

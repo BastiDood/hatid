@@ -1,15 +1,15 @@
 <script lang="ts">
     import Fa from 'svelte-fa';
+    import Logo from '$lib/icons/logo.svelte';
     import type { PageServerData } from './$types';
     import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-    import logo from '$lib/images/HATiD.png';
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
     $: ({ user } = data);
 </script>
 
-<img src="{logo}" alt="HATiD spelled with a ticket icon to emulate the letter H" />
+<Logo />
 
 {#if user === null}
     <a href="/auth/login" class="btn variant-filled-primary">
