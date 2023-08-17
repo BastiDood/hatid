@@ -57,7 +57,7 @@ CREATE TABLE
 CREATE TABLE
     priorities (
         priority_id SERIAL NOT NULL,
-        title VARCHAR(32) UNIQUE,
+        title VARCHAR(32) NOT NULL UNIQUE,
         priority INT NOT NULL,
         PRIMARY KEY (priority_id)
     );
