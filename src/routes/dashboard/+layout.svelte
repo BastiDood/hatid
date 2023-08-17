@@ -13,7 +13,6 @@
     import CreateDepartment from './CreateDepartment.svelte';
     import CreateLabel from './CreateLabel.svelte';
     import CreatePriority from './CreatePriority.svelte';
-    import CreateTicket from './CreateTicket.svelte';
     import Inbox from '@krowten/svelte-heroicons/icons/InboxIcon.svelte';
     import type { LayoutServerData } from './$types';
     import Logout from '@krowten/svelte-heroicons/icons/ArrowRightOnRectangleIcon.svelte';
@@ -30,7 +29,6 @@
         createLabel: { ref: CreateLabel },
         createPriority: { ref: CreatePriority },
         createDept: { ref: CreateDepartment },
-        createTicket: { ref: CreateTicket },
     };
 </script>
 

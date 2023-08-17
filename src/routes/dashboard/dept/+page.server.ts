@@ -2,20 +2,15 @@ import type { Actions, PageServerLoad } from './$types';
 import { createDept, getDepartments, isAdminSession } from '$lib/server/database';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
-import type { Dept } from '$lib/model/dept';
 import { StatusCodes } from 'http-status-codes';
 
-interface Output {
-    depts: Dept[];
-}
-
 // eslint-disable-next-line func-style
-export const load: PageServerLoad<Output> = async ({ parent }) => {
+export const load = (async ({ parent }) => {
     const user = await parent();
     if (user === null) throw redirect(StatusCodes.MOVED_TEMPORARILY, '/auth/login');
     const depts = await getDepartments();
     return { depts };
-};
+}) satisfies PageServerLoad;
 
 export const actions = {
     default: async ({ cookies, request }) => {

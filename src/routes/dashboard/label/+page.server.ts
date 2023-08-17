@@ -2,20 +2,15 @@ import type { Actions, PageServerLoad } from './$types';
 import { createLabel, getLabels, isAdminSession } from '$lib/server/database';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
-import type { Label } from '$lib/model/label';
 import { StatusCodes } from 'http-status-codes';
 
-interface Output {
-    labels: Label[];
-}
-
 // eslint-disable-next-line func-style
-export const load: PageServerLoad<Output> = async ({ parent }) => {
+export const load = (async ({ parent }) => {
     const user = await parent();
     if (user === null) throw redirect(StatusCodes.MOVED_TEMPORARILY, '/auth/login');
     const labels = await getLabels();
     return { labels };
-};
+}) satisfies PageServerLoad;
 
 export const actions = {
     default: async ({ cookies, request }) => {

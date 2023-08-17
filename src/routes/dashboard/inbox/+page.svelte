@@ -1,5 +1,8 @@
 <script>
-    import FormTrigger from '../FormTrigger.svelte';
+    import Plus from '@krowten/svelte-heroicons/icons/PlusIcon.svelte';
 </script>
 
-<FormTrigger component="createTicket" label="Create New Ticket" />
+<a href="/dashboard/ticket" class="btn variant-filled-primary m-auto">
+    <Plus class="h-4 w-4" />
+    <span>Open a Ticket</span>
+</a>

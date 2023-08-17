@@ -1,8 +1,16 @@
-import { CreateTicketResult, createTicket, getUserFromSession } from '$lib/server/database';
-import { error, json } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { AssertionError } from 'node:assert/strict';
 import { StatusCodes } from 'http-status-codes';
+import { CreateTicketResult, createTicket, getLabelsWithoutDeadline, getUserFromSession } from '$lib/server/database';
+import { error, json, redirect } from '@sveltejs/kit';
+
+// eslint-disable-next-line func-style
+export const load = (async ({ parent }) => {
+    const user = await parent();
+    if (user === null) throw redirect(StatusCodes.MOVED_TEMPORARILY, '/auth/login');
+    const labels = await getLabelsWithoutDeadline();
+    return { labels };
+}) satisfies PageServerLoad;
 
 export const actions = {
     default: async ({ cookies, request }) => {
