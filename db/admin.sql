@@ -1,4 +1,4 @@
-SELECT user_id, name, email FROM users;
+SELECT user_id, name, email FROM users WHERE NOT admin;
 
 \prompt 'Which user ID would you like to promote as a system adminstrator? ' uid
 
