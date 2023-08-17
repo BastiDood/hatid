@@ -5,7 +5,7 @@ import {
     isAssignedAgent,
 } from '$lib/server/database';
 import { AssertionError } from 'node:assert/strict';
-import type { RequestHandler } from '../$types';
+import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
 import { error } from '@sveltejs/kit';
 

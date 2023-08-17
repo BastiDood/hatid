@@ -1,5 +1,5 @@
 import { canEditTicket, editTicketTitle, getUserFromSession } from '$lib/server/database';
-import type { RequestHandler } from '../$types';
+import type { RequestHandler } from './$types';
 import { StatusCodes } from 'http-status-codes';
 import { error } from '@sveltejs/kit';
 
