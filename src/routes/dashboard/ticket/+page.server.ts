@@ -1,8 +1,13 @@
 import type { Actions, PageServerLoad } from './$types';
+import {
+    CreateTicketResult,
+    createTicket,
+    getLabelsWithoutDeadline,
+    getUserFromSession,
+} from '$lib/server/database';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import { StatusCodes } from 'http-status-codes';
-import { CreateTicketResult, createTicket, getLabelsWithoutDeadline, getUserFromSession } from '$lib/server/database';
-import { error, json, redirect } from '@sveltejs/kit';
 
 // eslint-disable-next-line func-style
 export const load = (async ({ parent }) => {
@@ -17,12 +22,13 @@ export const actions = {
         const form = await request.formData();
 
         const title = form.get('title');
-        if (title === null || title instanceof File) throw error(StatusCodes.BAD_REQUEST);
+        if (title === null || title instanceof File) return fail(StatusCodes.BAD_REQUEST);
 
         const body = form.get('body');
-        if (body === null || body instanceof File) throw error(StatusCodes.BAD_REQUEST);
+        if (body === null || body instanceof File) return fail(StatusCodes.BAD_REQUEST);
 
         const labels = form.getAll('label').map(entry => {
+            // FIXME: Somehow refactor to use `return fail` instead of `throw error`.
             if (entry === null || entry instanceof File) throw error(StatusCodes.BAD_REQUEST);
             return parseInt(entry, 10) >> 0;
         });
@@ -34,7 +40,7 @@ export const actions = {
         if (user === null) throw error(StatusCodes.UNAUTHORIZED);
 
         const result = await createTicket(title, user.user_id, body, labels);
-        if (typeof result === 'object') return json(result, { status: StatusCodes.CREATED });
+        if (typeof result === 'object') return result;
 
         switch (result) {
             case CreateTicketResult.NoAuthor:
