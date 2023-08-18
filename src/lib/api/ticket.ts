@@ -31,13 +31,12 @@ export async function editTitle(id: Ticket['ticket_id'], title: Ticket['title'])
  * Returns `true` if successful. Otherwise, it is `false`.
  */
 export async function assignPriority(tid: Ticket['ticket_id'], pid: Ticket['priority_id']) {
+    const body = new URLSearchParams({ ticket: tid });
+    if (pid !== null) body.set('priority', pid.toString(10));
     const { status } = await fetch('/api/ticket/priority', {
         method: 'PATCH',
         credentials: 'same-origin',
-        body: new URLSearchParams({
-            ticket: tid,
-            priority: pid.toString(10),
-        }),
+        body,
     });
     switch (status) {
         case StatusCodes.NO_CONTENT:
