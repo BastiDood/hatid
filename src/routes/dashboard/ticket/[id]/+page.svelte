@@ -1,9 +1,11 @@
 <script lang="ts">
+    import {
+        ArrowUturnLeftIcon as Back,
+        PaperAirplaneIcon as Send,
+        ExclamationTriangleIcon as Warning,
+    } from '@krowten/svelte-heroicons';
     import { Avatar } from '@skeletonlabs/skeleton';
-    import Back from '@krowten/svelte-heroicons/icons/ArrowUturnLeftIcon.svelte';
     import type { PageServerData } from './$types';
-    import Send from '@krowten/svelte-heroicons/icons/PaperAirplaneIcon.svelte';
-    import Warning from '@krowten/svelte-heroicons/icons/ExclamationTriangleIcon.svelte';
     import autosize from '$lib/actions/autosize';
     import { enhance } from '$app/forms';
 

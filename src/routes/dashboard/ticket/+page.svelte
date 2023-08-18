@@ -1,7 +1,9 @@
 <script lang="ts">
+    import {
+        ArrowUturnLeftIcon as Back,
+        ExclamationCircleIcon as Error,
+    } from '@krowten/svelte-heroicons';
     import { MessageSchema, TicketSchema } from '$lib/model/ticket';
-    import Back from '@krowten/svelte-heroicons/icons/ArrowUturnLeftIcon.svelte';
-    import Error from '@krowten/svelte-heroicons/icons/ExclamationCircleIcon.svelte';
     import type { PageServerData } from './$types';
     import SubmitButton from '../SubmitButton.svelte';
     import type { SubmitFunction } from '@sveltejs/kit';

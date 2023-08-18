@@ -1,8 +1,10 @@
 <script lang="ts">
-    import Back from '@krowten/svelte-heroicons/icons/ArrowUturnLeftIcon.svelte';
+    import {
+        ArrowUturnLeftIcon as Back,
+        ExclamationTriangleIcon as Warning,
+    } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
     import Users from '$lib/components/Users.svelte';
-    import Warning from '@krowten/svelte-heroicons/icons/ExclamationTriangleIcon.svelte';
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
