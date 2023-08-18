@@ -180,7 +180,7 @@ it('should complete a full user journey', async () => {
 
     {
         // Create ticket and edit its title
-        const result = await db.createTicket('Old title', uid, 'Hello World', [coolLabel]);
+        const result = await db.createTicket('Old Title', uid, 'Hello World', [coolLabel]);
         assert(typeof result === 'object');
         const { tid, mid, due } = result;
         expect(tid).toHaveLength(36);
@@ -376,6 +376,27 @@ it('should complete a full user journey', async () => {
     const replyId = await db.createReply(tid, uid, 'Valid Reply');
     assert(typeof replyId === 'number');
     expect(replyId).not.toStrictEqual(0);
+
+    expect(await db.getTicketThread(nonExistentTicket)).toHaveLength(0);
+
+    {
+        const [first, second, ...rest] = await db.getTicketThread(tid);
+        expect(rest).toHaveLength(0);
+        expect(first).toMatchObject({
+            name: 'Test',
+            email: `${email}@example.com`,
+            picture: 'http://example.com/avatar.png',
+            message_id: mid,
+            body: 'yay!',
+        });
+        expect(second).toMatchObject({
+            name: 'Test',
+            email: `${email}@example.com`,
+            picture: 'http://example.com/avatar.png',
+            message_id: replyId,
+            body: 'Valid Reply',
+        });
+    }
 
     expect(await db.setStatusForTicket(nonExistentTicket, false)).toBeNull();
     expect(await db.setStatusForTicket(tid, false)).toStrictEqual(true);
