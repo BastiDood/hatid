@@ -404,7 +404,7 @@ REPLACE FUNCTION get_tickets_by_dept (
                 (SELECT dept_id FROM dept_agents WHERE user_id = uid)))
 $$ LANGUAGE SQL;
 
-CREATE OR 
+CREATE OR
 REPLACE FUNCTION get_user_inbox (
     sid sessions.session_id %
     TYPE

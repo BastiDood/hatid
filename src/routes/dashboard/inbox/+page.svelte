@@ -1,8 +1,7 @@
 <script lang="ts">
     import { PlusIcon as Plus } from '@krowten/svelte-heroicons';
-    import AdminInbox from './AdminInbox.svelte';
     import type { PageServerData } from './$types';
-
+    import UserInbox from './UserInbox.svelte';
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
     $: ({ tickets } = data);
@@ -13,5 +12,4 @@
     <span>Open a Ticket</span>
 </a>
 
-
-<AdminInbox tickets={tickets}/>
+<UserInbox tickets="{tickets}" />
