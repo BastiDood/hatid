@@ -12,14 +12,14 @@
                 <th>ID</th>
                 <th>Title</th>
                 <th>Due Date</th>
-                <th>Priority Id</th>
+                <th>Priority</th>
             </tr>
         </thead>
         <tbody>
             {#each tickets as { ticket_id, title, due_date, priority_id } (ticket_id)}
                 <tr>
                     <td>{ticket_id}</td>
-                    <td>{title}</td>
+                    <td><a href="/dashboard/ticket/{ticket_id}" class="anchor">{title}</a></td>
                     <td>{due_date.toLocaleString()}</td>
                     <td>
                         {#if priority_id !== null}
