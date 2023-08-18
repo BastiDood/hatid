@@ -7,6 +7,7 @@ import {
     type TicketLabel,
     TicketLabelSchema,
     TicketSchema,
+    OpenTicketSchema,
 } from '$lib/model/ticket';
 import { type Dept, type DeptLabel, DeptLabelSchema, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
@@ -670,8 +671,23 @@ export async function getPriorities() {
     return PrioritySchema.array().parse(rows);
 }
 
+export async function getOpenTickets() {
+    const rows = await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM tickets WHERE open = true`.execute();
+    return OpenTicketSchema.array().parse(rows);
+}
+
 export async function getTickets() {
-    const rows = await sql`SELECT * FROM tickets`.execute();
+    const rows = await sql`SELECT ticket_id, title, open, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM tickets`.execute();
+    return TicketSchema.array().parse(rows);
+}
+
+export async function getUserInbox(sid: Session['session_id']) {
+    const rows = await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_user_inbox(${sid})`.execute();
+    return OpenTicketSchema.array().parse(rows);
+}
+
+export async function getTicketsByAgent(sid: Session["session_id"]) {
+    const rows = await sql`SELECT * FROM get_tickets_by_agent(SELECT user_id FROM get_user_from_session(${sid}))`.execute();
     return TicketSchema.array().parse(rows);
 }
 
