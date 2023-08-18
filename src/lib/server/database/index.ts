@@ -671,28 +671,12 @@ export async function getPriorities() {
     return PrioritySchema.array().parse(rows);
 }
 
-export async function getOpenTickets() {
-    const rows =
-        await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM tickets WHERE open = true`.execute();
-    return OpenTicketSchema.array().parse(rows);
-}
-
-export async function getTickets() {
-    const rows =
-        await sql`SELECT ticket_id, title, open, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM tickets`.execute();
-    return TicketSchema.array().parse(rows);
-}
-
 export async function getUserInbox(uid: User['user_id']) {
+    // TODO: Add Test Cases
+    // TODO: We should `LEFT JOIN` the `priority_id` eventually.
     const rows =
         await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_user_inbox(${uid})`.execute();
     return OpenTicketSchema.array().parse(rows);
-}
-
-export async function getTicketsByAgent(uid: User['user_id']) {
-    const rows =
-        await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_tickets_by_dept(${uid})`.execute();
-    return TicketSchema.array().parse(rows);
 }
 
 export async function getTicketLabels() {
