@@ -1,9 +1,11 @@
 <script lang="ts">
+    import {
+        ArrowUturnLeftIcon as Back,
+        PaperAirplaneIcon as Send,
+    } from '@krowten/svelte-heroicons';
     import { Avatar } from '@skeletonlabs/skeleton';
-    import Back from '@krowten/svelte-heroicons/icons/ArrowUturnLeftIcon.svelte';
+    import Error from '$lib/components/alerts/Error.svelte';
     import type { PageServerData } from './$types';
-    import Send from '@krowten/svelte-heroicons/icons/PaperAirplaneIcon.svelte';
-    import Warning from '@krowten/svelte-heroicons/icons/ExclamationTriangleIcon.svelte';
     import autosize from '$lib/actions/autosize';
     import { enhance } from '$app/forms';
 
@@ -17,10 +19,9 @@
         <Back class="h-4 w-4" />
         <span>Go Back to Inbox</span>
     </a>
-    <div class="alert variant-soft-error">
-        <Warning class="h-8 w-8" />
+    <Error>
         <span>This ticket does not exist.</span>
-    </div>
+    </Error>
 {:else}
     {#each messages as { message_id, body, creation, author_id, name, email, picture } (message_id)}
         {@const id = message_id.toString()}

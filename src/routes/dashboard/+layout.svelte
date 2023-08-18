@@ -9,17 +9,19 @@
         Modal,
         Toast,
     } from '@skeletonlabs/skeleton';
-    import BuildingOffice from '@krowten/svelte-heroicons/icons/BuildingOfficeIcon.svelte';
+    import {
+        BuildingOfficeIcon as BuildingOffice,
+        InboxIcon as Inbox,
+        ArrowRightOnRectangleIcon as Logout,
+        QueueListIcon as QueueList,
+        TagIcon as Tag,
+        UsersIcon as Users,
+    } from '@krowten/svelte-heroicons';
     import CreateDepartment from './CreateDepartment.svelte';
     import CreateLabel from './CreateLabel.svelte';
     import CreatePriority from './CreatePriority.svelte';
-    import Inbox from '@krowten/svelte-heroicons/icons/InboxIcon.svelte';
     import type { LayoutServerData } from './$types';
     import Logo from '$lib/icons/logo.svelte';
-    import Logout from '@krowten/svelte-heroicons/icons/ArrowRightOnRectangleIcon.svelte';
-    import QueueList from '@krowten/svelte-heroicons/icons/QueueListIcon.svelte';
-    import Tag from '@krowten/svelte-heroicons/icons/TagIcon.svelte';
-    import Users from '@krowten/svelte-heroicons/icons/UsersIcon.svelte';
     import { goto } from '$app/navigation';
     import { logout } from '$lib/api/session';
     import { page } from '$app/stores';

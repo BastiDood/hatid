@@ -1,5 +1,5 @@
 <script>
-    import Plus from '@krowten/svelte-heroicons/icons/PlusIcon.svelte';
+    import { PlusIcon as Plus } from '@krowten/svelte-heroicons';
 </script>
 
 <a href="/dashboard/ticket" class="btn variant-filled-secondary m-auto">

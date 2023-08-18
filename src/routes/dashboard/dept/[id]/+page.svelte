@@ -1,8 +1,8 @@
 <script lang="ts">
-    import Back from '@krowten/svelte-heroicons/icons/ArrowUturnLeftIcon.svelte';
+    import { ArrowUturnLeftIcon as Back } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
     import Users from '$lib/components/Users.svelte';
-    import Warning from '@krowten/svelte-heroicons/icons/ExclamationTriangleIcon.svelte';
+    import Warning from '$lib/components/alerts/Warning.svelte';
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
@@ -14,10 +14,9 @@
     <span>Go Back</span>
 </a>
 {#if users.length === 0}
-    <div class="alert variant-soft-warning">
-        <Warning class="h-8 w-8" />
+    <Warning>
         <span>There are no agents in this department.</span>
-    </div>
+    </Warning>
 {:else}
     <Users users="{users}" />
 {/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Plus from '@krowten/svelte-heroicons/icons/PlusIcon.svelte';
+    import { PlusIcon as Plus } from '@krowten/svelte-heroicons';
     import { modalStore } from '@skeletonlabs/skeleton';
 
     // eslint-disable-next-line init-declarations
