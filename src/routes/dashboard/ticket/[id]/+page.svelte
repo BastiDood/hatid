@@ -4,7 +4,7 @@
     import type { PageServerData } from './$types';
     import Send from '@krowten/svelte-heroicons/icons/PaperAirplaneIcon.svelte';
     import Warning from '@krowten/svelte-heroicons/icons/ExclamationTriangleIcon.svelte';
-    import autosize from 'svelte-autosize';
+    import autosize from '$lib/actions/autosize';
     import { enhance } from '$app/forms';
 
     // eslint-disable-next-line init-declarations
