@@ -47,10 +47,10 @@
     </a>
     <div class="alert variant-soft-warning">
         <Error class="h-8 w-8" />
-        <span
-            >The system is not yet ready to accept tickets because there are no labels available at
-            the moment.</span
-        >
+        <span>
+            The system is not yet ready to accept tickets because there are no labels available at
+            the moment.
+        </span>
     </div>
 {:else}
     <form
