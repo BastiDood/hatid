@@ -38,7 +38,7 @@
 <Toast />
 <Modal components="{components}" />
 <AppShell>
-    <AppBar slot="header">
+    <AppBar slot="header" shadow="shadow-xl">
         <a href="/" slot="lead"><Logo /></a>
         <svelte:fragment slot="trail">
             <LightSwitch />
