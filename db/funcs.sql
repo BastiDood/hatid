@@ -200,6 +200,8 @@ REPLACE FUNCTION get_messages_with_authors (
     tid ticket_labels.ticket_id %
     TYPE
 ) RETURNS TABLE (
+    author_id messages.author_id %
+    TYPE,
     NAME users.name %
     TYPE,
     email users.email %
@@ -213,8 +215,8 @@ REPLACE FUNCTION get_messages_with_authors (
     body messages.body %
     TYPE
 ) AS $$
-    SELECT name, email, picture, message_id, creation, body FROM messages
-        INNER JOIN users ON messages.author_id = users.user_id
+    SELECT author_id, name, email, picture, message_id, creation, body FROM messages
+        INNER JOIN users ON author_id = user_id
         WHERE ticket_id = tid ORDER BY creation;
 $$ LANGUAGE SQL;
 

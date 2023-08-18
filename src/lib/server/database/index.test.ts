@@ -383,6 +383,7 @@ it('should complete a full user journey', async () => {
         const [first, second, ...rest] = await db.getTicketThread(tid);
         expect(rest).toHaveLength(0);
         expect(first).toMatchObject({
+            author_id: uid,
             name: 'Test',
             email: `${email}@example.com`,
             picture: 'http://example.com/avatar.png',
@@ -390,6 +391,7 @@ it('should complete a full user journey', async () => {
             body: 'yay!',
         });
         expect(second).toMatchObject({
+            author_id: uid,
             name: 'Test',
             email: `${email}@example.com`,
             picture: 'http://example.com/avatar.png',

@@ -452,6 +452,7 @@ export async function getTicketThread(tid: Ticket['ticket_id']) {
         picture: true,
     });
     const MessageData = MessageSchema.pick({
+        author_id: true,
         message_id: true,
         creation: true,
         body: true,
