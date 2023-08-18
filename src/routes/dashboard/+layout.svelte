@@ -31,8 +31,9 @@
     $: ({ name, email, picture } = data);
 
     async function exit() {
-        const path = (await logout()) ? '/' : '/auth/login';
-        await goto(path);
+        // TODO: Somehow make use of the return value.
+        await logout();
+        await goto('/');
     }
 
     const components = {
