@@ -1,43 +1,13 @@
 <script lang="ts">
-    import { MessageSchema, TicketSchema } from '$lib/model/ticket';
     import { ArrowUturnLeftIcon as Back } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
     import SubmitButton from '../SubmitButton.svelte';
-    import type { SubmitFunction } from '@sveltejs/kit';
     import Warning from '$lib/components/alerts/Warning.svelte';
-    import assert from '$lib/assert';
     import { enhance } from '$app/forms';
-    import { goto } from '$app/navigation';
-    import { toastStore } from '@skeletonlabs/skeleton';
-    import { z } from 'zod';
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
     $: ({ labels } = data);
-
-    const ResultSchema = z.object({
-        tid: TicketSchema.shape.ticket_id,
-        mid: MessageSchema.shape.message_id,
-        due: TicketSchema.shape.due_date,
-    });
-
-    const submit = (() =>
-        async ({ result, update }) => {
-            assert(result.type === 'success');
-            const { tid, mid, due } = ResultSchema.parse(result.data);
-            await update();
-            toastStore.trigger({
-                autohide: false,
-                message: `New ticket created due at ${due.toLocaleString()}.`,
-                background: 'variant-filled-success',
-                action: {
-                    label: 'Go to Thread',
-                    response() {
-                        return goto(`/dashboard/ticket/${tid}#${mid}`);
-                    },
-                },
-            });
-        }) satisfies SubmitFunction;
 </script>
 
 {#if labels.length === 0}
@@ -53,9 +23,9 @@
     </Warning>
 {:else}
     <form
+        use:enhance
         method="POST"
         enctype="application/x-www-form-urlencoded"
-        use:enhance="{submit}"
         class="card space-y-4 p-4"
     >
         <label class="label">
