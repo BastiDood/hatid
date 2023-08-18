@@ -3,8 +3,8 @@
         ArrowUturnLeftIcon as Back,
         PaperAirplaneIcon as Send,
     } from '@krowten/svelte-heroicons';
-    import Error from '$lib/components/Alerts/Error.svelte';
     import { Avatar } from '@skeletonlabs/skeleton';
+    import Error from '$lib/components/alerts/Error.svelte';
     import type { PageServerData } from './$types';
     import autosize from '$lib/actions/autosize';
     import { enhance } from '$app/forms';

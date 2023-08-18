@@ -1,10 +1,10 @@
 <script lang="ts">
     import { MessageSchema, TicketSchema } from '$lib/model/ticket';
-    import Warning from '$lib/components/Alerts/Warning.svelte';
     import { ArrowUturnLeftIcon as Back } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
     import SubmitButton from '../SubmitButton.svelte';
     import type { SubmitFunction } from '@sveltejs/kit';
+    import Warning from '$lib/components/alerts/Warning.svelte';
     import assert from '$lib/assert';
     import { enhance } from '$app/forms';
     import { goto } from '$app/navigation';

@@ -2,7 +2,7 @@
     import { ArrowUturnLeftIcon as Back } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
     import Users from '$lib/components/Users.svelte';
-    import Warning from '$lib/components/Alerts/Warning.svelte';
+    import Warning from '$lib/components/alerts/Warning.svelte';
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
