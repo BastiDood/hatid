@@ -193,6 +193,31 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL;
 
+-- TODO: Investigate whether an inner join is too costly in terms of bandwidth.
+-- TODO: Return whether the user is an admin so that we can decorate their message badge.
+CREATE OR
+REPLACE FUNCTION get_messages_with_authors (
+    tid ticket_labels.ticket_id %
+    TYPE
+) RETURNS TABLE (
+    NAME users.name %
+    TYPE,
+    email users.email %
+    TYPE,
+    picture users.picture %
+    TYPE,
+    message_id messages.message_id %
+    TYPE,
+    creation messages.creation %
+    TYPE,
+    body messages.body %
+    TYPE
+) AS $$
+    SELECT name, email, picture, message_id, creation, body FROM messages
+        INNER JOIN users ON messages.author_id = users.user_id
+        WHERE ticket_id = tid ORDER BY creation;
+$$ LANGUAGE SQL;
+
 CREATE OR
 REPLACE FUNCTION assign_label (
     tid ticket_labels.ticket_id %
