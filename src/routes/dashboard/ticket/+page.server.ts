@@ -40,7 +40,11 @@ export const actions = {
         if (user === null) throw error(StatusCodes.UNAUTHORIZED);
 
         const result = await createTicket(title, user.user_id, body, labels);
-        if (typeof result === 'object') return result;
+        if (typeof result === 'object') {
+            // TODO: Somehow log the `due` date.
+            const { tid, mid } = result;
+            throw redirect(StatusCodes.MOVED_TEMPORARILY, `/dashboard/ticket/${tid}#${mid}`);
+        }
 
         switch (result) {
             case CreateTicketResult.NoAuthor:
