@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { PlusIcon as Plus } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
+    import { PlusIcon as Plus } from '@krowten/svelte-heroicons';
     import UserInbox from './UserInbox.svelte';
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
