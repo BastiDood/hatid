@@ -3,7 +3,7 @@
         ArrowUturnLeftIcon as Back,
         PaperAirplaneIcon as Send,
     } from '@krowten/svelte-heroicons';
-    import Alert from '$lib/components/Alert.svelte';
+    import Error from '$lib/components/Alerts/Error.svelte';
     import { Avatar } from '@skeletonlabs/skeleton';
     import type { PageServerData } from './$types';
     import autosize from '$lib/actions/autosize';
@@ -19,9 +19,9 @@
         <Back class="h-4 w-4" />
         <span>Go Back to Inbox</span>
     </a>
-    <Alert variant="soft-error">
+    <Error>
         <span>This ticket does not exist.</span>
-    </Alert>
+    </Error>
 {:else}
     {#each messages as { message_id, body, creation, author_id, name, email, picture } (message_id)}
         {@const id = message_id.toString()}

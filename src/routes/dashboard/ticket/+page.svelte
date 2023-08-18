@@ -1,6 +1,6 @@
 <script lang="ts">
     import { MessageSchema, TicketSchema } from '$lib/model/ticket';
-    import Alert from '$lib/components/Alert.svelte';
+    import Warning from '$lib/components/Alerts/Warning.svelte';
     import { ArrowUturnLeftIcon as Back } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
     import SubmitButton from '../SubmitButton.svelte';
@@ -45,12 +45,12 @@
         <Back class="h-4 w-4" />
         <span>Go Back to Dashboard</span>
     </a>
-    <Alert variant="soft-warning">
+    <Warning>
         <span>
             The system is not yet ready to accept tickets because there are no labels available at
             the moment.
         </span>
-    </Alert>
+    </Warning>
 {:else}
     <form
         method="POST"
