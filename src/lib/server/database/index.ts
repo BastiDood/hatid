@@ -3,6 +3,7 @@ import {
     CreateTicketSchema,
     type Message,
     MessageSchema,
+    OpenTicketSchema,
     type Ticket,
     type TicketLabel,
     TicketLabelSchema,
@@ -670,9 +671,12 @@ export async function getPriorities() {
     return PrioritySchema.array().parse(rows);
 }
 
-export async function getTickets() {
-    const rows = await sql`SELECT * FROM tickets`.execute();
-    return TicketSchema.array().parse(rows);
+export async function getUserInbox(uid: User['user_id']) {
+    // TODO: Add Test Cases
+    // TODO: We should `LEFT JOIN` the `priority_id` eventually.
+    const rows =
+        await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_user_inbox(${uid}) WHERE open`.execute();
+    return OpenTicketSchema.array().parse(rows);
 }
 
 export async function getTicketLabels() {

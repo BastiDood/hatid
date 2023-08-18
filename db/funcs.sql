@@ -392,3 +392,11 @@ TYPE AS $$
     WITH _ AS (SELECT open FROM tickets WHERE ticket_id = tid)
         UPDATE tickets SET open = value FROM _ WHERE ticket_id = tid RETURNING _.open;
 $$ LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION get_user_inbox (
+    uid users.user_id %
+    TYPE
+) RETURNS SETOF tickets AS $$ 
+    SELECT * FROM tickets WHERE get_ticket_author(ticket_id) = uid;
+$$ STABLE LANGUAGE SQL;

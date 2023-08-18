@@ -8,7 +8,7 @@ export const TicketSchema = z.object({
     title: z.string().max(128),
     open: z.boolean(),
     due_date: z.coerce.date(),
-    priority_id: PrioritySchema.shape.priority_id,
+    priority_id: PrioritySchema.shape.priority_id.nullable(),
 });
 
 export const TicketLabelSchema = z.object({
@@ -30,8 +30,16 @@ export const CreateTicketSchema = z.object({
     due: TicketSchema.shape.due_date,
 });
 
+export const OpenTicketSchema = z.object({
+    ticket_id: z.string().uuid(),
+    title: z.string().max(128),
+    due_date: z.coerce.date(),
+    priority_id: PrioritySchema.shape.priority_id.nullable(),
+});
+
 export type Ticket = z.infer<typeof TicketSchema>;
 export type TicketLabel = z.infer<typeof TicketLabelSchema>;
 export type Message = z.infer<typeof MessageSchema>;
 
 export type CreateTicket = z.infer<typeof CreateTicketSchema>;
+export type OpenTicket = z.infer<typeof OpenTicketSchema>;
