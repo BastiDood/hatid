@@ -683,15 +683,15 @@ export async function getTickets() {
     return TicketSchema.array().parse(rows);
 }
 
-export async function getUserInbox(sid: Session['session_id']) {
+export async function getUserInbox(uid: User['user_id']) {
     const rows =
-        await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_user_inbox(${sid})`.execute();
+        await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_user_inbox(${uid})`.execute();
     return OpenTicketSchema.array().parse(rows);
 }
 
-export async function getTicketsByAgent(sid: Session['session_id']) {
+export async function getTicketsByAgent(uid: User['user_id']) {
     const rows =
-        await sql`SELECT * FROM get_tickets_by_agent(SELECT user_id FROM get_user_from_session(${sid}))`.execute();
+        await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_tickets_by_dept(${uid})`.execute();
     return TicketSchema.array().parse(rows);
 }
 
