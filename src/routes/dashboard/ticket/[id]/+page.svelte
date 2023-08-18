@@ -2,8 +2,8 @@
     import {
         ArrowUturnLeftIcon as Back,
         PaperAirplaneIcon as Send,
-        ExclamationTriangleIcon as Warning,
     } from '@krowten/svelte-heroicons';
+    import Alert from '$lib/components/Alert.svelte';
     import { Avatar } from '@skeletonlabs/skeleton';
     import type { PageServerData } from './$types';
     import autosize from '$lib/actions/autosize';
@@ -19,10 +19,9 @@
         <Back class="h-4 w-4" />
         <span>Go Back to Inbox</span>
     </a>
-    <div class="alert variant-soft-error">
-        <Warning class="h-8 w-8" />
+    <Alert variant="soft-error">
         <span>This ticket does not exist.</span>
-    </div>
+    </Alert>
 {:else}
     {#each messages as { message_id, body, creation, author_id, name, email, picture } (message_id)}
         {@const id = message_id.toString()}

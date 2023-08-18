@@ -1,9 +1,7 @@
 <script lang="ts">
-    import {
-        ArrowUturnLeftIcon as Back,
-        ExclamationCircleIcon as Error,
-    } from '@krowten/svelte-heroicons';
     import { MessageSchema, TicketSchema } from '$lib/model/ticket';
+    import Alert from '$lib/components/Alert.svelte';
+    import { ArrowUturnLeftIcon as Back } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
     import SubmitButton from '../SubmitButton.svelte';
     import type { SubmitFunction } from '@sveltejs/kit';
@@ -47,13 +45,12 @@
         <Back class="h-4 w-4" />
         <span>Go Back to Dashboard</span>
     </a>
-    <div class="alert variant-soft-warning">
-        <Error class="h-8 w-8" />
+    <Alert variant="soft-warning">
         <span>
             The system is not yet ready to accept tickets because there are no labels available at
             the moment.
         </span>
-    </div>
+    </Alert>
 {:else}
     <form
         method="POST"

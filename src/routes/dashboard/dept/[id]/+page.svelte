@@ -1,8 +1,6 @@
 <script lang="ts">
-    import {
-        ArrowUturnLeftIcon as Back,
-        ExclamationTriangleIcon as Warning,
-    } from '@krowten/svelte-heroicons';
+    import Alert from '$lib/components/Alert.svelte';
+    import { ArrowUturnLeftIcon as Back } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
     import Users from '$lib/components/Users.svelte';
 
@@ -16,10 +14,9 @@
     <span>Go Back</span>
 </a>
 {#if users.length === 0}
-    <div class="alert variant-soft-warning">
-        <Warning class="h-8 w-8" />
+    <Alert variant="soft-warning">
         <span>There are no agents in this department.</span>
-    </div>
+    </Alert>
 {:else}
     <Users users="{users}" />
 {/if}
