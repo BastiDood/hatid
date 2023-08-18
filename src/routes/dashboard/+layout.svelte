@@ -20,6 +20,8 @@
     import QueueList from '@krowten/svelte-heroicons/icons/QueueListIcon.svelte';
     import Tag from '@krowten/svelte-heroicons/icons/TagIcon.svelte';
     import Users from '@krowten/svelte-heroicons/icons/UsersIcon.svelte';
+    import { goto } from '$app/navigation';
+    import { logout } from '$lib/api/session';
     import { page } from '$app/stores';
 
     $: ({ pathname } = $page.url);
@@ -27,6 +29,11 @@
     // eslint-disable-next-line init-declarations
     export let data: LayoutServerData;
     $: ({ name, email, picture } = data);
+
+    async function exit() {
+        const path = (await logout()) ? '/' : '/auth/login';
+        await goto(path);
+    }
 
     const components = {
         createLabel: { ref: CreateLabel },
@@ -71,11 +78,11 @@
             <BuildingOffice slot="lead" class="h-8 w-8" solid />
             <span>Departments</span>
         </AppRailAnchor>
-        <!-- TODO: Use the logout endpoint here. -->
         <button
             type="button"
             slot="trail"
             class="flex aspect-square w-full appearance-none flex-col items-center justify-center gap-1 hover:bg-error-hover-token active:bg-error-active-token"
+            on:click="{exit}"
         >
             <Logout class="block h-8 w-8" />
             <span class="app-rail-label text-xs font-bold">Logout</span>
