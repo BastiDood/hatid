@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
     import { PlusIcon as Plus } from '@krowten/svelte-heroicons';
 </script>
 
