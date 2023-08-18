@@ -10,7 +10,12 @@ import {
 } from '$lib/model/ticket';
 import { type Dept, type DeptLabel, DeptLabelSchema, DeptSchema } from '$lib/model/dept';
 import { type Label, LabelSchema } from '$lib/model/label';
-import { type Pending, PendingSchema, type Session } from '$lib/server/model/session';
+import {
+    type Pending,
+    PendingSchema,
+    type Session,
+    SessionSchema,
+} from '$lib/server/model/session';
 import { type Priority, PrioritySchema } from '$lib/model/priority';
 import {
     UnexpectedConstraintName,
@@ -93,6 +98,16 @@ export async function getUserFromSession(sid: Session['session_id']) {
         await sql`SELECT * FROM get_user_from_session(${sid}) AS _ WHERE _ IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined' ? null : UserSchema.parse(first);
+}
+
+/** Deletes a {@linkcode Session} from the system (i.e., logging out). */
+export async function deleteSession(sid: Session['session_id']) {
+    const [first, ...rest] =
+        await sql`DELETE FROM sessions WHERE session_id = ${sid} RETURNING user_id, expiration`;
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined'
+        ? null
+        : SessionSchema.pick({ user_id: true, expiration: true }).parse(first);
 }
 
 /** Maps a session ID to its associated `admin` field in {@linkcode User}. */

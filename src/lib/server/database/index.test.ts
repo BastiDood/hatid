@@ -39,6 +39,9 @@ it('should complete a full user journey', async () => {
         return { uid, email };
     });
 
+    const nonExistentSession = randomUUID();
+    expect(await db.getUserFromSession(nonExistentSession)).toBeNull();
+
     {
         const users = await db.getUsers();
         expect(users).toContainEqual({
@@ -70,8 +73,8 @@ it('should complete a full user journey', async () => {
     }
 
     const nonExistentUser = randomUUID();
-    expect(await db.isHeadSession(nonExistentUser, 0)).toBeNull();
-    expect(await db.isHeadSession(nonExistentUser, did)).toBeNull();
+    expect(await db.isHeadSession(nonExistentSession, 0)).toBeNull();
+    expect(await db.isHeadSession(nonExistentSession, did)).toBeNull();
     expect(await db.isHeadSession(session_id, 0)).toBeNull();
     expect(await db.isHeadSession(session_id, did)).toBeNull();
 
@@ -479,6 +482,16 @@ it('should complete a full user journey', async () => {
             picture: 'http://example.com/avatar.png',
             admin: false,
         });
+    }
+
+    expect(await db.deleteSession(nonExistentSession)).toBeNull();
+
+    {
+        const result = await db.deleteSession(session_id);
+        assert(result !== null);
+        const { user_id, expiration } = result;
+        expect(user_id).toStrictEqual(uid);
+        expect(expiration.getTime()).toBeGreaterThanOrEqual(Date.now());
     }
 });
 
