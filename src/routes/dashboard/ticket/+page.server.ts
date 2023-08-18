@@ -5,7 +5,7 @@ import {
     getLabelsWithoutDeadline,
     getUserFromSession,
 } from '$lib/server/database';
-import { error, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
 import { StatusCodes } from 'http-status-codes';
 

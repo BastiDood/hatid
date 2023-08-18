@@ -406,9 +406,9 @@ $$ LANGUAGE SQL;
 
 CREATE OR
 REPLACE FUNCTION get_user_inbox (
-    sid sessions.session_id %
+    uid users.user_id %
     TYPE
 ) RETURNS SETOF tickets AS $$ 
     SELECT * FROM
-        tickets WHERE ticket_id IN (SELECT ticket_id FROM messages WHERE get_ticket_author(ticket_id) =(SELECT user_id FROM get_user_from_session(sid)))
+        tickets WHERE ticket_id IN (SELECT ticket_id FROM messages WHERE get_ticket_author(ticket_id) = uid)
 $$ LANGUAGE SQL;
