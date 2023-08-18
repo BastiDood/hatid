@@ -33,7 +33,7 @@
                 action: {
                     label: 'Go to Thread',
                     response() {
-                        return goto(`/dashboard/inbox/${tid}#${mid}`);
+                        return goto(`/dashboard/ticket/${tid}#${mid}`);
                     },
                 },
             });

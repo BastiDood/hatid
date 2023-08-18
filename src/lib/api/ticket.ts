@@ -1,11 +1,5 @@
-import {
-    BadInput,
-    EntityNotFound,
-    InsufficientPermissions,
-    InvalidSession,
-    UnexpectedStatusCode,
-} from './error';
-import { type Message, MessageSchema, type Ticket, type TicketLabel } from '$lib/model/ticket';
+import { BadInput, InsufficientPermissions, InvalidSession, UnexpectedStatusCode } from './error';
+import type { Ticket, TicketLabel } from '$lib/model/ticket';
 import type { Agent } from '$lib/model/agent';
 import { StatusCodes } from 'http-status-codes';
 
@@ -86,29 +80,6 @@ export async function editDueDate(id: Ticket['ticket_id'], due: Ticket['due_date
             throw new InsufficientPermissions();
         default:
             throw new UnexpectedStatusCode(status);
-    }
-}
-
-/** Creates a new reply {@linkcode Message} to a {@linkcode Ticket} and returns its `message_id`. */
-export async function reply(ticket: Message['ticket_id'], body: Message['body']) {
-    const res = await fetch('/api/ticket/reply', {
-        method: 'POST',
-        credentials: 'same-origin',
-        body: new URLSearchParams({ ticket, body }),
-    });
-    switch (res.status) {
-        case StatusCodes.CREATED:
-            return MessageSchema.shape.message_id.parse(await res.json());
-        case StatusCodes.GONE:
-            return null;
-        case StatusCodes.NOT_FOUND:
-            throw new EntityNotFound();
-        case StatusCodes.BAD_REQUEST:
-            throw new BadInput();
-        case StatusCodes.UNAUTHORIZED:
-            throw new InvalidSession();
-        default:
-            throw new UnexpectedStatusCode(res.status);
     }
 }
 

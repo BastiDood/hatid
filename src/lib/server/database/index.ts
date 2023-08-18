@@ -439,6 +439,27 @@ export async function createTicket(
     }
 }
 
+/**
+ * Returns the non-empty thread of {@linkcode Message} entries in a {@linkcode Ticket}.
+ * If empty, the {@linkcode Ticket} is invalid or non-existent.
+ */
+export async function getTicketThread(tid: Ticket['ticket_id']) {
+    const rows =
+        await sql`SELECT * FROM get_messages_with_authors(${tid}) AS _ WHERE _ IS NOT NULL`.execute();
+    const MessageUser = UserSchema.pick({
+        name: true,
+        email: true,
+        picture: true,
+    });
+    const MessageData = MessageSchema.pick({
+        author_id: true,
+        message_id: true,
+        creation: true,
+        body: true,
+    });
+    return MessageUser.merge(MessageData).array().parse(rows);
+}
+
 export const enum AssignTicketLabelResult {
     /** Label successfully assigned to ticket. */
     Success,
