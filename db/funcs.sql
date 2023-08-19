@@ -434,6 +434,36 @@ CREATE OR
 REPLACE FUNCTION get_user_inbox (
     uid users.user_id %
     TYPE
-) RETURNS SETOF tickets AS $$ 
-    SELECT * FROM tickets WHERE get_ticket_author(ticket_id) = uid;
+) RETURNS TABLE (
+    ticket_id tickets.ticket_id %
+    TYPE,
+    title tickets.title %
+    TYPE,
+    open tickets.open %
+    TYPE,
+    due tickets.due_date %
+    TYPE,
+    priority jsonb
+) AS $$ 
+    SELECT ticket_id, (get_ticket_info(ticket_id)).* FROM tickets
+        WHERE open AND get_ticket_author(ticket_id) = uid;
+$$ STABLE LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION get_agent_inbox (
+    uid users.user_id %
+    TYPE
+) RETURNS TABLE (
+    ticket_id tickets.ticket_id %
+    TYPE,
+    title tickets.title %
+    TYPE,
+    open tickets.open %
+    TYPE,
+    due tickets.due_date %
+    TYPE,
+    priority jsonb
+) AS $$ 
+    SELECT ticket_id, (get_ticket_info(ticket_id)).* FROM tickets
+        WHERE open AND uid IN (SELECT user_id FROM get_assigned_agents(ticket_id));
 $$ STABLE LANGUAGE SQL;

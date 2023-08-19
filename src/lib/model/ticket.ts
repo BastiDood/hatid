@@ -33,8 +33,8 @@ export const CreateTicketSchema = z.object({
 export const OpenTicketSchema = z.object({
     ticket_id: z.string().uuid(),
     title: z.string().max(128),
-    due_date: z.coerce.date(),
-    priority_id: PrioritySchema.shape.priority_id.nullable(),
+    due: z.coerce.date(),
+    priority: PrioritySchema.pick({ title: true, priority: true }).nullable(),
 });
 
 export const TicketInfoSchema = z.object({
