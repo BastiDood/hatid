@@ -296,13 +296,14 @@ TYPE AS $$
         SELECT author_id FROM _;
 $$ STABLE LANGUAGE SQL;
 
+-- FIXME: Currently, there is no way to disambiguate agents if they hail from multiple departments.
 CREATE OR
 REPLACE FUNCTION get_assigned_agents (
     tid assignments.ticket_id %
     TYPE
-) RETURNS SETOF assignments.user_id %
-TYPE AS $$
-    SELECT user_id FROM assignments WHERE ticket_id = tid;
+) RETURNS users AS $$
+    WITH _ AS (SELECT DISTINCT user_id FROM assignments WHERE ticket_id = tid)
+        SELECT users.* FROM _ INNER JOIN users USING (user_id);
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
@@ -385,7 +386,7 @@ REPLACE FUNCTION is_assigned_agent (
     uid dept_agents.user_id %
     TYPE
 ) RETURNS BOOLEAN AS $$
-    SELECT uid IN (SELECT * FROM get_assigned_agents(tid));
+    SELECT uid IN (SELECT user_id FROM get_assigned_agents(tid));
 $$ LANGUAGE SQL;
 
 -- NOTE: Truth tables with `NULL` have special considerations.
