@@ -12,7 +12,7 @@
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
-    $: ({ messages, info, uid } = data);
+    $: ({ info, agents, messages, uid } = data);
 </script>
 
 {#if info === null || messages.length === 0}
@@ -110,6 +110,15 @@
             <hr />
             <div>
                 <h4 class="h4">Assignees</h4>
+                {#each agents as { user_id, name, email, picture } (user_id)}
+                    <!-- TODO: Render an admin badge. -->
+                    <div class="card p-2">
+                        <Avatar src={picture} width="w-4" />
+                        <a href="mailto:{email}" class="anchor">{name}</a>
+                    </div>
+                {:else}
+                    <p>No assigned agents yet.</p>
+                {/each}
             </div>
         </aside>
     </div>

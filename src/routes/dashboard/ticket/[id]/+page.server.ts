@@ -2,6 +2,7 @@ import type { Actions, PageServerLoad } from './$types';
 import {
     CreateReplyResult,
     createReply,
+    getAssignedAgentsToTicket,
     getTicketInfo,
     getTicketThread,
     getUserFromSession,
@@ -16,8 +17,9 @@ export const load = (async ({ parent, params: { id } }) => {
     if (user === null) throw redirect(StatusCodes.MOVED_TEMPORARILY, '/auth/login');
     return {
         uid: user.user_id,
-        messages: getTicketThread(id),
+        agents: getAssignedAgentsToTicket(id),
         info: getTicketInfo(id),
+        messages: getTicketThread(id),
     };
 }) satisfies PageServerLoad;
 
