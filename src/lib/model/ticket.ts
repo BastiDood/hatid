@@ -37,9 +37,17 @@ export const OpenTicketSchema = z.object({
     priority_id: PrioritySchema.shape.priority_id.nullable(),
 });
 
+export const TicketInfoSchema = z.object({
+    title: TicketSchema.shape.title,
+    open: TicketSchema.shape.open,
+    due: TicketSchema.shape.due_date,
+    priority: PrioritySchema.pick({ title: true, priority: true }).nullable(),
+});
+
 export type Ticket = z.infer<typeof TicketSchema>;
 export type TicketLabel = z.infer<typeof TicketLabelSchema>;
 export type Message = z.infer<typeof MessageSchema>;
 
 export type CreateTicket = z.infer<typeof CreateTicketSchema>;
 export type OpenTicket = z.infer<typeof OpenTicketSchema>;
+export type TicketInfo = z.infer<typeof TicketInfoSchema>;

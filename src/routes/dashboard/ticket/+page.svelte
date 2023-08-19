@@ -37,7 +37,7 @@
             <select required multiple name="label" class="select">
                 {#each labels as { label_id, title, color } (label_id)}
                     {@const rgb = color >>> 8}
-                    {@const hex = rgb.toString(16)}
+                    {@const hex = rgb.toString(16).padStart(6, '0')}
                     <option value="{label_id}" style:color="#{hex}">{title}</option>
                 {/each}
             </select>

@@ -5,8 +5,8 @@ import {
     MessageSchema,
     OpenTicketSchema,
     type Ticket,
+    TicketInfoSchema,
     type TicketLabel,
-    TicketLabelSchema,
     TicketSchema,
 } from '$lib/model/ticket';
 import { type Dept, type DeptLabel, DeptLabelSchema, DeptSchema } from '$lib/model/dept';
@@ -96,7 +96,7 @@ export async function createPending() {
 /** Maps a session ID to its associated {@linkcode User}. */
 export async function getUserFromSession(sid: Session['session_id']) {
     const [first, ...rest] =
-        await sql`SELECT * FROM get_user_from_session(${sid}) AS _ WHERE _ IS NOT NULL`.execute();
+        await sql`SELECT * FROM get_user_from_session(${sid}) _ WHERE _ IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined' ? null : UserSchema.parse(first);
 }
@@ -114,7 +114,7 @@ export async function deleteSession(sid: Session['session_id']) {
 /** Maps a session ID to its associated `admin` field in {@linkcode User}. */
 export async function isAdminSession(sid: Session['session_id']) {
     const [first, ...rest] =
-        await sql`SELECT admin FROM get_user_from_session(${sid}) AS _ WHERE _ IS NOT NULL`.execute();
+        await sql`SELECT admin FROM get_user_from_session(${sid}) _ WHERE _ IS NOT NULL`.execute();
     strictEqual(rest.length, 0);
     return typeof first === 'undefined'
         ? null
@@ -455,13 +455,20 @@ export async function createTicket(
     }
 }
 
+export async function getTicketInfo(tid: Ticket['ticket_id']) {
+    const [first, ...rest] =
+        await sql`SELECT title, open, priority, LEAST(due, to_timestamp(8640000000000)) AS due FROM get_ticket_info(${tid})`.execute();
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined' ? null : TicketInfoSchema.parse(first);
+}
+
 /**
  * Returns the non-empty thread of {@linkcode Message} entries in a {@linkcode Ticket}.
  * If empty, the {@linkcode Ticket} is invalid or non-existent.
  */
 export async function getTicketThread(tid: Ticket['ticket_id']) {
     const rows =
-        await sql`SELECT * FROM get_messages_with_authors(${tid}) AS _ WHERE _ IS NOT NULL`.execute();
+        await sql`SELECT * FROM get_messages_with_authors(${tid}) _ WHERE _ IS NOT NULL`.execute();
     const MessageUser = UserSchema.pick({
         name: true,
         email: true,
@@ -545,7 +552,7 @@ export async function isAssignedDepartment(tid: Ticket['ticket_id'], did: Dept['
 
 export async function canEditTicket(tid: Ticket['ticket_id'], uid: User['user_id']) {
     const [first, ...rest] =
-        await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT * FROM get_assigned_agents(${tid})) AS result`.execute();
+        await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT user_id FROM get_assigned_agents(${tid})) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }
@@ -631,7 +638,7 @@ export async function assignTicketPriority(tid: Ticket['ticket_id'], pid: Ticket
 
 export async function getAgentsByDept(did: Dept['dept_id']) {
     const rows =
-        await sql`SELECT * FROM get_agents_by_dept(${did}) AS _ WHERE _ IS NOT NULL`.execute();
+        await sql`SELECT * FROM get_agents_by_dept(${did}) _ WHERE _ IS NOT NULL`.execute();
     return UserSchema.array().parse(rows);
 }
 
@@ -679,9 +686,9 @@ export async function getUserInbox(uid: User['user_id']) {
     return OpenTicketSchema.array().parse(rows);
 }
 
-export async function getTicketLabels() {
-    const rows = await sql`SELECT * FROM ticket_labels`.execute();
-    return TicketLabelSchema.array().parse(rows);
+export async function resolveTicketLabels(tid: Ticket['ticket_id']) {
+    const rows = await sql`SELECT * FROM resolve_ticket_labels(${tid})`.execute();
+    return LabelSchema.pick({ label_id: true, title: true, color: true }).array().parse(rows);
 }
 
 export async function getUsers() {
@@ -761,6 +768,11 @@ export async function assignAgentToTicket(
                 throw new UnexpectedErrorCode(code);
         }
     }
+}
+
+export async function getAssignedAgentsToTicket(tid: Ticket['ticket_id']) {
+    const rows = await sql`SELECT * FROM get_assigned_agents(${tid}) _ WHERE _ IS NOT NULL`;
+    return UserSchema.array().parse(rows);
 }
 
 export async function removeTicketAgent(

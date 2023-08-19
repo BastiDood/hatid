@@ -218,7 +218,7 @@ REPLACE FUNCTION get_messages_with_authors (
     SELECT author_id, name, email, picture, message_id, creation, body FROM messages
         INNER JOIN users ON author_id = user_id
         WHERE ticket_id = tid ORDER BY creation;
-$$ LANGUAGE SQL;
+$$ STABLE LANGUAGE SQL;
 
 CREATE OR
 REPLACE FUNCTION assign_label (
@@ -266,6 +266,27 @@ END;
 $$ LANGUAGE PLPGSQL;
 
 CREATE OR
+REPLACE FUNCTION get_ticket_info (
+    tid tickets.ticket_id %
+    TYPE
+) RETURNS TABLE (
+    title tickets.title %
+    TYPE,
+    open tickets.open %
+    TYPE,
+    due tickets.due_date %
+    TYPE,
+    priority jsonb
+) AS $$
+    SELECT t.title, open, due_date AS due,
+        CASE WHEN priority_id IS NULL
+            THEN NULL
+            ELSE jsonb_build_object('title', p.title, 'priority', priority)
+        END AS priority
+    FROM tickets t LEFT JOIN priorities p USING (priority_id) WHERE ticket_id = tid;
+$$ STABLE LANGUAGE SQL;
+
+CREATE OR
 REPLACE FUNCTION get_ticket_author (
     tid tickets.ticket_id %
     TYPE
@@ -276,12 +297,28 @@ TYPE AS $$
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
+REPLACE FUNCTION resolve_ticket_labels (
+    tid tickets.ticket_id %
+    TYPE
+) RETURNS TABLE (
+    label_id labels.label_id %
+    TYPE,
+    title labels.title %
+    TYPE,
+    color labels.color %
+    TYPE
+) AS $$
+    SELECT label_id, title, color FROM ticket_labels INNER JOIN labels USING (label_id) WHERE ticket_id = tid;
+$$ STABLE LANGUAGE SQL;
+
+-- FIXME: Currently, there is no way to disambiguate agents if they hail from multiple departments.
+CREATE OR
 REPLACE FUNCTION get_assigned_agents (
     tid assignments.ticket_id %
     TYPE
-) RETURNS SETOF assignments.user_id %
-TYPE AS $$
-    SELECT user_id FROM assignments WHERE ticket_id = tid;
+) RETURNS users AS $$
+    WITH _ AS (SELECT DISTINCT user_id FROM assignments WHERE ticket_id = tid)
+        SELECT users.* FROM _ INNER JOIN users USING (user_id);
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
@@ -364,7 +401,7 @@ REPLACE FUNCTION is_assigned_agent (
     uid dept_agents.user_id %
     TYPE
 ) RETURNS BOOLEAN AS $$
-    SELECT uid IN (SELECT * FROM get_assigned_agents(tid));
+    SELECT uid IN (SELECT user_id FROM get_assigned_agents(tid) WHERE user_id IS NOT NULL);
 $$ LANGUAGE SQL;
 
 -- NOTE: Truth tables with `NULL` have special considerations.

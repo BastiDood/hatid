@@ -2,8 +2,11 @@ import type { Actions, PageServerLoad } from './$types';
 import {
     CreateReplyResult,
     createReply,
+    getAssignedAgentsToTicket,
+    getTicketInfo,
     getTicketThread,
     getUserFromSession,
+    resolveTicketLabels,
 } from '$lib/server/database';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
@@ -13,8 +16,13 @@ import { StatusCodes } from 'http-status-codes';
 export const load = (async ({ parent, params: { id } }) => {
     const user = await parent();
     if (user === null) throw redirect(StatusCodes.MOVED_TEMPORARILY, '/auth/login');
-    const messages = await getTicketThread(id);
-    return { messages, uid: user.user_id };
+    return {
+        uid: user.user_id,
+        agents: getAssignedAgentsToTicket(id),
+        labels: resolveTicketLabels(id),
+        info: getTicketInfo(id),
+        messages: getTicketThread(id),
+    };
 }) satisfies PageServerLoad;
 
 function resultToCode(result: CreateReplyResult) {

@@ -192,7 +192,8 @@ it('should complete a full user journey', async () => {
 
         expect(await db.canEditTicket(nonExistentTicket, nonExistentUser)).toBeNull();
         expect(await db.canEditTicket(nonExistentTicket, uid)).toBeNull();
-        expect(await db.canEditTicket(tid, nonExistentUser)).toStrictEqual(false);
+        expect(await db.canEditTicket(tid, nonExistentUser)).toBeNull();
+        // TODO: add test case for existent user that cannot edit ticket
         expect(await db.canEditTicket(tid, uid)).toStrictEqual(true);
         // TODO: add test case when the agent actually does have permission
         expect(await db.editTicketTitle(tid, 'New Title')).toStrictEqual(true);

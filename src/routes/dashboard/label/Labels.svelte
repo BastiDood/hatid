@@ -22,7 +22,7 @@
                     supports  RGB, not RGBA. Hence, we have the unsigned arithmetic right-shift.
                 -->
                 {@const rgb = color >>> 8}
-                {@const hex = rgb.toString(16)}
+                {@const hex = rgb.toString(16).padStart(6, '0')}
                 <tr>
                     <td>{label_id}</td>
                     <td>{title}</td>
