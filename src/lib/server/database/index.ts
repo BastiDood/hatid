@@ -696,6 +696,12 @@ export async function getUsers() {
     return UserSchema.array().parse(rows);
 }
 
+export async function getAgentInbox(uid: User['user_id']) {
+    const rows =
+        await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_agent_inbox(${uid}) WHERE open`.execute();
+    return OpenTicketSchema.array().parse(rows);
+}
+
 export async function getUsersOutsideDept(did: Dept['dept_id']) {
     const rows = await sql`SELECT * FROM get_users_outside_dept(${did})`.execute();
     return UserSchema.array().parse(rows);

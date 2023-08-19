@@ -437,3 +437,16 @@ REPLACE FUNCTION get_user_inbox (
 ) RETURNS SETOF tickets AS $$ 
     SELECT * FROM tickets WHERE get_ticket_author(ticket_id) = uid;
 $$ STABLE LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION get_agent_inbox (
+    uid users.user_id %
+    TYPE
+) RETURNS SETOF tickets AS $$ 
+    SELECT tickets.ticket_id, title, open, due_date, priority_id FROM tickets INNER JOIN 
+    (SELECT * FROM ticket_labels INNER JOIN dept_labels ON ticket_labels.label_id = dept_labels.label_id) 
+    AS x ON x.ticket_id = tickets.ticket_id 
+    WHERE dept_id IN 
+    (SELECT dept_id FROM users INNER JOIN dept_agents ON users.user_id = dept_agents.user_id 
+    WHERE users.user_id = uid); 
+$$ LANGUAGE SQL;
