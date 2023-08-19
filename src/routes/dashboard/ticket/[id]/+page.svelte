@@ -13,7 +13,6 @@
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
     $: ({ messages, info, uid } = data);
-    $: console.log(info);
 </script>
 
 {#if info === null || messages.length === 0}
@@ -90,17 +89,27 @@
         </section>
         <span class="divider-vertical h-full"></span>
         <aside class="card variant-ghost-surface space-y-2 rounded-xl p-4">
-            <h4 class="h4">Assignees</h4>
-            {#if priority !== null}
-                {@const { title, priority: value } = priority}
-                <hr />
+            <div>
+                <h4 class="h4">Labels</h4>
+            </div>
+            <hr />
+            <div>
                 <h4 class="h4">Priority</h4>
-                <p>{title} [{value}]</p>
-            {/if}
+                {#if priority === null}
+                    To be triaged.
+                {:else}
+                    {@const { title, priority: value } = priority}
+                    <p>{title} [{value}]</p>
+                {/if}
+            </div>
             <hr />
             <div>
                 <h4 class="h4">Due Date</h4>
                 <p>{due.toLocaleString()}</p>
+            </div>
+            <hr />
+            <div>
+                <h4 class="h4">Assignees</h4>
             </div>
         </aside>
     </div>
