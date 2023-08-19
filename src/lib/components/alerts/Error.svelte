@@ -2,7 +2,9 @@
     import { ExclamationCircleIcon as Error } from '@krowten/svelte-heroicons';
 </script>
 
-<div class="alert variant-soft-error">
+<div class="alert variant-soft-error flex-row gap-x-2 items-center">
     <Error class="h-8 w-8" />
-    <slot />
+    <div class="!mt-0">
+        <slot />
+    </div>
 </div>
