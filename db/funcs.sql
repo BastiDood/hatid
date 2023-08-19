@@ -386,7 +386,7 @@ REPLACE FUNCTION is_assigned_agent (
     uid dept_agents.user_id %
     TYPE
 ) RETURNS BOOLEAN AS $$
-    SELECT uid IN (SELECT user_id FROM get_assigned_agents(tid));
+    SELECT uid IN (SELECT user_id FROM get_assigned_agents(tid) WHERE user_id IS NOT NULL);
 $$ LANGUAGE SQL;
 
 -- NOTE: Truth tables with `NULL` have special considerations.

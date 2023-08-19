@@ -553,7 +553,7 @@ export async function isAssignedDepartment(tid: Ticket['ticket_id'], did: Dept['
 
 export async function canEditTicket(tid: Ticket['ticket_id'], uid: User['user_id']) {
     const [first, ...rest] =
-        await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT * FROM get_assigned_agents(${tid})) AS result`.execute();
+        await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT user_id FROM get_assigned_agents(${tid})) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }
