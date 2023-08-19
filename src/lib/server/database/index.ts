@@ -680,13 +680,20 @@ export async function getPriorities() {
 
 export async function getUserInbox(uid: User['user_id']) {
     // TODO: Add Test Cases
-    // TODO: We should `LEFT JOIN` the `priority_id` eventually.
     const rows =
-        await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_user_inbox(${uid}) WHERE open`.execute();
+        await sql`SELECT ticket_id, title, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_user_inbox(${uid})`.execute();
+    return OpenTicketSchema.array().parse(rows);
+}
+
+export async function getAgentInbox(uid: User['user_id']) {
+    // TODO: Add Test Cases
+    const rows =
+        await sql`SELECT ticket_id, title, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_agent_inbox(${uid})`.execute();
     return OpenTicketSchema.array().parse(rows);
 }
 
 export async function resolveTicketLabels(tid: Ticket['ticket_id']) {
+    // TODO: Add Test Cases
     const rows = await sql`SELECT * FROM resolve_ticket_labels(${tid})`.execute();
     return LabelSchema.pick({ label_id: true, title: true, color: true }).array().parse(rows);
 }
@@ -694,12 +701,6 @@ export async function resolveTicketLabels(tid: Ticket['ticket_id']) {
 export async function getUsers() {
     const rows = await sql`SELECT * FROM users`.execute();
     return UserSchema.array().parse(rows);
-}
-
-export async function getAgentInbox(uid: User['user_id']) {
-    const rows =
-        await sql`SELECT ticket_id, title, LEAST(due_date, to_timestamp(8640000000000)) AS due_date, priority_id FROM get_agent_inbox(${uid}) WHERE open`.execute();
-    return OpenTicketSchema.array().parse(rows);
 }
 
 export async function getUsersOutsideDept(did: Dept['dept_id']) {
