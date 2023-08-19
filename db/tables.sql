@@ -45,6 +45,8 @@ CREATE TABLE
         PRIMARY KEY (session_id)
     );
 
+CREATE INDEX idx_pending_expiration ON pendings (expiration);
+
 -- Validated OAuth login.
 CREATE TABLE
     sessions (
@@ -54,6 +56,8 @@ CREATE TABLE
         PRIMARY KEY (session_id)
     );
 
+CREATE INDEX idx_sessions_expiration ON sessions (expiration);
+
 CREATE TABLE
     priorities (
         priority_id SERIAL NOT NULL,
@@ -61,6 +65,9 @@ CREATE TABLE
         priority INT NOT NULL,
         PRIMARY KEY (priority_id)
     );
+
+-- TODO: Should we also index by the title?
+CREATE INDEX idx_priorities_priority ON priorities (priority);
 
 CREATE TABLE
     tickets (
@@ -71,6 +78,9 @@ CREATE TABLE
         priority_id INT REFERENCES priorities (priority_id),
         PRIMARY KEY (ticket_id)
     );
+
+-- TODO: Should we also index by the title?
+CREATE INDEX idx_tickets_due_date ON tickets (due_date);
 
 CREATE TABLE
     assignments (
@@ -90,6 +100,8 @@ CREATE TABLE
         body VARCHAR(1024) NOT NULL,
         PRIMARY KEY (ticket_id, message_id)
     );
+
+CREATE INDEX idx_messages_creation ON messages (creation);
 
 CREATE TABLE
     labels (
