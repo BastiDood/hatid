@@ -7,7 +7,6 @@ import {
     type Ticket,
     TicketInfoSchema,
     type TicketLabel,
-    TicketLabelSchema,
     TicketSchema,
 } from '$lib/model/ticket';
 import { type Dept, type DeptLabel, DeptLabelSchema, DeptSchema } from '$lib/model/dept';
@@ -687,9 +686,9 @@ export async function getUserInbox(uid: User['user_id']) {
     return OpenTicketSchema.array().parse(rows);
 }
 
-export async function getTicketLabels() {
-    const rows = await sql`SELECT * FROM ticket_labels`.execute();
-    return TicketLabelSchema.array().parse(rows);
+export async function resolveTicketLabels(tid: Ticket['ticket_id']) {
+    const rows = await sql`SELECT * FROM resolve_ticket_labels(${tid})`.execute();
+    return LabelSchema.pick({ label_id: true, title: true, color: true }).array().parse(rows);
 }
 
 export async function getUsers() {
@@ -773,7 +772,6 @@ export async function assignAgentToTicket(
 
 export async function getAssignedAgentsToTicket(tid: Ticket['ticket_id']) {
     const rows = await sql`SELECT * FROM get_assigned_agents(${tid}) _ WHERE _ IS NOT NULL`;
-    console.log(rows);
     return UserSchema.array().parse(rows);
 }
 

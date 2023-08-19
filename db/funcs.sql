@@ -296,6 +296,21 @@ TYPE AS $$
         SELECT author_id FROM _;
 $$ STABLE LANGUAGE SQL;
 
+CREATE OR
+REPLACE FUNCTION resolve_ticket_labels (
+    tid tickets.ticket_id %
+    TYPE
+) RETURNS TABLE (
+    label_id labels.label_id %
+    TYPE,
+    title labels.title %
+    TYPE,
+    color labels.color %
+    TYPE
+) AS $$
+    SELECT label_id, title, color FROM ticket_labels INNER JOIN labels USING (label_id) WHERE ticket_id = tid;
+$$ STABLE LANGUAGE SQL;
+
 -- FIXME: Currently, there is no way to disambiguate agents if they hail from multiple departments.
 CREATE OR
 REPLACE FUNCTION get_assigned_agents (
