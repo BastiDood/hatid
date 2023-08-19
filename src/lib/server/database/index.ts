@@ -5,6 +5,7 @@ import {
     MessageSchema,
     OpenTicketSchema,
     type Ticket,
+    TicketInfoSchema,
     type TicketLabel,
     TicketLabelSchema,
     TicketSchema,
@@ -453,6 +454,12 @@ export async function createTicket(
         assert(constraint_name);
         throw new UnexpectedConstraintName(constraint_name);
     }
+}
+
+export async function getTicketInfo(tid: Ticket['ticket_id']) {
+    const [first, ...rest] = await sql`SELECT * FROM get_ticket_info(${tid})`.execute();
+    strictEqual(rest.length, 0);
+    return typeof first === 'undefined' ? null : TicketInfoSchema.parse(first);
 }
 
 /**

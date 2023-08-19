@@ -218,7 +218,7 @@ REPLACE FUNCTION get_messages_with_authors (
     SELECT author_id, name, email, picture, message_id, creation, body FROM messages
         INNER JOIN users ON author_id = user_id
         WHERE ticket_id = tid ORDER BY creation;
-$$ LANGUAGE SQL;
+$$ STABLE LANGUAGE SQL;
 
 CREATE OR
 REPLACE FUNCTION assign_label (
@@ -264,6 +264,27 @@ BEGIN
     RETURN QUERY SELECT tid, mid, due;
 END;
 $$ LANGUAGE PLPGSQL;
+
+CREATE OR
+REPLACE FUNCTION get_ticket_info (
+    tid tickets.ticket_id %
+    TYPE
+) RETURNS TABLE (
+    title tickets.title %
+    TYPE,
+    open tickets.open %
+    TYPE,
+    due tickets.due_date %
+    TYPE,
+    priority jsonb
+) AS $$
+    SELECT t.title, open, due_date AS due,
+        CASE WHEN priority_id IS NULL
+            THEN NULL
+            ELSE jsonb_build_object('title', p.title, 'priority', priority)
+        END AS priority
+    FROM tickets t LEFT JOIN priorities p USING (priority_id) WHERE ticket_id = tid;
+$$ STABLE LANGUAGE SQL;
 
 CREATE OR
 REPLACE FUNCTION get_ticket_author (
