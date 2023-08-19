@@ -30,7 +30,7 @@
 
     // eslint-disable-next-line init-declarations
     export let data: LayoutServerData;
-    $: ({ name, email, picture } = data);
+    $: ({ name, email, picture, admin } = data);
 
     async function exit() {
         // TODO: Somehow make use of the return value.
@@ -61,22 +61,30 @@
             <Inbox slot="lead" class="h-8 w-8" solid />
             <span>Inbox</span>
         </AppRailAnchor>
-        <!-- TODO: Use `data.admin` to remove this for non-admin people. -->
-        <AppRailAnchor
-            href="/dashboard/priority"
-            selected="{pathname.startsWith('/dashboard/priority')}"
-        >
-            <QueueList slot="lead" class="h-8 w-8" solid />
-            <span>Priorities</span>
-        </AppRailAnchor>
-        <AppRailAnchor href="/dashboard/label" selected="{pathname.startsWith('/dashboard/label')}">
-            <Tag slot="lead" class="h-8 w-8" solid />
-            <span>Labels</span>
-        </AppRailAnchor>
-        <AppRailAnchor href="/dashboard/user" selected="{pathname.startsWith('/dashboard/user')}">
-            <Users slot="lead" class="h-8 w-8" solid />
-            <span>Users</span>
-        </AppRailAnchor>
+        {#if admin}
+            <AppRailAnchor
+                href="/dashboard/priority"
+                selected="{pathname.startsWith('/dashboard/priority')}"
+            >
+                <QueueList slot="lead" class="h-8 w-8" solid />
+                <span>Priorities</span>
+            </AppRailAnchor>
+            <AppRailAnchor
+                href="/dashboard/label"
+                selected="{pathname.startsWith('/dashboard/label')}"
+            >
+                <Tag slot="lead" class="h-8 w-8" solid />
+                <span>Labels</span>
+            </AppRailAnchor>
+            <AppRailAnchor
+                href="/dashboard/user"
+                selected="{pathname.startsWith('/dashboard/user')}"
+            >
+                <Users slot="lead" class="h-8 w-8" solid />
+                <span>Users</span>
+            </AppRailAnchor>
+        {/if}
+        <!-- TODO: Check against department head permissions. -->
         <AppRailAnchor href="/dashboard/dept" selected="{pathname.startsWith('/dashboard/dept')}">
             <BuildingOffice slot="lead" class="h-8 w-8" solid />
             <span>Departments</span>
