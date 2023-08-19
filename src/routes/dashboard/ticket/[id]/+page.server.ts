@@ -6,6 +6,7 @@ import {
     getTicketInfo,
     getTicketThread,
     getUserFromSession,
+    resolveTicketLabels,
 } from '$lib/server/database';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { AssertionError } from 'node:assert/strict';
@@ -18,6 +19,7 @@ export const load = (async ({ parent, params: { id } }) => {
     return {
         uid: user.user_id,
         agents: getAssignedAgentsToTicket(id),
+        labels: resolveTicketLabels(id),
         info: getTicketInfo(id),
         messages: getTicketThread(id),
     };

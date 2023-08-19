@@ -12,7 +12,7 @@
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
-    $: ({ info, agents, messages, uid } = data);
+    $: ({ info, labels, agents, messages, uid } = data);
 </script>
 
 {#if info === null || messages.length === 0}
@@ -91,12 +91,28 @@
         <aside class="card variant-ghost-surface space-y-2 rounded-xl p-4">
             <div>
                 <h4 class="h4">Labels</h4>
+                <div class="space-x-2">
+                    {#each labels as { label_id, title, color } (label_id)}
+                        {@const rgb = color >>> 8}
+                        {@const hex = rgb.toString(16).padStart(6, '0')}
+                        <span
+                            class="chip variant-ghost-surface cursor-default"
+                            style:background-color="#{hex}"
+                        >
+                            {title}
+                        </span>
+                    {:else}
+                        <Warning>
+                            <span>No labels assigned.</span>
+                        </Warning>
+                    {/each}
+                </div>
             </div>
             <hr />
             <div>
                 <h4 class="h4">Priority</h4>
                 {#if priority === null}
-                    To be triaged.
+                    <span>To be triaged.</span>
                 {:else}
                     {@const { title, priority: value } = priority}
                     <p>{title} [{value}]</p>
@@ -113,7 +129,7 @@
                 {#each agents as { user_id, name, email, picture } (user_id)}
                     <!-- TODO: Render an admin badge. -->
                     <div class="card p-2">
-                        <Avatar src={picture} width="w-4" />
+                        <Avatar src="{picture}" width="w-4" />
                         <a href="mailto:{email}" class="anchor">{name}</a>
                     </div>
                 {:else}
