@@ -2,6 +2,7 @@ import type { Actions, PageServerLoad } from './$types';
 import {
     CreateReplyResult,
     createReply,
+    getTicketInfo,
     getTicketThread,
     getUserFromSession,
 } from '$lib/server/database';
@@ -13,8 +14,11 @@ import { StatusCodes } from 'http-status-codes';
 export const load = (async ({ parent, params: { id } }) => {
     const user = await parent();
     if (user === null) throw redirect(StatusCodes.MOVED_TEMPORARILY, '/auth/login');
-    const messages = await getTicketThread(id);
-    return { messages, uid: user.user_id };
+    return {
+        uid: user.user_id,
+        messages: getTicketThread(id),
+        info: getTicketInfo(id),
+    };
 }) satisfies PageServerLoad;
 
 function resultToCode(result: CreateReplyResult) {
