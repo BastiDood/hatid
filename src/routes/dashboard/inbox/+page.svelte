@@ -1,8 +1,6 @@
 <script>
-    import { PlusIcon as Plus } from '@krowten/svelte-heroicons';
+    import OpenTicket from './OpenTicket.svelte';
 </script>
 
-<a href="/dashboard/ticket" class="btn variant-filled-secondary m-auto">
-    <Plus class="h-4 w-4" />
-    <span>Open a Ticket</span>
-</a>
+<OpenTicket />
+<!-- TODO: Let the user select from their personal inbox and agent inbox. -->

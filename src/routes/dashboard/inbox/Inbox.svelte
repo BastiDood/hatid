@@ -16,14 +16,15 @@
             </tr>
         </thead>
         <tbody>
-            {#each tickets as { ticket_id, title, due_date, priority_id } (ticket_id)}
+            {#each tickets as { ticket_id, title, due, priority } (ticket_id)}
                 <tr>
                     <td>{ticket_id}</td>
                     <td><a href="/dashboard/ticket/{ticket_id}" class="anchor">{title}</a></td>
-                    <td>{due_date.toLocaleString()}</td>
+                    <td>{due.toLocaleString()}</td>
                     <td>
-                        {#if priority_id !== null}
-                            {priority_id}
+                        {#if priority !== null}
+                            {@const { title, priority: value } = priority}
+                            {title} [{value}]
                         {/if}
                     </td>
                 </tr>
