@@ -43,7 +43,8 @@ export const actions = {
         if (typeof result === 'object') {
             // TODO: Somehow log the `due` date.
             const { tid, mid } = result;
-            throw redirect(StatusCodes.MOVED_TEMPORARILY, `/dashboard/ticket/${tid}#${mid}`);
+            const hash = mid.getTime();
+            throw redirect(StatusCodes.MOVED_TEMPORARILY, `/dashboard/ticket/${tid}#${hash}`);
         }
 
         switch (result) {

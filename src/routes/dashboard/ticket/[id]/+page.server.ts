@@ -49,10 +49,10 @@ export const actions = {
         const user = await getUserFromSession(sid);
         if (user === null) throw error(StatusCodes.UNAUTHORIZED);
 
-        const mid = await createReply(id, user.user_id, body);
-        if (typeof mid === 'number') return { mid };
+        const creation = await createReply(id, user.user_id, body);
+        if (creation instanceof Date) return { mid: creation.getTime() };
 
-        const status = resultToCode(mid);
+        const status = resultToCode(creation);
         throw error(status);
     },
 } satisfies Actions;
