@@ -530,9 +530,11 @@ export async function assignTicketLabel(
 
 export async function isTicketAuthor(tid: Ticket['ticket_id'], uid: Message['author_id']) {
     const [first, ...rest] =
-        await sql`SELECT get_ticket_author(${tid}) = ${uid} AS result`.execute();
+        await sql`SELECT (get_first_ticket_message(${tid})).author_id = ${uid} AS result`.execute();
     strictEqual(rest.length, 0);
-    return NullableBooleanResult.parse(first).result;
+    return typeof first === 'undefined'
+        ? null
+        : z.object({ result: z.boolean() }).parse(first).result;
 }
 
 export async function isAssignedAgent(tid: Ticket['ticket_id'], uid: Agent['user_id']) {
@@ -551,7 +553,7 @@ export async function isAssignedDepartment(tid: Ticket['ticket_id'], did: Dept['
 
 export async function canEditTicket(tid: Ticket['ticket_id'], uid: User['user_id']) {
     const [first, ...rest] =
-        await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT user_id FROM get_assigned_agents(${tid})) AS result`.execute();
+        await sql`SELECT ${uid} IN (SELECT user_id FROM get_assigned_agents(${tid}) UNION (SELECT author_id AS user_id FROM get_first_ticket_message(${tid}))) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }

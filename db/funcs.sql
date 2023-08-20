@@ -285,16 +285,6 @@ REPLACE FUNCTION get_ticket_info (
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
-REPLACE FUNCTION get_ticket_author (
-    tid tickets.ticket_id %
-    TYPE
-) RETURNS messages.author_id %
-TYPE AS $$
-    WITH _ AS (SELECT author_id, MIN(creation) FROM messages WHERE ticket_id = tid GROUP BY author_id)
-        SELECT author_id FROM _;
-$$ STABLE LANGUAGE SQL;
-
-CREATE OR
 REPLACE FUNCTION get_first_ticket_message (
     tid tickets.ticket_id %
     TYPE
@@ -306,7 +296,8 @@ REPLACE FUNCTION get_first_ticket_message (
     body messages.body %
     TYPE
 ) AS $$
-    SELECT MIN(creation) AS creation, author_id, body FROM messages WHERE ticket_id = tid GROUP BY creation;
+    SELECT MIN(creation) AS creation, author_id, body FROM messages
+        WHERE ticket_id = tid GROUP BY creation;
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
@@ -458,8 +449,9 @@ REPLACE FUNCTION get_user_inbox (
     TYPE,
     priority jsonb
 ) AS $$ 
-    SELECT ticket_id, (get_ticket_info(ticket_id)).* FROM tickets
-        WHERE open AND get_ticket_author(ticket_id) = uid;
+    SELECT ticket_id, (get_ticket_info(ticket_id)).*
+        FROM tickets, LATERAL (SELECT author_id FROM get_first_ticket_message(ticket_id)) _
+        WHERE open AND _.author_id = uid;
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
