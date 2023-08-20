@@ -296,8 +296,10 @@ REPLACE FUNCTION get_first_ticket_message (
     body messages.body %
     TYPE
 ) AS $$
-    SELECT MIN(creation) AS creation, author_id, body FROM messages
-        WHERE ticket_id = tid GROUP BY creation;
+    SELECT creation, author_id, body
+        FROM messages,
+        LATERAL (SELECT MIN(creation) AS mid FROM messages WHERE ticket_id = tid) _
+        WHERE creation = _.mid;
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
