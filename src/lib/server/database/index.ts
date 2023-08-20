@@ -398,7 +398,7 @@ export const enum CreateTicketResult {
 }
 
 /**
- * Creates a new {@linkcode Ticket} and returns its `ticket_id`, `message_id`, `due_date` if
+ * Creates a new {@linkcode Ticket} and returns its `ticket_id`, `creation`, `due_date` if
  * successful. Note that the PostgreSQL date for `infinity` would be replaced by the
  * {@link https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-time-values-and-time-range maximum}
  * possible `Date` value, which roughly lands on September 13, 275760.
@@ -475,9 +475,8 @@ export async function getTicketThread(tid: Ticket['ticket_id']) {
         picture: true,
     });
     const MessageData = MessageSchema.pick({
-        author_id: true,
-        message_id: true,
         creation: true,
+        author_id: true,
         body: true,
     });
     return MessageUser.merge(MessageData).array().parse(rows);
@@ -810,11 +809,11 @@ export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket[
 
 export const enum CreateReplyResult {
     /** The ticket has already been closed. */
-    Closed = '0',
+    Closed,
     /** The provided {@linkcode Ticket} does not exist. */
-    NoTicket = '1',
+    NoTicket,
     /** The provided {@linkcode User} does not exist. */
-    NoUser = '2',
+    NoUser,
 }
 
 export async function createReply(
@@ -824,11 +823,11 @@ export async function createReply(
 ) {
     try {
         const [first, ...rest] =
-            await sql`SELECT * FROM create_reply(${tid}, ${author}, ${body}) AS message_id WHERE message_id IS NOT NULL`.execute();
+            await sql`SELECT * FROM create_reply(${tid}, ${author}, ${body}) AS creation WHERE creation IS NOT NULL`.execute();
         strictEqual(rest.length, 0);
         return typeof first === 'undefined'
             ? CreateReplyResult.Closed
-            : MessageSchema.pick({ message_id: true }).parse(first).message_id;
+            : MessageSchema.pick({ creation: true }).parse(first).creation;
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;

@@ -141,7 +141,7 @@ it('should complete a full user journey', async () => {
         assert(typeof result === 'object');
         const { tid, mid, due } = result;
         expect(tid).toHaveLength(36);
-        expect(mid).not.toStrictEqual(0);
+        expect(mid.getTime()).toBeLessThan(Date.now());
         expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
 
         expect(await db.isTicketAuthor(nonExistentTicket, nonExistentUser)).toBeNull();
@@ -187,7 +187,7 @@ it('should complete a full user journey', async () => {
         assert(typeof result === 'object');
         const { tid, mid, due } = result;
         expect(tid).toHaveLength(36);
-        expect(mid).not.toStrictEqual(0);
+        expect(mid.getTime()).toBeLessThan(Date.now());
         expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
 
         expect(await db.canEditTicket(nonExistentTicket, nonExistentUser)).toBeNull();
@@ -286,7 +286,7 @@ it('should complete a full user journey', async () => {
     assert(typeof createTicketResult === 'object');
     const { tid, mid, due } = createTicketResult;
     expect(tid).toHaveLength(36);
-    expect(mid).not.toStrictEqual(0);
+    expect(mid.getTime()).toBeLessThan(Date.now());
     expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
 
     expect(await db.isTicketAuthor(nonExistentTicket, nonExistentUser)).toBeNull();
@@ -378,8 +378,7 @@ it('should complete a full user journey', async () => {
     expect(await db.removeTicketAgent(tid, did, nonExistentUser)).toStrictEqual(false);
 
     const replyId = await db.createReply(tid, uid, 'Valid Reply');
-    assert(typeof replyId === 'number');
-    expect(replyId).not.toStrictEqual(0);
+    assert(replyId instanceof Date);
 
     expect(await db.getTicketThread(nonExistentTicket)).toHaveLength(0);
 
@@ -391,7 +390,7 @@ it('should complete a full user journey', async () => {
             name: 'Test',
             email: `${email}@example.com`,
             picture: 'http://example.com/avatar.png',
-            message_id: mid,
+            creation: mid,
             body: 'yay!',
         });
         expect(second).toMatchObject({
@@ -399,7 +398,7 @@ it('should complete a full user journey', async () => {
             name: 'Test',
             email: `${email}@example.com`,
             picture: 'http://example.com/avatar.png',
-            message_id: replyId,
+            creation: replyId,
             body: 'Valid Reply',
         });
     }

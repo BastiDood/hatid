@@ -177,17 +177,17 @@ REPLACE FUNCTION create_reply (
     TYPE,
     body messages.body %
     TYPE
-) RETURNS messages.message_id %
+) RETURNS messages.creation %
 TYPE AS $$
 DECLARE
     valid tickets.open%TYPE;
-    mid messages.message_id%TYPE;
+    mid messages.creation%TYPE;
 BEGIN
     SELECT open STRICT INTO valid FROM tickets WHERE ticket_id = tid;
     ASSERT valid IS NOT NULL;
     IF valid THEN
         INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body)
-            RETURNING message_id STRICT INTO mid;
+            RETURNING creation STRICT INTO mid;
     END IF;
     RETURN mid;
 END;
@@ -208,14 +208,12 @@ REPLACE FUNCTION get_messages_with_authors (
     TYPE,
     picture users.picture %
     TYPE,
-    message_id messages.message_id %
-    TYPE,
     creation messages.creation %
     TYPE,
     body messages.body %
     TYPE
 ) AS $$
-    SELECT author_id, name, email, picture, message_id, creation, body FROM messages
+    SELECT author_id, name, email, picture, creation, body FROM messages
         INNER JOIN users ON author_id = user_id
         WHERE ticket_id = tid ORDER BY creation;
 $$ STABLE LANGUAGE SQL;
@@ -243,14 +241,14 @@ REPLACE FUNCTION create_ticket (
 ) RETURNS TABLE (
     tid tickets.ticket_id %
     TYPE,
-    mid messages.message_id %
+    mid messages.creation %
     TYPE,
     due tickets.due_date %
     TYPE
 ) AS $$
 DECLARE
     tid tickets.ticket_id%TYPE;
-    mid messages.message_id%TYPE;
+    mid messages.creation%TYPE;
     due tickets.due_date%TYPE = 'infinity';
     min_deadline labels.deadline%TYPE;
 BEGIN
@@ -259,7 +257,7 @@ BEGIN
     INSERT INTO tickets (title, due_date) VALUES (title, COALESCE(NOW() + min_deadline, due))
         RETURNING ticket_id, due_date STRICT INTO tid, due;
     INSERT INTO messages (ticket_id, author_id, body) VALUES (tid, author, body)
-        RETURNING message_id STRICT INTO mid;
+        RETURNING creation STRICT INTO mid;
     INSERT INTO ticket_labels (ticket_id, label_id) SELECT tid, unnest(lids);
     RETURN QUERY SELECT tid, mid, due;
 END;
@@ -294,6 +292,21 @@ REPLACE FUNCTION get_ticket_author (
 TYPE AS $$
     WITH _ AS (SELECT author_id, MIN(creation) FROM messages WHERE ticket_id = tid GROUP BY author_id)
         SELECT author_id FROM _;
+$$ STABLE LANGUAGE SQL;
+
+CREATE OR
+REPLACE FUNCTION get_first_ticket_message (
+    tid tickets.ticket_id %
+    TYPE
+) RETURNS TABLE (
+    creation messages.creation %
+    TYPE,
+    author_id messages.author_id %
+    TYPE,
+    body messages.body %
+    TYPE
+) AS $$
+    SELECT MIN(creation) AS creation, author_id, body FROM messages WHERE ticket_id = tid GROUP BY creation;
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
