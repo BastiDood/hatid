@@ -441,17 +441,17 @@ REPLACE FUNCTION get_user_inbox (
 ) RETURNS TABLE (
     ticket_id tickets.ticket_id %
     TYPE,
-    title tickets.title %
-    TYPE,
-    open tickets.open %
+    ticket tickets.title %
     TYPE,
     due tickets.due_date %
     TYPE,
-    priority jsonb
+    priority priorities.title %
+    TYPE
 ) AS $$ 
-    SELECT ticket_id, (get_ticket_info(ticket_id)).*
-        FROM tickets, LATERAL (SELECT author_id FROM get_first_ticket_message(ticket_id)) _
-        WHERE open AND _.author_id = uid;
+    SELECT ticket_id, t.title AS ticket, due_date AS due, p.title AS priority
+        FROM tickets t LEFT JOIN priorities p USING (priority_id),
+        LATERAL get_first_ticket_message(ticket_id) msg
+        WHERE open AND msg.author_id = uid ORDER BY p.priority DESC NULLS LAST, due, msg.creation DESC;
 $$ STABLE LANGUAGE SQL;
 
 CREATE OR
@@ -461,14 +461,16 @@ REPLACE FUNCTION get_agent_inbox (
 ) RETURNS TABLE (
     ticket_id tickets.ticket_id %
     TYPE,
-    title tickets.title %
-    TYPE,
-    open tickets.open %
+    ticket tickets.title %
     TYPE,
     due tickets.due_date %
     TYPE,
-    priority jsonb
+    priority priorities.title %
+    TYPE
 ) AS $$ 
-    SELECT ticket_id, (get_ticket_info(ticket_id)).* FROM tickets
-        WHERE open AND uid IN (SELECT user_id FROM get_assigned_agents(ticket_id));
+    SELECT ticket_id, t.title AS ticket, due_date AS due, p.title AS priority
+        FROM tickets t LEFT JOIN priorities p USING (priority_id),
+        LATERAL get_first_ticket_message(ticket_id) msg
+        WHERE open AND uid IN (SELECT user_id FROM get_assigned_agents(ticket_id))
+        ORDER BY p.priority DESC NULLS LAST, due, msg.creation DESC;
 $$ STABLE LANGUAGE SQL;

@@ -682,14 +682,14 @@ export async function getPriorities() {
 export async function getUserInbox(uid: User['user_id']) {
     // TODO: Add Test Cases
     const rows =
-        await sql`SELECT ticket_id, title, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_user_inbox(${uid})`.execute();
+        await sql`SELECT ticket_id, ticket, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_user_inbox(${uid})`.execute();
     return OpenTicketSchema.array().parse(rows);
 }
 
 export async function getAgentInbox(uid: User['user_id']) {
     // TODO: Add Test Cases
     const rows =
-        await sql`SELECT ticket_id, title, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_agent_inbox(${uid})`.execute();
+        await sql`SELECT ticket_id, ticket, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_agent_inbox(${uid})`.execute();
     return OpenTicketSchema.array().parse(rows);
 }
 
