@@ -28,8 +28,8 @@
     <h1 class="h1">{title}</h1>
     <div class="grid grid-cols-[1fr_auto_auto] gap-4">
         <section class="flex flex-col space-y-4">
-            {#each messages as { message_id, body, creation, author_id, name, email, picture } (message_id)}
-                {@const id = message_id.toString()}
+            {#each messages as { creation, body, author_id, name, email, picture } (creation)}
+                {@const id = creation.getTime().toString()}
                 {#if author_id === uid}
                     <article id="{id}" class="grid grid-cols-[1fr_auto] gap-2">
                         <div

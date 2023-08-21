@@ -398,7 +398,7 @@ export const enum CreateTicketResult {
 }
 
 /**
- * Creates a new {@linkcode Ticket} and returns its `ticket_id`, `message_id`, `due_date` if
+ * Creates a new {@linkcode Ticket} and returns its `ticket_id`, `creation`, `due_date` if
  * successful. Note that the PostgreSQL date for `infinity` would be replaced by the
  * {@link https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-time-values-and-time-range maximum}
  * possible `Date` value, which roughly lands on September 13, 275760.
@@ -475,9 +475,8 @@ export async function getTicketThread(tid: Ticket['ticket_id']) {
         picture: true,
     });
     const MessageData = MessageSchema.pick({
-        author_id: true,
-        message_id: true,
         creation: true,
+        author_id: true,
         body: true,
     });
     return MessageUser.merge(MessageData).array().parse(rows);
@@ -531,9 +530,11 @@ export async function assignTicketLabel(
 
 export async function isTicketAuthor(tid: Ticket['ticket_id'], uid: Message['author_id']) {
     const [first, ...rest] =
-        await sql`SELECT get_ticket_author(${tid}) = ${uid} AS result`.execute();
+        await sql`SELECT (get_first_ticket_message(${tid})).author_id = ${uid} AS result`.execute();
     strictEqual(rest.length, 0);
-    return NullableBooleanResult.parse(first).result;
+    return typeof first === 'undefined'
+        ? null
+        : z.object({ result: z.boolean() }).parse(first).result;
 }
 
 export async function isAssignedAgent(tid: Ticket['ticket_id'], uid: Agent['user_id']) {
@@ -552,7 +553,7 @@ export async function isAssignedDepartment(tid: Ticket['ticket_id'], did: Dept['
 
 export async function canEditTicket(tid: Ticket['ticket_id'], uid: User['user_id']) {
     const [first, ...rest] =
-        await sql`SELECT get_ticket_author(${tid}) = ${uid} OR ${uid} IN (SELECT user_id FROM get_assigned_agents(${tid})) AS result`.execute();
+        await sql`SELECT ${uid} IN (SELECT user_id FROM get_assigned_agents(${tid}) UNION (SELECT author_id AS user_id FROM get_first_ticket_message(${tid}))) AS result`.execute();
     strictEqual(rest.length, 0);
     return NullableBooleanResult.parse(first).result;
 }
@@ -681,14 +682,14 @@ export async function getPriorities() {
 export async function getUserInbox(uid: User['user_id']) {
     // TODO: Add Test Cases
     const rows =
-        await sql`SELECT ticket_id, title, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_user_inbox(${uid})`.execute();
+        await sql`SELECT ticket_id, ticket, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_user_inbox(${uid})`.execute();
     return OpenTicketSchema.array().parse(rows);
 }
 
 export async function getAgentInbox(uid: User['user_id']) {
     // TODO: Add Test Cases
     const rows =
-        await sql`SELECT ticket_id, title, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_agent_inbox(${uid})`.execute();
+        await sql`SELECT ticket_id, ticket, LEAST(due, to_timestamp(8640000000000)) AS due, priority FROM get_agent_inbox(${uid})`.execute();
     return OpenTicketSchema.array().parse(rows);
 }
 
@@ -810,11 +811,11 @@ export async function setStatusForTicket(tid: Ticket['ticket_id'], open: Ticket[
 
 export const enum CreateReplyResult {
     /** The ticket has already been closed. */
-    Closed = '0',
+    Closed,
     /** The provided {@linkcode Ticket} does not exist. */
-    NoTicket = '1',
+    NoTicket,
     /** The provided {@linkcode User} does not exist. */
-    NoUser = '2',
+    NoUser,
 }
 
 export async function createReply(
@@ -824,11 +825,11 @@ export async function createReply(
 ) {
     try {
         const [first, ...rest] =
-            await sql`SELECT * FROM create_reply(${tid}, ${author}, ${body}) AS message_id WHERE message_id IS NOT NULL`.execute();
+            await sql`SELECT * FROM create_reply(${tid}, ${author}, ${body}) AS creation WHERE creation IS NOT NULL`.execute();
         strictEqual(rest.length, 0);
         return typeof first === 'undefined'
             ? CreateReplyResult.Closed
-            : MessageSchema.pick({ message_id: true }).parse(first).message_id;
+            : MessageSchema.pick({ creation: true }).parse(first).creation;
     } catch (err) {
         const isExpected = err instanceof pg.PostgresError;
         if (!isExpected) throw err;

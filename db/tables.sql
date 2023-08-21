@@ -93,15 +93,14 @@ CREATE TABLE
 
 CREATE TABLE
     messages (
+        creation TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         author_id GoogleUserId REFERENCES users (user_id),
         ticket_id UUID NOT NULL REFERENCES tickets (ticket_id),
-        message_id SERIAL NOT NULL,
-        creation TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         body VARCHAR(1024) NOT NULL,
-        PRIMARY KEY (ticket_id, message_id)
+        PRIMARY KEY (creation)
     );
 
-CREATE INDEX idx_messages_creation ON messages (creation);
+CREATE INDEX idx_messages_ticket_id ON messages (ticket_id);
 
 CREATE TABLE
     labels (

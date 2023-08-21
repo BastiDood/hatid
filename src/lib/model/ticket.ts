@@ -17,24 +17,23 @@ export const TicketLabelSchema = z.object({
 });
 
 export const MessageSchema = z.object({
+    creation: z.coerce.date(),
     author_id: UserSchema.shape.user_id,
     ticket_id: TicketSchema.shape.ticket_id,
-    message_id: z.number().int().positive(),
-    creation: z.coerce.date(),
     body: z.string().max(1024),
 });
 
 export const CreateTicketSchema = z.object({
     tid: TicketSchema.shape.ticket_id,
-    mid: MessageSchema.shape.message_id,
+    mid: MessageSchema.shape.creation,
     due: TicketSchema.shape.due_date,
 });
 
 export const OpenTicketSchema = z.object({
-    ticket_id: z.string().uuid(),
-    title: z.string().max(128),
-    due: z.coerce.date(),
-    priority: PrioritySchema.pick({ title: true, priority: true }).nullable(),
+    ticket_id: TicketSchema.shape.ticket_id,
+    ticket: TicketSchema.shape.title,
+    due: TicketSchema.shape.due_date,
+    priority: PrioritySchema.shape.title.nullable(),
 });
 
 export const TicketInfoSchema = z.object({
