@@ -705,6 +705,7 @@ export async function getUsers() {
 }
 
 export async function getUsersAndAdmins() {
+    // TODO: Add Test Cases
     const [first, ...rest] = await sql`SELECT users, admins FROM get_users_and_admins()`.execute();
     strictEqual(rest.length, 0);
     const Users = UserSchema.omit({ admin: true }).array();
