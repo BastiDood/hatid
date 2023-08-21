@@ -49,6 +49,12 @@ export const actions = {
         const user = await getUserFromSession(sid);
         if (user === null) throw error(StatusCodes.UNAUTHORIZED);
 
+        // TODO: Use microsecond- or nanosecond-precision for the `mid`.
+        // Although it is unlikely, two messages of the same thread may
+        // end up resolving to the same millisecond (hence colliding their
+        // `id` in HTML). The solution is to introduce higher precision
+        // in the hash since it is exceptionally rare that two database
+        // transactions resolve at the exact same nanosecond.
         const creation = await createReply(id, user.user_id, body);
         if (creation instanceof Date) return { mid: creation.getTime() };
 
