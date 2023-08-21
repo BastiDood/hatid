@@ -1,7 +1,7 @@
 <script lang="ts">
+    import { Avatar } from '@skeletonlabs/skeleton';
     import { ArrowUturnLeftIcon as Back } from '@krowten/svelte-heroicons';
     import type { PageServerData } from './$types';
-    import Users from '$lib/components/Users.svelte';
     import Warning from '$lib/components/alerts/Warning.svelte';
 
     // eslint-disable-next-line init-declarations
@@ -18,5 +18,25 @@
         <span>There are no agents in this department.</span>
     </Warning>
 {:else}
-    <Users users="{users}" />
+    <div class="table-container">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each users as { picture, name, email, user_id } (user_id)}
+                    <tr>
+                        <td class="flex flex-row items-center gap-2">
+                            <Avatar src="{picture}" class="h-8 w-8" />
+                            <span>{name}</span>
+                        </td>
+                        <td><a href="{email}" class="anchor">{email}</a></td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+    </div>
 {/if}
