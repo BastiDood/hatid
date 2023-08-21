@@ -14,7 +14,6 @@
         InboxIcon as Inbox,
         ArrowRightOnRectangleIcon as Logout,
         QueueListIcon as QueueList,
-        ShieldCheckIcon as Admin,
         TagIcon as Tag,
         UsersIcon as Users,
     } from '@krowten/svelte-heroicons';

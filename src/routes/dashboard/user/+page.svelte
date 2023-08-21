@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ArrowDownIcon as Demote, ArrowUpIcon as Promote } from '@krowten/svelte-heroicons';
-    import List from './List.svelte';
     import Error from '$lib/components/alerts/Error.svelte';
+    import List from './List.svelte';
     import type { PageServerData } from './$types';
     import Warning from '$lib/components/alerts/Warning.svelte';
 
