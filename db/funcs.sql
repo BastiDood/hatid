@@ -93,11 +93,11 @@ DECLARE
     users jsonb[];
     admins jsonb[];
 BEGIN
-    SELECT COALESCE(array_agg(to_jsonb(_) - 'admin'), '{}') STRICT INTO users
-        FROM users _ WHERE NOT admin;
-    SELECT COALESCE(array_agg(to_jsonb(_) - 'admin'), '{}') STRICT INTO admins
-        FROM users _ WHERE admin;
-    RETURN QUERY SELECT users, admins;
+    SELECT array_agg(to_jsonb(_) - 'admin') STRICT INTO users
+        FROM users _ WHERE NOT admin GROUP BY user_id ORDER BY name;
+    SELECT array_agg(to_jsonb(_) - 'admin') STRICT INTO admins
+        FROM users _ WHERE admin GROUP BY user_id ORDER BY name;
+    RETURN QUERY SELECT COALESCE(users, '{}'), COALESCE(admins, '{}');
 END;
 $$ STABLE LANGUAGE PLPGSQL;
 
