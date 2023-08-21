@@ -13,10 +13,9 @@
 
 {#if labels.length === 0}
     <Error>
-        <span
-            >There are currently no labels set up for this system. Until then, no tickets may be
-            opened.</span
-        >
+        <span>
+            There are currently no labels set up for this system. No tickets may be opened for now.
+        </span>
     </Error>
 {:else}
     <Labels labels="{labels}" />
