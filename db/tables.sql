@@ -21,6 +21,8 @@ CREATE TABLE
         PRIMARY KEY (user_id)
     );
 
+CREATE INDEX idx_users_name ON users (NAME);
+
 CREATE TABLE
     depts (
         dept_id SERIAL NOT NULL,
@@ -45,7 +47,7 @@ CREATE TABLE
         PRIMARY KEY (session_id)
     );
 
-CREATE INDEX idx_pending_expiration ON pendings (expiration);
+CREATE INDEX idx_pendings_expiration ON pendings (expiration);
 
 -- Validated OAuth login.
 CREATE TABLE

@@ -87,6 +87,20 @@ TYPE AS $$
         UPDATE users SET admin = value FROM _ WHERE user_id = uid RETURNING _.admin;
 $$ LANGUAGE SQL;
 
+CREATE OR
+REPLACE FUNCTION get_users_and_admins () RETURNS TABLE (users jsonb[], admins jsonb[]) AS $$
+DECLARE
+    users jsonb[];
+    admins jsonb[];
+BEGIN
+    SELECT array_agg(to_jsonb(_) - 'admin') STRICT INTO users
+        FROM users _ WHERE NOT admin GROUP BY user_id ORDER BY name;
+    SELECT array_agg(to_jsonb(_) - 'admin') STRICT INTO admins
+        FROM users _ WHERE admin GROUP BY user_id ORDER BY name;
+    RETURN QUERY SELECT COALESCE(users, '{}'), COALESCE(admins, '{}');
+END;
+$$ STABLE LANGUAGE PLPGSQL;
+
 -- LABEL FUNCTIONS
 CREATE OR
 REPLACE FUNCTION create_label (

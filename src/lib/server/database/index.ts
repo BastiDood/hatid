@@ -704,6 +704,14 @@ export async function getUsers() {
     return UserSchema.array().parse(rows);
 }
 
+export async function getUsersAndAdmins() {
+    // TODO: Add Test Cases
+    const [first, ...rest] = await sql`SELECT users, admins FROM get_users_and_admins()`.execute();
+    strictEqual(rest.length, 0);
+    const Users = UserSchema.omit({ admin: true }).array();
+    return z.object({ users: Users, admins: Users }).parse(first);
+}
+
 export async function getUsersOutsideDept(did: Dept['dept_id']) {
     const rows = await sql`SELECT * FROM get_users_outside_dept(${did})`.execute();
     return UserSchema.array().parse(rows);
