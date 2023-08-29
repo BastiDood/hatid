@@ -5,13 +5,15 @@
     import type { PageServerData } from './$types';
     import type { User } from '$lib/model/user';
     import Warning from '$lib/components/alerts/Warning.svelte';
+    import { getToastStore } from '@skeletonlabs/skeleton';
     import { invalidateAll } from '$app/navigation';
     import { setAdmin } from '$lib/api/user';
-    import { toastStore } from '@skeletonlabs/skeleton';
 
     // eslint-disable-next-line init-declarations
     export let data: PageServerData;
     $: ({ uid, users, admins } = data);
+
+    const toastStore = getToastStore();
 
     async function action(admin: User['admin'], { detail }: CustomEvent<User['user_id']>) {
         const result = await setAdmin(detail, admin);

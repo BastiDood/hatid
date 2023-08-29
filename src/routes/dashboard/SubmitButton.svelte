@@ -3,5 +3,5 @@
 </script>
 
 <div class="flex justify-center">
-    <button type="submit" class="m-0-auto btn variant-filled-primary">{text}</button>
+    <button type="submit" class="m-0-auto variant-filled-primary btn">{text}</button>
 </div>

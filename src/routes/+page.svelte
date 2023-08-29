@@ -12,10 +12,10 @@
 <Logo />
 
 {#if user === null}
-    <a href="/auth/login" class="btn variant-filled-primary">
+    <a href="/auth/login" class="variant-filled-primary btn">
         <Fa icon="{faGoogle}" />
         <span>Sign in with Google</span>
     </a>
 {:else}
-    <a href="/dashboard" class="btn variant-filled-primary"> Go to Dashboard </a>
+    <a href="/dashboard" class="variant-filled-primary btn"> Go to Dashboard </a>
 {/if}

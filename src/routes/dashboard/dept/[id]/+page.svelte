@@ -9,7 +9,7 @@
     $: ({ users } = data);
 </script>
 
-<a href="/dashboard/dept" class="btn variant-filled-primary m-auto">
+<a href="/dashboard/dept" class="variant-filled-primary btn m-auto">
     <Back class="h-4 w-4" />
     <span>Go Back</span>
 </a>

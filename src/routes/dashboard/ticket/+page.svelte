@@ -11,7 +11,7 @@
 </script>
 
 {#if labels.length === 0}
-    <a href="/dashboard" class="btn variant-filled-primary m-auto">
+    <a href="/dashboard" class="variant-filled-primary btn m-auto">
         <Back class="h-4 w-4" />
         <span>Go Back to Dashboard</span>
     </a>

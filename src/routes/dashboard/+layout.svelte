@@ -8,6 +8,7 @@
         LightSwitch,
         Modal,
         Toast,
+        initializeStores,
     } from '@skeletonlabs/skeleton';
     import {
         BuildingOfficeIcon as BuildingOffice,
@@ -25,6 +26,9 @@
     import { goto } from '$app/navigation';
     import { logout } from '$lib/api/session';
     import { page } from '$app/stores';
+
+    // https://github.com/skeletonlabs/skeleton/wiki/SvelteKit-SSR-Warning
+    initializeStores();
 
     $: ({ pathname } = $page.url);
 
