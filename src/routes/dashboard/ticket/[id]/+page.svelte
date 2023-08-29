@@ -16,7 +16,7 @@
 </script>
 
 {#if info === null || messages.length === 0}
-    <a href="/dashboard/inbox" class="btn variant-filled-primary m-auto">
+    <a href="/dashboard/inbox" class="variant-filled-primary btn m-auto">
         <Back class="h-4 w-4" />
         <span>Go Back to Inbox</span>
     </a>
@@ -96,7 +96,7 @@
                         {@const rgb = color >>> 8}
                         {@const hex = rgb.toString(16).padStart(6, '0')}
                         <span
-                            class="chip variant-ghost-surface cursor-default"
+                            class="variant-ghost-surface chip cursor-default"
                             style:background-color="#{hex}"
                         >
                             {title}

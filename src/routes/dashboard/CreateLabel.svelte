@@ -1,11 +1,14 @@
 <script lang="ts">
-    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
+    import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
     import { LabelSchema } from '$lib/model/label';
     import SubmitButton from './SubmitButton.svelte';
     import type { SubmitFunction } from '@sveltejs/kit';
     import assert from '$lib/assert';
     import { enhance } from '$app/forms';
     import { z } from 'zod';
+
+    const modalStore = getModalStore();
+    const toastStore = getToastStore();
 
     const ResultSchema = z.object({ id: LabelSchema.shape.label_id });
 
