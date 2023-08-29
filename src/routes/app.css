@@ -1,3 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+@font-face {
+    font-family: 'Public Sans';
+    font-style: normal;
+    font-weight: 500;
+    src: local('Public Sans'), url('$lib/fonts/PublicSans/Medium.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Public Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Public Sans'), url('$lib/fonts/PublicSans/Bold.woff2') format('woff2');
+}
+
 html,
 body {
     @apply h-full overflow-hidden;
