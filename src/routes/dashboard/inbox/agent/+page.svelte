@@ -16,5 +16,5 @@
         <span>There are currently no pending open tickets assigned to you. Great work!</span>
     </Success>
 {:else}
-    <Inbox tickets="{tickets}" />
+    <Inbox {tickets} />
 {/if}

@@ -16,5 +16,5 @@
         <span>There are currently no departments set up for this system.</span>
     </Warning>
 {:else}
-    <Departments depts="{depts}" />
+    <Departments {depts} />
 {/if}

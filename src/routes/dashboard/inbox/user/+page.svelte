@@ -16,5 +16,5 @@
         <span>You have not yet opened any tickets.</span>
     </Warning>
 {:else}
-    <Inbox tickets="{tickets}" />
+    <Inbox {tickets} />
 {/if}

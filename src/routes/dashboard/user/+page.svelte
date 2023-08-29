@@ -39,7 +39,7 @@
 
 <List
     heading="Admins"
-    uid="{uid}"
+    {uid}
     users="{admins}"
     variant="variant-ghost-error"
     on:button="{action.bind(null, false)}"
@@ -52,8 +52,8 @@
 
 <List
     heading="Users"
-    uid="{uid}"
-    users="{users}"
+    {uid}
+    {users}
     variant="variant-ghost-success"
     on:button="{action.bind(null, true)}"
 >

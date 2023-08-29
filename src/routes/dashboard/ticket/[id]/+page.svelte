@@ -31,7 +31,7 @@
             {#each messages as { creation, body, author_id, name, email, picture } (creation)}
                 {@const id = creation.getTime().toString()}
                 {#if author_id === uid}
-                    <article id="{id}" class="grid grid-cols-[1fr_auto] gap-2">
+                    <article {id} class="grid grid-cols-[1fr_auto] gap-2">
                         <div
                             class="card variant-ghost-tertiary space-y-2 rounded-xl rounded-tr-none p-4"
                         >
@@ -46,7 +46,7 @@
                         </a>
                     </article>
                 {:else}
-                    <article id="{id}" class="grid grid-cols-[auto_1fr] gap-2">
+                    <article {id} class="grid grid-cols-[auto_1fr] gap-2">
                         <a href="mailto:{email}">
                             <Avatar src="{picture}" width="w-12" shadow="shadow-md" />
                         </a>
@@ -76,7 +76,8 @@
                         placeholder="Write a message..."
                         rows="1"
                         maxlength="1024"
-                        class="resize-none border-0 bg-transparent ring-0"></textarea>
+                        class="resize-none border-0 bg-transparent ring-0"
+                    ></textarea>
                     <button type="submit" class="variant-filled-primary">
                         <Send class="h-6 w-6" strokeWidth="2" />
                     </button>

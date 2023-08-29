@@ -50,7 +50,7 @@
 </script>
 
 <Toast />
-<Modal components="{components}" />
+<Modal {components} />
 <AppShell>
     <AppBar slot="header" shadow="shadow-xl">
         <a href="/" slot="lead"><Logo /></a>

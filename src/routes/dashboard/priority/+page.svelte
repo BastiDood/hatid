@@ -16,5 +16,5 @@
         <span>There are currently no priority levels set up for this system.</span>
     </Warning>
 {:else}
-    <Priorities priorities="{priorities}" />
+    <Priorities {priorities} />
 {/if}

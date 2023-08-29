@@ -18,5 +18,5 @@
         </span>
     </Error>
 {:else}
-    <Labels labels="{labels}" />
+    <Labels {labels} />
 {/if}

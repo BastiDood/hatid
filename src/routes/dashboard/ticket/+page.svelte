@@ -50,7 +50,8 @@
                 cols="40"
                 rows="6"
                 placeholder="Write about your experience."
-                class="textarea"></textarea>
+                class="textarea"
+            ></textarea>
         </label>
         <SubmitButton />
     </form>
