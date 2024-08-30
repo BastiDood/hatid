@@ -1,5 +1,9 @@
 # HATiD
 
+<p align="center">
+<img alt="HATiD Logo" src="src/lib/assets/logo-type.svg" width="50%" />
+</p>
+
 **HATiD** is a **H**elpdesk **A**nd **Ti**cketing **D**ashboard written in [TypeScript] and [Svelte]. It is a full-stack web application on top of the [SvelteKit] framework. In the back end, it uses PostgreSQL as the database.
 
 [TypeScript]: https://www.typescriptlang.org/

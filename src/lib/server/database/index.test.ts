@@ -187,7 +187,7 @@ it('should complete a full user journey', async () => {
         assert(typeof result === 'object');
         const { tid, mid, due } = result;
         expect(tid).toHaveLength(36);
-        expect(mid.getTime()).toBeLessThan(Date.now());
+        expect(mid.getTime()).toBeLessThanOrEqual(Date.now());
         expect(due.getTime()).toBeGreaterThanOrEqual(Date.now());
 
         expect(await db.canEditTicket(nonExistentTicket, nonExistentUser)).toBeNull();
